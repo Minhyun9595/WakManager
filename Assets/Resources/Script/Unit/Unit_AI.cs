@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Unit_AI : MonoBehaviour
 {
-    Unit info;
+    public Unit info;
     public float rayDistance = 5f;   // Ray의 길이
     public LayerMask layerMask;      // 충돌할 레이어 설정
 
@@ -11,10 +11,15 @@ public class Unit_AI : MonoBehaviour
     public float coneAngle = 60f;          // 부채꼴 각도 (전체 각도)
     public int rayCount = 10;              // 발사할 Ray 개수
 
+    private void Invoke()
+    {
+        InvokeRepeating("CheckCone", 1, 1);
+    }
+
     private void Update()
     {
-        CheckCone();
-        CheckLine();
+        //CheckCone();
+        //CheckLine();
     }
 
     private void CheckCone()
@@ -41,7 +46,6 @@ public class Unit_AI : MonoBehaviour
                 if (hit.collider != null && hit.collider.gameObject != gameObject)
                 {
                     hitColliders.Add(hit.collider);  // 중복 방지
-                    Debug.Log($"Hit {hit.collider.name} at angle {currentAngle} degrees");
                 }
             }
 

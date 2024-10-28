@@ -1,5 +1,15 @@
-Index,Name
-1,우왁굳
-2,메시
-3,비즈니스 킴
-4,설리반
+Index,DescName,Desc,IsDeveloped,Name,Role,Health,MeleeDamage,AttackSpeed,Range,Armor,MagicArmor,MoveSpeed_X,MoveSpeed_Y,CriticalChance,CriticalRatio,MaxTraitCount,FixTrait
+1,IsDeveloped,개발 완료,1,곽춘식,탱커,300,20,1,5,1,1,3,1.5,2000,10000,3,
+2,Name,이름,1,권민,전사,300,20,1,5,0,0,3,1.5,2000,10000,3,
+3,Role,직업,1,김치만두번영택사스가,마법사,300,20,1,5,0,0,3,1.5,2000,10000,3,
+4,Health,체력 (HP): 유닛의 최대 체력입니다.,1,단답벌레,암살자,300,20,1,5,0,0,3,1.5,2000,10000,3,
+5,MeleeDamage,공격력 (AD): 유닛의 기본 공격 피해량입니다.,1,도파민,궁수,300,20,1,5,0,0,3,1.5,2000,10000,3,
+6,Armor,방어력 (Armor): 물리 피해로부터의 피해 감소량입니다.,1,박사,서포터,300,20,1,5,0,0,3,1.5,2000,10000,3,
+7,MagicArmor,마법 저항력 (MR): 마법 피해로부터의 피해 감소량입니다.,,,,,,,,,,,,,,,
+8,AttackSpeed,공격 속도 (AS): 유닛이 초당 공격하는 횟수입니다.,,,,,,,,,,,,,,,
+9,Range,사거리 (Range): 유닛의 기본 공격 사거리입니다.,,,,,,,,,,,,,,,
+10,MoveSpeed,이동 속도 (MS): 유닛의 이동 속도를 나타내며 X축과 Y축의 속도로 구분됩니다. MoveSpeedXY,,,,,,,,,,,,,,,
+11,CriticalChance,치명타 확률 (Critical Chance): 유닛의 치명타 발생 확률입니다. (100 = 1%),,,,,,,,,,,,,,,
+,CriticalRatio,치명타 배율 (Critical Ratio): 유닛의 치명타 배율입니다. (100 = 1%),,,,,,,,,,,,,,,
+,TraitCount,특성 개수,,,,,,,,,,,,,,,
+,FixTrait,고정 특성,,,,,,,,,,,,,,,
