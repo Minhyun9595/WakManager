@@ -402,7 +402,7 @@ GameObject:
   - component: {fileID: 1961486039}
   - component: {fileID: 1961486040}
   m_Layer: 0
-  m_Name: GameMain
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -436,7 +436,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StageBG: {fileID: 707955435}
-  UnitPrefab: {fileID: 1039775565848612908, guid: 1f4fbd5a1be2c0c4fbd36efaec43e81f, type: 3}
 --- !u!224 &2097113357 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1223652010481630604, guid: 5d5861960f396224c844b1b78b3cfb38, type: 3}

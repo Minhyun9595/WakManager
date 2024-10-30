@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 
-public class DataManager : CustomSingleton<DataManager>
+public class DataLoader : CustomSingleton<DataLoader>
 {
     public List<T> LoadCSV<T>(string filePath) where T : new()
     {

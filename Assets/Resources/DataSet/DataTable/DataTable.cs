@@ -18,8 +18,6 @@ public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Start()
     {
-        Debug.Log("asdasd");
-        Initialize();
     }
 
     public void Initialize()

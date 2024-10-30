@@ -4,15 +4,18 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameMain : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     void Start()
     {
-        var data = DataManager.Instance;
-        var dataTable = DataTable.Instance;
+        DataTable.Instance.Initialize();
+
         var panel = PanelManager.Instance;
+        var poolManager = PoolManager.Instance;
+        var fieldManager = FieldManager.Instance;
 
         InitMapData();
+        fieldManager.StartGame();
     }
 
     void Update()
@@ -25,18 +28,9 @@ public class GameMain : MonoBehaviour
         {
             SceneManager.LoadScene(1);
         }
-
-        else if (Input.GetKeyUp(KeyCode.T))
-        {
-            // À¯´Ö ¼ÒÈ¯
-            var pos = GetRandomLeftPosition();
-            Debug.Log(pos);
-            var unit = Instantiate<GameObject>(UnitPrefab, pos, Quaternion.identity);
-        }
     }
 
     public GameObject StageBG;
-    public GameObject UnitPrefab;
 
     private Vector3 center;               // Áß¾Ó À§Ä¡
     private float leftBound, rightBound;  // ÁÂ¿ì °æ°è °ª

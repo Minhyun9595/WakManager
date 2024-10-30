@@ -1,15 +1,79 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
+
+public class Blackboard
+{
+    // ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public GameObject myGameObject;
+    public Transform myTransform;
+    public Unit unitInfo;
+    public int teamIndex;
+
+    // 
+    public Transform target;     // ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ (Transform)
+    public Vector3 destination;  // Æ¯ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+    public string teamColor;
+
+    public Blackboard(int _teamIndex, int _unitIndex, GameObject _myGameObject) 
+    {
+        teamIndex = _teamIndex;
+        var originalDataRef = DataTable.Instance.GetInfoByIndex(_unitIndex);
+        if (originalDataRef == null)
+        {
+            Debug.LogError(_unitIndex);
+            new OnApplicationPause();
+        }
+
+        unitInfo = new Unit(originalDataRef);
+        this.myGameObject = _myGameObject;
+        this.myTransform = _myGameObject.transform;
+        var nameText = myTransform.Find("NameText").GetComponent<TextMesh>();
+        nameText.text = unitInfo.Name;
+        teamColor = "#ff0000";
+        if(_teamIndex == 1)
+        {
+            teamColor = "#00ff00";
+        }
+    }
+}
 
 public class Unit_AI : MonoBehaviour
 {
-    public Unit info;
-    public float rayDistance = 5f;   // RayÀÇ ±æÀÌ
-    public LayerMask layerMask;      // Ãæµ¹ÇÒ ·¹ÀÌ¾î ¼³Á¤
+    private BehaviorNode rootNode;
+    private Blackboard blackboard;
 
-    // ºÎÃ¤²Ã
-    public float coneAngle = 60f;          // ºÎÃ¤²Ã °¢µµ (ÀüÃ¼ °¢µµ)
-    public int rayCount = 10;              // ¹ß»çÇÒ Ray °³¼ö
+    private void Start()
+    {
+
+    }
+
+    public void Initialize(int _teamIndex, int _unitIndex)
+    {
+        blackboard = new Blackboard(_teamIndex, _unitIndex, this.gameObject);
+        rootNode = CreateTankBehaviorTree();
+    }
+
+    BehaviorNode CreateTankBehaviorTree()
+    {
+        var findEnemyWarriorAction = new FindEnemyAction(blackboard);
+        var moveToTargetAction = new MoveToTargetAction(blackboard);
+        //var attack = new AttackAction();
+        var idleAction = new IdleAction(blackboard);
+
+        var attackSequence = new SequenceNode();
+        attackSequence.AddChild(findEnemyWarriorAction);
+        attackSequence.AddChild(moveToTargetAction);
+        attackSequence.AddChild(idleAction);
+
+        var rootSelector = new SelectorNode();
+        rootSelector.AddChild(attackSequence);
+        //rootSelector.AddChild(patrol);
+
+        return rootSelector;
+    }
 
     private void Invoke()
     {
@@ -18,34 +82,48 @@ public class Unit_AI : MonoBehaviour
 
     private void Update()
     {
+        rootNode.Execute();
         //CheckCone();
         //CheckLine();
     }
 
+
+    public Blackboard GetBlackboard()
+    {
+        return blackboard;
+    }
+
+
+    public float rayDistance = 5f;   // Rayï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public LayerMask layerMask;      // ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+    public float coneAngle = 60f;          // ï¿½ï¿½Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½)
+    public int rayCount = 10;              // ï¿½ß»ï¿½ï¿½ï¿½ Ray ï¿½ï¿½ï¿½ï¿½
+
     private void CheckCone()
     {
-        float startAngle = -coneAngle / 2;     // ºÎÃ¤²Ã ½ÃÀÛ °¢µµ
-        float angleStep = coneAngle / (rayCount - 1); // °¢ Ray °£ÀÇ °¢µµ Â÷ÀÌ
+        float startAngle = -coneAngle / 2;     // ï¿½ï¿½Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        float angleStep = coneAngle / (rayCount - 1); // ï¿½ï¿½ Ray ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         HashSet<Collider2D> hitColliders = new HashSet<Collider2D>();
 
         for (int i = 0; i < rayCount; i++)
         {
-            // °¢µµ¸¦ ±âÁØÀ¸·Î ¹æÇâ °è»ê
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             float currentAngle = startAngle + (angleStep * i);
             float radian = (currentAngle + transform.eulerAngles.z) * Mathf.Deg2Rad;
 
             Vector2 direction = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
 
-            // RaycastAllÀ» »ç¿ëÇÏ¿© ¸ðµç Ãæµ¹Ã¼ °¨Áö
+            // RaycastAllï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ ï¿½æµ¹Ã¼ ï¿½ï¿½ï¿½ï¿½
             RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, direction, rayDistance, layerMask);
 
-            // ¸ðµç Ãæµ¹Ã¼ °Ë»ç ¹× ½Ã°¢È­
+            // ï¿½ï¿½ï¿½ ï¿½æµ¹Ã¼ ï¿½Ë»ï¿½ ï¿½ï¿½ ï¿½Ã°ï¿½È­
             foreach (RaycastHit2D hit in hits)
             {
                 if (hit.collider != null && hit.collider.gameObject != gameObject)
                 {
-                    hitColliders.Add(hit.collider);  // Áßº¹ ¹æÁö
+                    hitColliders.Add(hit.collider);  // ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½
                 }
             }
 
@@ -53,7 +131,7 @@ public class Unit_AI : MonoBehaviour
             Debug.DrawRay(transform.position, direction * rayDistance, color);
         }
 
-        // ºÎÃ¤²Ã ¹üÀ§ ³»¿¡¼­ Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®°¡ ÀÖ´ÂÁö ÆÇ´Ü
+        // ï¿½ï¿½Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½
         if (hitColliders.Count > 0)
         {
             //Debug.Log($"Total unique objects hit in cone: {hitColliders.Count}");
@@ -62,7 +140,7 @@ public class Unit_AI : MonoBehaviour
 
     private void CheckLine()
     {
-        Vector2 direction = transform.right; // ¿ÀºêÁ§Æ®ÀÇ ¿À¸¥ÂÊ(¹Ù¶óº¸´Â ¹æÇâ)
+        Vector2 direction = transform.right; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½)
         Vector2 startPosition = transform.position;
         Vector2 endPosition = startPosition + direction * rayDistance;
 
