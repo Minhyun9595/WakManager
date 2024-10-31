@@ -14,20 +14,23 @@ public class MoveToTargetAction : ActionNode
 
     public override NodeStatus Execute()
     {
-        if (blackboard.target == null)
+        if (blackboard.targetTransform == null)
         {
             // 타겟이 없으면 실패 반환
             return NodeStatus.Failure;
         }
 
         // 타겟의 위치 가져오기
-        Vector3 targetPosition = blackboard.target.position;
+        Vector3 targetPosition = blackboard.targetTransform.position;
         Vector3 currentPosition = blackboard.myTransform.position;
 
         // 타겟과의 거리 계산
         float distance = Vector3.Distance(currentPosition, targetPosition);
 
-        if (distance <= 1.5f)
+        // 사거리를 원으로 표시
+        QUtility.UIUtility.DrawDebugCircle(blackboard.myTransform.position, blackboard.unitData.Range, Color.green);
+
+        if (distance <= blackboard.unitData.Range)
         {
             // 목표 지점에 도달하면 성공 반환
             return NodeStatus.Success;
@@ -35,24 +38,40 @@ public class MoveToTargetAction : ActionNode
         else
         {
             // 타겟 방향으로 이동
-            MoveTowards(targetPosition);
+            var movement = MoveTowards(targetPosition);
+
+            // 방향 전환
+            LookDirection(movement);
 
             // 이동 중이므로 Running 반환
             return NodeStatus.Running;
         }
     }
 
-    private void MoveTowards(Vector3 targetPosition)
+    private Vector3 MoveTowards(Vector3 targetPosition)
     {
         // 이동 방향 계산
         Vector3 direction = (targetPosition - blackboard.myTransform.position).normalized;
 
         // 이동 속도 적용
-        Vector3 movement = new Vector3(blackboard.unitInfo.MoveSpeed_X * direction.x, blackboard.unitInfo.MoveSpeed_Y * direction.y, 0) * Time.deltaTime * ConstValue.speedRatio;
+        Vector3 movement = new Vector3(blackboard.unitData.MoveSpeed_X * direction.x, blackboard.unitData.MoveSpeed_Y * direction.y, 0) * Time.deltaTime * ConstValue.speedRatio;
 
         // 실제 이동 적용
         blackboard.myTransform.position += movement;
 
-        // 애니메이션 또는 방향 전환 처리 (필요한 경우)
+        return movement;
+    }
+
+    private void LookDirection(Vector3 movement)
+    {
+        // 이동 방향에 따라 이미지 방향 전환
+        if (movement.x > 0)
+        {
+            blackboard.myTransform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (movement.x < 0)
+        {
+            blackboard.myTransform.localScale = new Vector3(-1, 1, 1);
+        }
     }
 }

@@ -6,16 +6,16 @@ using UnityEngine;
 
 public class Blackboard
 {
-    // �ڽ��� ����
-    public GameObject myGameObject;
-    public Transform myTransform;
-    public Unit unitInfo;
-    public int teamIndex;
+    public int teamIndex { get; set; }
+    public GameObject myGameObject { get; set; }
+    public Transform myTransform { get; set; }
+    public Unit unitData { get; set; }
+    public Unit_FieldData unitFieldInfo { get; set; }
 
-    // 
-    public Transform target;     // ��ǥ�� �ϴ� ��� (Transform)
-    public Vector3 destination;  // Ư�� ��ġ�� ��ǥ�� �� ��� ��� (���� ����)
-    public string teamColor;
+    public Transform targetTransform { get; set; }
+    public Blackboard targetBoard { get; set; }
+    public Vector3 destination { get; set; }
+    public string teamColor { get; set; }
 
     public Blackboard(int _teamIndex, int _unitIndex, GameObject _myGameObject) 
     {
@@ -23,31 +23,37 @@ public class Blackboard
         var originalDataRef = DataTable.Instance.GetInfoByIndex(_unitIndex);
         if (originalDataRef == null)
         {
-            Debug.LogError(_unitIndex);
+            Debug.LogError("originalDataRef is null : " + _unitIndex);
             new OnApplicationPause();
         }
 
-        unitInfo = new Unit(originalDataRef);
+        unitData = new Unit(originalDataRef);
         this.myGameObject = _myGameObject;
         this.myTransform = _myGameObject.transform;
         var nameText = myTransform.Find("NameText").GetComponent<TextMesh>();
-        nameText.text = unitInfo.Name;
-        teamColor = "#ff0000";
-        if(_teamIndex == 1)
-        {
-            teamColor = "#00ff00";
-        }
+        nameText.text = unitData.Name;
+        teamColor = QUtility.UIUtility.GetTeamTextColor(teamIndex);
+        unitFieldInfo = new Unit_FieldData(unitData);
+    }
+
+    public void Update(float deltaTime)
+    {
+        unitFieldInfo.Update(deltaTime);
     }
 }
 
 public class Unit_AI : MonoBehaviour
 {
     private BehaviorNode rootNode;
-    private Blackboard blackboard;
+    [SerializeField] private Blackboard blackboard;
 
-    private void Start()
+    public static GameObject Spawn(Vector3 position, int teamIndex, int unitIndex)
     {
+        GameObject unit = PoolManager.Instance.GetFromPool(EPrefabType.Unit.ToString());
+        unit.transform.position = position;
+        unit.GetComponent<Unit_AI>().Initialize(teamIndex, unitIndex);
 
+        return unit;
     }
 
     public void Initialize(int _teamIndex, int _unitIndex)
@@ -58,17 +64,25 @@ public class Unit_AI : MonoBehaviour
 
     BehaviorNode CreateTankBehaviorTree()
     {
+        var deadAction = new DeadAction(blackboard);
         var findEnemyWarriorAction = new FindEnemyAction(blackboard);
         var moveToTargetAction = new MoveToTargetAction(blackboard);
-        //var attack = new AttackAction();
+        var attackAction = new AttackAction(blackboard);
         var idleAction = new IdleAction(blackboard);
 
+        // 사망 시퀀스
+        var deadSequence = new SequenceNode();
+        deadSequence.AddChild(deadAction);
+
+        // 공격 시퀀스
         var attackSequence = new SequenceNode();
-        attackSequence.AddChild(findEnemyWarriorAction);
         attackSequence.AddChild(moveToTargetAction);
+        attackSequence.AddChild(attackAction);
+        attackSequence.AddChild(findEnemyWarriorAction);
         attackSequence.AddChild(idleAction);
 
         var rootSelector = new SelectorNode();
+        rootSelector.AddChild(deadSequence);
         rootSelector.AddChild(attackSequence);
         //rootSelector.AddChild(patrol);
 
@@ -82,11 +96,13 @@ public class Unit_AI : MonoBehaviour
 
     private void Update()
     {
-        rootNode.Execute();
-        //CheckCone();
-        //CheckLine();
-    }
+        blackboard.Update(Time.deltaTime);
 
+        if(rootNode != null)
+        {
+            rootNode.Execute();
+        }
+    }
 
     public Blackboard GetBlackboard()
     {
@@ -94,31 +110,28 @@ public class Unit_AI : MonoBehaviour
     }
 
 
-    public float rayDistance = 5f;   // Ray�� ����
-    public LayerMask layerMask;      // �浹�� ���̾� ����
+    public float rayDistance = 5f;
+    public LayerMask layerMask;   
 
-    public float coneAngle = 60f;          // ��ä�� ���� (��ü ����)
-    public int rayCount = 10;              // �߻��� Ray ����
+    public float coneAngle = 60f; 
+    public int rayCount = 10;     
 
     private void CheckCone()
     {
-        float startAngle = -coneAngle / 2;     // ��ä�� ���� ����
-        float angleStep = coneAngle / (rayCount - 1); // �� Ray ���� ���� ����
+        float startAngle = -coneAngle / 2;    
+        float angleStep = coneAngle / (rayCount - 1);
 
         HashSet<Collider2D> hitColliders = new HashSet<Collider2D>();
 
         for (int i = 0; i < rayCount; i++)
         {
-            // ������ �������� ���� ���
             float currentAngle = startAngle + (angleStep * i);
             float radian = (currentAngle + transform.eulerAngles.z) * Mathf.Deg2Rad;
 
             Vector2 direction = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
 
-            // RaycastAll�� ����Ͽ� ��� �浹ü ����
             RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, direction, rayDistance, layerMask);
 
-            // ��� �浹ü �˻� �� �ð�ȭ
             foreach (RaycastHit2D hit in hits)
             {
                 if (hit.collider != null && hit.collider.gameObject != gameObject)
@@ -131,16 +144,15 @@ public class Unit_AI : MonoBehaviour
             Debug.DrawRay(transform.position, direction * rayDistance, color);
         }
 
-        // ��ä�� ���� ������ �浹�� ������Ʈ�� �ִ��� �Ǵ�
         if (hitColliders.Count > 0)
         {
-            //Debug.Log($"Total unique objects hit in cone: {hitColliders.Count}");
+
         }
     }
 
     private void CheckLine()
     {
-        Vector2 direction = transform.right; // ������Ʈ�� ������(�ٶ󺸴� ����)
+        Vector2 direction = transform.right;
         Vector2 startPosition = transform.position;
         Vector2 endPosition = startPosition + direction * rayDistance;
 
@@ -153,7 +165,7 @@ public class Unit_AI : MonoBehaviour
         {
             if (hit.collider != null && hit.collider.gameObject != gameObject)
             {
-                //Debug.Log($"Hit {hit.collider.name} at distance {hit.distance}");
+
             }
         }
     }

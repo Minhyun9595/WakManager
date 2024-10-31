@@ -10,12 +10,10 @@ public class GameManager : MonoBehaviour
     {
         DataTable.Instance.Initialize();
 
-        var panel = PanelManager.Instance;
+        var panel = PanelRenderQueueManager.Instance;
         var poolManager = PoolManager.Instance;
-        var fieldManager = FieldManager.Instance;
 
         InitMapData();
-        fieldManager.StartGame();
     }
 
     void Update()

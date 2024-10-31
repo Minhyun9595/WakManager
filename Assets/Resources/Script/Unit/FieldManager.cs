@@ -1,23 +1,84 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class FieldManager : CustomSingleton<FieldManager>
+[System.Serializable]
+public class TeamUnitData
 {
-    public void StartGame()
+    public List<int> unitIndices = new List<int>();
+}
+
+[System.Serializable]
+public class SpawnedUnit
+{
+    public List<Unit_AI> units = new List<Unit_AI>();
+}
+
+
+public class FieldManager : MonoBehaviour
+{
+    [SerializeField] private List<TeamUnitData> teamUnitIndices = new List<TeamUnitData>();
+    [SerializeField] private List<SpawnedUnit> spawnedUnits = new List<SpawnedUnit>();
+
+
+    private void Start()
     {
         StageBG = GameObject.FindWithTag("StageBG");
-        CreateTeam(1, new List<int> { 1, 2, 3 });
-        CreateTeam(2, new List<int> { 4, 5, 6 });
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("ResetGame")]
+#endif
+    public void ResetGame()
+    {
+        foreach (var team in spawnedUnits)
+        {
+            foreach (var unit in team.units)
+            {
+                PoolManager.Instance.ReturnToPool(EPrefabType.Unit.ToString(), unit.gameObject);
+            }
+        }
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("StartGame")]
+#endif
+    public void StartGame()
+    {
+        ResetGame();
+
+        var teamCount = teamUnitIndices.Count;
+
+        spawnedUnits.Clear();
+        if (0 < teamCount)
+        {
+            spawnedUnits = Enumerable.Repeat(new SpawnedUnit(), teamCount).ToList();
+        }
+
+        for (int i = 0, length = teamCount; i < length; i++)
+        {
+            CreateTeam(i, teamUnitIndices[i].unitIndices);
+        }
     }
 
     private void CreateTeam(int _teamIndex, List<int> _unitIndexList)
     {
         foreach(var unitIndex in _unitIndexList)
         {
-            var unit = PoolManager.Instance.GetFromPool("Unit");
-            var unitAI = unit.GetComponent<Unit_AI>();
-            unitAI.Initialize(_teamIndex, unitIndex);
+            Vector3 position = Vector3.zero;
+            if(_teamIndex % 2 == 0)
+            {
+                position = GetRandomRightPosition();
+            }
+            else
+            {
+                position = GetRandomLeftPosition();
+            }
+
+            var unitObject = Unit_AI.Spawn(position, _teamIndex, unitIndex);
+            var unitAI = unitObject.GetComponent<Unit_AI>();
+            spawnedUnits[_teamIndex].units.Add(unitAI);
         }
     }
 

@@ -12,6 +12,8 @@ public class Unit
     public string Name;
     public string Role;
     public int Health;
+    public int MeleeDamageType;
+    public int MeleeDamageCount;
     public int MeleeDamage;
     public float AttackSpeed;
     public int Range;
@@ -26,13 +28,15 @@ public class Unit
 
     public Unit() { }
 
-    public Unit(in Unit other) // 값 생성
+    public Unit(in Unit other) // 값 복사
     {
         Index = other.Index;
         IsDeveloped = other.IsDeveloped;
         Name = other.Name;
         Role = other.Role;
         Health = other.Health;
+        MeleeDamageType = other.MeleeDamageType;
+        MeleeDamageCount = other.MeleeDamageCount;
         MeleeDamage = other.MeleeDamage;
         AttackSpeed = other.AttackSpeed;
         Range = other.Range;
@@ -50,7 +54,72 @@ public class Unit
     {
         return $"<color={color}>{Name}</color>";
     }
+
+    public EDamageType GetDamageType()
+    {
+        return (EDamageType)MeleeDamageType;
+    }
 }
+
+public struct Unit_FieldData
+{
+    private Unit unit;
+    public float FullHp;
+    public float Hp;
+    public float NormalAction_LeftCoolTime;
+
+    public Unit_FieldData(Unit unit)
+    {
+        this.unit = unit;
+        FullHp = unit.Health;
+        Hp = FullHp;
+        NormalAction_LeftCoolTime = 1 / unit.AttackSpeed;
+    }
+
+    public void Update(float deltaTime)
+    {
+        NormalAction_LeftCoolTime -= deltaTime;
+    }
+
+    public bool Hit(EDamageType damageType, float damage)
+    {
+        if (IsDead())
+            return false;
+
+        var myArmor = unit.Armor;
+        var myMagicArmor = unit.MagicArmor;
+        
+        if(damageType == EDamageType.Magical)
+        {
+            // 마법 공격 효과
+            Hp -= damage - myMagicArmor;
+        }
+        else if(damageType == EDamageType.Physical)
+        {
+            // 물리 공격 효과
+            Hp -= damage - myArmor;
+        }
+        else if(damageType == EDamageType.True)
+        {
+            // 물리 공격 효과
+            Hp -= damage;
+        }
+
+        // 죽었는지 체크
+        if(IsDead())
+        {
+            Debug.Log($"{unit.Name} 사망");
+        }
+
+        return true;
+    }
+
+    public bool IsDead()
+    {
+        return Hp <= 0;
+    }
+}
+
 
 public partial class DataTable : CustomSingleton<DataTable>
 {

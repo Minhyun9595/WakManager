@@ -13,6 +13,7 @@ public class IdleAction : ActionNode
 
     public override NodeStatus Execute()
     {
+        Debug.Log("IdleAction Execute");
         return NodeStatus.Success;
     }
 

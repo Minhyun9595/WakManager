@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PoolManager : CustomSingleton<PoolManager>
 {
@@ -18,7 +19,17 @@ public class PoolManager : CustomSingleton<PoolManager>
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
         prefabDictionary = new Dictionary<string, GameObject>();
         prefabNames = new List<string>();
+
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         LoadPrefabs();
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     void LoadPrefabs()
@@ -46,6 +57,7 @@ public class PoolManager : CustomSingleton<PoolManager>
             }
 
             poolDictionary.Add(prefab.name, objectPool);
+            Debug.Log("PoolManager: " + prefab.name + " 로드 완료.");
         }
     }
 
@@ -87,5 +99,29 @@ public class PoolManager : CustomSingleton<PoolManager>
 
         obj.SetActive(false);
         poolDictionary[prefabName].Enqueue(obj);
+    }
+
+    public void OnSceneUnloaded(Scene current)
+    {
+        foreach (var pool in poolDictionary.Values)
+        {
+            while (pool.Count > 0)
+            {
+                GameObject obj = pool.Dequeue();
+                Destroy(obj);
+            }
+        }
+
+        // 딕셔너리 정리
+        poolDictionary.Clear();
+        prefabDictionary.Clear();
+        prefabNames.Clear();
+
+        Debug.Log("PoolManager: SceneChange로 모든 풀 오브젝트가 제거되었습니다.");
+    }
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        LoadPrefabs();
     }
 }

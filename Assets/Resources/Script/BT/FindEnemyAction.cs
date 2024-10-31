@@ -16,15 +16,20 @@ public class FindEnemyAction : ActionNode
 
     public override NodeStatus Execute()
     {
+        // 공격 쿨타임중이면 실패 반환
+        if(0 < blackboard.unitFieldInfo.NormalAction_LeftCoolTime)
+        {
+            return NodeStatus.Failure;
+        }
+
         // 유닛의 위치와 시야 범위를 가져옴
         Vector3 unitPosition = blackboard.myTransform.position;
-        float sightRange = 10;
-        TextMesh nameText = null;
 
         // 주변의 적 유닛들을 탐색
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(unitPosition, sightRange);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(unitPosition, 1000);
 
         float closestDistance = Mathf.Infinity;
+        TextMesh nameText = null;
         Transform closestEnemy = null;
         Unit_AI closestEnemyUnit = null;
 
@@ -50,12 +55,13 @@ public class FindEnemyAction : ActionNode
 
         if (closestEnemy != null)
         {
-            blackboard.target = closestEnemy;
+            blackboard.targetTransform = closestEnemy;
+            blackboard.targetBoard = closestEnemyUnit.GetBlackboard();
 
             // 이름 텍스트 업데이트
             nameText = blackboard.myTransform.Find("NameText").GetComponent<TextMesh>();
             var enemyBlackBoard = closestEnemyUnit.GetBlackboard();
-            nameText.text = blackboard.unitInfo.GetColorName(blackboard.teamColor) + "\n타겟 : " + enemyBlackBoard.unitInfo.GetColorName(enemyBlackBoard.teamColor);
+            nameText.text = blackboard.unitData.GetColorName(blackboard.teamColor) + "\n타겟 : " + enemyBlackBoard.unitData.GetColorName(enemyBlackBoard.teamColor);
 
             return NodeStatus.Success;
         }
@@ -63,7 +69,7 @@ public class FindEnemyAction : ActionNode
         {
             // 주변에 적이 없는 경우
             nameText = blackboard.myTransform.Find("NameText").GetComponent<TextMesh>();
-            nameText.text = blackboard.unitInfo.GetColorName(blackboard.teamColor);
+            nameText.text = blackboard.unitData.GetColorName(blackboard.teamColor);
 
             return NodeStatus.Failure;
         }

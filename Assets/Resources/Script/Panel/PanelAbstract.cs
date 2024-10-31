@@ -6,7 +6,7 @@ public class PanelAbstract : MonoBehaviour
 {
     public void Open()
     {
-        PanelManager.Instance.PushPanel(this);
+        PanelRenderQueueManager.Instance.PushPanel(this);
         gameObject.SetActive(true);
     }
 
@@ -14,6 +14,6 @@ public class PanelAbstract : MonoBehaviour
     {
         Debug.Log("PanelClose");
         gameObject.SetActive(false);
-        PanelManager.Instance.ClosePanel(this);
+        PanelRenderQueueManager.Instance.ClosePanel(this);
     }
 }
