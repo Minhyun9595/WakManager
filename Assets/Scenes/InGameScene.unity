@@ -412,6 +412,7 @@ MonoBehaviour:
   teamUnitIndices:
   - unitIndices: 01000000
   - unitIndices: 02000000
+  spawnedUnits: []
   StageBG: {fileID: 0}
 --- !u!4 &611078003
 Transform:
