@@ -15,6 +15,7 @@ public class DeadAction : ActionNode
     {
         if(blackboard.unitFieldInfo.IsDead())
         {
+            Debug.Log($"╩Г╦а ╩Себ {blackboard.unitData.Name}");
             return NodeStatus.Success;
         }
         else

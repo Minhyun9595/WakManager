@@ -16,5 +16,4 @@ public class IdleAction : ActionNode
         Debug.Log("IdleAction Execute");
         return NodeStatus.Success;
     }
-
 }

@@ -16,8 +16,8 @@ public class MoveToTargetAction : ActionNode
     {
         if (blackboard.targetTransform == null)
         {
-            // 타겟이 없으면 실패 반환
-            return NodeStatus.Failure;
+            // 타겟이 없으면 반환
+            return NodeStatus.Success;
         }
 
         // 타겟의 위치 가져오기
@@ -64,14 +64,16 @@ public class MoveToTargetAction : ActionNode
 
     private void LookDirection(Vector3 movement)
     {
-        // 이동 방향에 따라 이미지 방향 전환
+        Vector3 localScale = blackboard.myBodyTransform.localScale;
+
         if (movement.x > 0)
         {
-            blackboard.myTransform.localScale = new Vector3(1, 1, 1);
+            // Keep the original scale, only adjusting the sign for x
+            blackboard.myBodyTransform.localScale = new Vector3(Mathf.Abs(localScale.x), localScale.y, localScale.z);
         }
         else if (movement.x < 0)
         {
-            blackboard.myTransform.localScale = new Vector3(-1, 1, 1);
+            blackboard.myBodyTransform.localScale = new Vector3(-Mathf.Abs(localScale.x), localScale.y, localScale.z);
         }
     }
 }

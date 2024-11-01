@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [System.Serializable]
 public class TeamUnitData
@@ -25,6 +26,7 @@ public class FieldManager : MonoBehaviour
     private void Start()
     {
         StageBG = GameObject.FindWithTag("StageBG");
+        InitMapData();
     }
 
 #if UNITY_EDITOR
@@ -140,5 +142,46 @@ public class FieldManager : MonoBehaviour
         float clampedX = Mathf.Clamp(position.x, leftBound, rightBound);
         float clampedY = Mathf.Clamp(position.y, bottomBound, topBound);
         return new Vector3(clampedX, clampedY, position.z);
+    }
+
+    private void OnDrawGizmos()
+    {
+        // SpriteRenderer 컴포넌트 가져오기
+        if (StageBG == null)
+            return;
+
+        SpriteRenderer spriteRenderer = StageBG.GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+            return;
+
+        // Sprite의 Bounds (경계) 가져오기
+        Bounds bounds = spriteRenderer.bounds;
+
+        // Gizmo 색상 설정
+        Gizmos.color = Color.green;
+
+        // 상하좌우 좌표 계산
+        Vector3 topLeft = new Vector3(bounds.min.x, bounds.max.y, 0);
+        Vector3 topRight = new Vector3(bounds.max.x, bounds.max.y, 0);
+        Vector3 bottomLeft = new Vector3(bounds.min.x, bounds.min.y, 0);
+        Vector3 bottomRight = new Vector3(bounds.max.x, bounds.min.y, 0);
+
+        // 사각형 그리기
+        Gizmos.DrawLine(topLeft, topRight);     // 위쪽 선
+        Gizmos.DrawLine(topRight, bottomRight); // 오른쪽 선
+        Gizmos.DrawLine(bottomRight, bottomLeft); // 아래쪽 선
+        Gizmos.DrawLine(bottomLeft, topLeft);    // 왼쪽 선
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            StartGame();
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            ResetGame();
+        }
     }
 }

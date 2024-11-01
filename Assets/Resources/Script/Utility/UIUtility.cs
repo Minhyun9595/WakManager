@@ -22,6 +22,7 @@ namespace QUtility
                     return "<color=white>";
             }
         }
+
         public static void DrawDebugCircle(Vector3 center, float radius, Color color, int segments = 12)
         {
             float angleStep = 360f / segments;
@@ -35,6 +36,23 @@ namespace QUtility
 
                 Debug.DrawLine(point1, point2, color, 0.1f); // 각 라인 지속 시간
             }
+        }
+
+        public static Color GetDamageColor(bool isCritical)
+        {
+            Color color;
+            string hexCode = "#0079FFFF";
+            if (isCritical)
+            {
+                hexCode = "#D7790CFF";
+            }
+
+            if (ColorUtility.TryParseHtmlString(hexCode, out color))
+            {
+                return color;
+            }
+
+            return Color.white;
         }
 
     }

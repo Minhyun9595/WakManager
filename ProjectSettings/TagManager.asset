@@ -8,6 +8,7 @@ TagManager:
   - DisablePanelParent
   - Unit
   - StageBG
+  - GameManager
   layers:
   - Default
   - TransparentFX

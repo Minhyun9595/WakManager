@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Timeline.Actions;
@@ -9,6 +10,8 @@ public class Blackboard
     public int teamIndex { get; set; }
     public GameObject myGameObject { get; set; }
     public Transform myTransform { get; set; }
+    public Transform myBodyTransform { get; set; }
+    public TextMeshPro myNameText { get; set; }
     public Unit unitData { get; set; }
     public Unit_FieldData unitFieldInfo { get; set; }
 
@@ -27,11 +30,14 @@ public class Blackboard
             new OnApplicationPause();
         }
 
-        unitData = new Unit(originalDataRef);
+
         this.myGameObject = _myGameObject;
         this.myTransform = _myGameObject.transform;
-        var nameText = myTransform.Find("NameText").GetComponent<TextMesh>();
-        nameText.text = unitData.Name;
+        this.myNameText = myTransform.Find("NameText").GetComponent<TextMeshPro>();
+        this.myBodyTransform = myTransform.Find("Body").GetComponent<Transform>();
+
+        unitData = new Unit(originalDataRef);
+        myNameText.text = unitData.Name;
         teamColor = QUtility.UIUtility.GetTeamTextColor(teamIndex);
         unitFieldInfo = new Unit_FieldData(unitData);
     }
@@ -76,9 +82,9 @@ public class Unit_AI : MonoBehaviour
 
         // 공격 시퀀스
         var attackSequence = new SequenceNode();
+        attackSequence.AddChild(findEnemyWarriorAction);
         attackSequence.AddChild(moveToTargetAction);
         attackSequence.AddChild(attackAction);
-        attackSequence.AddChild(findEnemyWarriorAction);
         attackSequence.AddChild(idleAction);
 
         var rootSelector = new SelectorNode();

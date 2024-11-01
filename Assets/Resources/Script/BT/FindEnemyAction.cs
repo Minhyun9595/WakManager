@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.PackageManager;
 using UnityEngine;
@@ -29,7 +30,7 @@ public class FindEnemyAction : ActionNode
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(unitPosition, 1000);
 
         float closestDistance = Mathf.Infinity;
-        TextMesh nameText = null;
+        TextMeshPro nameText = null;
         Transform closestEnemy = null;
         Unit_AI closestEnemyUnit = null;
 
@@ -53,24 +54,17 @@ public class FindEnemyAction : ActionNode
             }
         }
 
-        if (closestEnemy != null)
+        if (closestEnemy != null && closestEnemyUnit.GetBlackboard().unitFieldInfo.IsDead() == false)
         {
             blackboard.targetTransform = closestEnemy;
             blackboard.targetBoard = closestEnemyUnit.GetBlackboard();
 
-            // 이름 텍스트 업데이트
-            nameText = blackboard.myTransform.Find("NameText").GetComponent<TextMesh>();
             var enemyBlackBoard = closestEnemyUnit.GetBlackboard();
-            nameText.text = blackboard.unitData.GetColorName(blackboard.teamColor) + "\n타겟 : " + enemyBlackBoard.unitData.GetColorName(enemyBlackBoard.teamColor);
 
             return NodeStatus.Success;
         }
         else
         {
-            // 주변에 적이 없는 경우
-            nameText = blackboard.myTransform.Find("NameText").GetComponent<TextMesh>();
-            nameText.text = blackboard.unitData.GetColorName(blackboard.teamColor);
-
             return NodeStatus.Failure;
         }
     }

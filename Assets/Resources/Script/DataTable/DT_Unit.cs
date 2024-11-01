@@ -59,9 +59,16 @@ public class Unit
     {
         return (EDamageType)MeleeDamageType;
     }
+
+    public bool IsCritical()
+    {
+        var rand = Random.Range(0, 9999);
+
+        return rand < CriticalChance;
+    }
 }
 
-public struct Unit_FieldData
+public class Unit_FieldData
 {
     private Unit unit;
     public float FullHp;
@@ -81,32 +88,41 @@ public struct Unit_FieldData
         NormalAction_LeftCoolTime -= deltaTime;
     }
 
-    public bool Hit(EDamageType damageType, float damage)
+    public void Attack()
+    {
+        NormalAction_LeftCoolTime = 1 / unit.AttackSpeed;
+    }
+
+    public bool Hit(EDamageType damageType, float damage, bool isCritical, Vector3 position)
     {
         if (IsDead())
             return false;
 
         var myArmor = unit.Armor;
         var myMagicArmor = unit.MagicArmor;
-        
-        if(damageType == EDamageType.Magical)
+        var convertDamage = damage;
+
+        if (damageType == EDamageType.Magical)
         {
             // 마법 공격 효과
-            Hp -= damage - myMagicArmor;
+            convertDamage = damage - myMagicArmor;
         }
         else if(damageType == EDamageType.Physical)
         {
             // 물리 공격 효과
-            Hp -= damage - myArmor;
+            convertDamage = damage - myArmor;
         }
         else if(damageType == EDamageType.True)
         {
-            // 물리 공격 효과
-            Hp -= damage;
+            convertDamage = damage;
         }
 
+        Hp -= convertDamage;
+
+        DamageFont.Spawn(position + new Vector3(0, 1, 0), convertDamage, QUtility.UIUtility.GetDamageColor(isCritical));
+
         // 죽었는지 체크
-        if(IsDead())
+        if (IsDead())
         {
             Debug.Log($"{unit.Name} 사망");
         }

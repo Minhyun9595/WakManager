@@ -25,7 +25,8 @@ public class AttackAction : ActionNode
         if (distance <= blackboard.unitData.Range)
         {
             // 공격 수행
-            
+            Attack();
+
             // 공격 후 성공 반환
             return NodeStatus.Success;
         }
@@ -43,7 +44,10 @@ public class AttackAction : ActionNode
         var myDamageType = myUnitData.GetDamageType();
         var myDamageCount = myUnitData.MeleeDamageCount;
         var myDamage = myUnitData.MeleeDamage;
+        var isCritical = myUnitData.IsCritical();
 
-        blackboard.targetBoard.unitFieldInfo.Hit(myDamageType, myDamage);
+        var targetTransform = blackboard.targetTransform;
+        blackboard.targetBoard.unitFieldInfo.Hit(myDamageType, myDamage, isCritical, targetTransform.position);
+        blackboard.unitFieldInfo.Attack();
     }
 }

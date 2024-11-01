@@ -5,22 +5,35 @@ using UnityEngine;
 
 public class DamageFont : MonoBehaviour
 {
-    public static GameObject Spawn(Vector3 position, int damage)
+    public static GameObject Spawn(Vector3 position, int damage, Color color)
     {
         GameObject damageFont = PoolManager.Instance.GetFromPool(prefabName);
         damageFont.transform.position = position;
-        damageFont.GetComponent<TextMeshPro>().text = damage.ToString();
+        var textMeshPro = damageFont.GetComponent<TextMeshPro>();
+        textMeshPro.text = ((int)damage).ToString();
+        textMeshPro.color = color;
+
+        return damageFont;
+    }
+
+    public static GameObject Spawn(Vector3 position, float damage, Color color)
+    {
+        GameObject damageFont = PoolManager.Instance.GetFromPool(prefabName);
+        damageFont.transform.position = position;
+        var textMeshPro = damageFont.GetComponent<TextMeshPro>();
+        textMeshPro.text =((int)damage).ToString();
+        textMeshPro.color = color;
 
         return damageFont;
     }
 
     public static string prefabName = EPrefabType.DamageFont.ToString();
 
-    private TextMeshPro meshPro;
+    private TextMeshPro textMeshPro;
 
     public void Start()
     {
-        meshPro = GetComponent<TextMeshPro>();
+        textMeshPro = GetComponent<TextMeshPro>();
     }
 
     public void OnEnable()
