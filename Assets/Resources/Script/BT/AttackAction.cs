@@ -1,7 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+
+public class DamageInfo
+{
+    public float damage { get; set; }
+    public bool isCritical { get; set; }
+}
 
 public class AttackAction : ActionNode
 {
@@ -14,18 +21,18 @@ public class AttackAction : ActionNode
 
     public override NodeStatus Execute()
     {
-        if (blackboard.targetTransform == null)
+        if (blackboard.targetUnitAI == null)
         {
             // 타겟이 없으면 실패 반환
             return NodeStatus.Failure;
         }
 
         // 공격 범위 내에 있는지 확인
-        float distance = Vector3.Distance(blackboard.myTransform.position, blackboard.targetTransform.position);
-        if (distance <= blackboard.unitData.Range)
+        float distance = Vector3.Distance(blackboard.myTransform.position, blackboard.targetUnitAI.transform.position);
+        if (distance <= blackboard.unitData.GetRange())
         {
             // 공격 수행
-            Attack();
+            blackboard.unitAnimator.SetAnimation(EAnimationType.Attack1);
 
             // 공격 후 성공 반환
             return NodeStatus.Success;
@@ -35,19 +42,5 @@ public class AttackAction : ActionNode
             // 타겟이 공격 범위 밖에 있으면 실패 반환
             return NodeStatus.Failure;
         }
-    }
-
-    public void Attack()
-    {
-        var myUnitData = blackboard.unitData;
-
-        var myDamageType = myUnitData.GetDamageType();
-        var myDamageCount = myUnitData.MeleeDamageCount;
-        var myDamage = myUnitData.MeleeDamage;
-        var isCritical = myUnitData.IsCritical();
-
-        var targetTransform = blackboard.targetTransform;
-        blackboard.targetBoard.unitFieldInfo.Hit(myDamageType, myDamage, isCritical, targetTransform.position);
-        blackboard.unitFieldInfo.Attack();
     }
 }

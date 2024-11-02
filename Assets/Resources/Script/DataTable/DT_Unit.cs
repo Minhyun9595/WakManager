@@ -12,9 +12,9 @@ public class Unit
     public string Name;
     public string Role;
     public int Health;
-    public int MeleeDamageType;
-    public int MeleeDamageCount;
-    public int MeleeDamage;
+    public int DamageType;
+    public int MultiHitCount;
+    public float Damage;
     public float AttackSpeed;
     public int Range;
     public int Armor;
@@ -25,6 +25,7 @@ public class Unit
     public int CriticalRatio;
     public int MaxTraitCount;
     public int FixTraitType;
+    public string Animation;
 
     public Unit() { }
 
@@ -35,9 +36,9 @@ public class Unit
         Name = other.Name;
         Role = other.Role;
         Health = other.Health;
-        MeleeDamageType = other.MeleeDamageType;
-        MeleeDamageCount = other.MeleeDamageCount;
-        MeleeDamage = other.MeleeDamage;
+        DamageType = other.DamageType;
+        MultiHitCount = other.MultiHitCount;
+        Damage = other.Damage;
         AttackSpeed = other.AttackSpeed;
         Range = other.Range;
         Armor = other.Armor;
@@ -48,6 +49,7 @@ public class Unit
         CriticalRatio = other.CriticalRatio;
         MaxTraitCount = other.MaxTraitCount;
         FixTraitType = other.FixTraitType;
+        Animation = other.Animation;
     }
 
     public string GetColorName(string color)
@@ -57,7 +59,7 @@ public class Unit
 
     public EDamageType GetDamageType()
     {
-        return (EDamageType)MeleeDamageType;
+        return (EDamageType)DamageType;
     }
 
     public bool IsCritical()
@@ -66,21 +68,31 @@ public class Unit
 
         return rand < CriticalChance;
     }
+
+    public float GetRange()
+    {
+        return (float)Range * ConstValue.RangeCoefficient;
+    }
 }
 
+[System.Serializable]
 public class Unit_FieldData
 {
     private Unit unit;
     public float FullHp;
     public float Hp;
     public float NormalAction_LeftCoolTime;
+    public bool isDead;
 
+    private const float AddingFontHeightCoefficient = 0.3f;
+    private const float AddingDelayTimeCoefficient = 0.18f;
     public Unit_FieldData(Unit unit)
     {
         this.unit = unit;
         FullHp = unit.Health;
         Hp = FullHp;
         NormalAction_LeftCoolTime = 1 / unit.AttackSpeed;
+        isDead = false;
     }
 
     public void Update(float deltaTime)
@@ -93,33 +105,40 @@ public class Unit_FieldData
         NormalAction_LeftCoolTime = 1 / unit.AttackSpeed;
     }
 
-    public bool Hit(EDamageType damageType, float damage, bool isCritical, Vector3 position)
+    public bool Hit(EDamageType damageType, List<DamageInfo> damageList, Vector3 position)
     {
         if (IsDead())
             return false;
 
         var myArmor = unit.Armor;
         var myMagicArmor = unit.MagicArmor;
-        var convertDamage = damage;
 
-        if (damageType == EDamageType.Magical)
+        for (int i = 0; i < damageList.Count; i++)
         {
-            // 마법 공격 효과
-            convertDamage = damage - myMagicArmor;
-        }
-        else if(damageType == EDamageType.Physical)
-        {
-            // 물리 공격 효과
-            convertDamage = damage - myArmor;
-        }
-        else if(damageType == EDamageType.True)
-        {
-            convertDamage = damage;
-        }
+            var damageInfo = damageList[i];
+            var convertDamage = damageInfo.damage;
 
-        Hp -= convertDamage;
+            if (damageType == EDamageType.Magical)
+            {
+                // 마법 공격 효과
+                convertDamage = damageInfo.damage - myMagicArmor;
+            }
+            else if (damageType == EDamageType.Physical)
+            {
+                // 물리 공격 효과
+                convertDamage = damageInfo.damage - myArmor;
+            }
+            else if (damageType == EDamageType.True)
+            {
+                convertDamage = damageInfo.damage;
+            }
 
-        DamageFont.Spawn(position + new Vector3(0, 1, 0), convertDamage, QUtility.UIUtility.GetDamageColor(isCritical));
+            Hp -= convertDamage;
+
+            var addingFontHeight = i * AddingFontHeightCoefficient;
+            var addingDelayTime = i * AddingDelayTimeCoefficient;
+            DamageFont.Spawn(position + new Vector3(0, 1 + (addingFontHeight), 0), convertDamage, QUtility.UIUtility.GetDamageColor(damageInfo.isCritical), addingDelayTime);
+        }
 
         // 죽었는지 체크
         if (IsDead())

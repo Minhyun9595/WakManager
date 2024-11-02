@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class DeadAction : ActionNode
@@ -15,7 +16,12 @@ public class DeadAction : ActionNode
     {
         if(blackboard.unitFieldInfo.IsDead())
         {
-            Debug.Log($"»ç¸Á »óÅÂ {blackboard.unitData.Name}");
+            if(blackboard.unitFieldInfo.isDead == false)
+            {
+                blackboard.unitFieldInfo.isDead = true;
+                blackboard.myUnitAI.Die();
+            }
+            blackboard.unitAnimator.SetAnimation(EAnimationType.Death);
             return NodeStatus.Success;
         }
         else

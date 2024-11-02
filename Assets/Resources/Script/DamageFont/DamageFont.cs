@@ -5,40 +5,61 @@ using UnityEngine;
 
 public class DamageFont : MonoBehaviour
 {
-    public static GameObject Spawn(Vector3 position, int damage, Color color)
+    public static string prefabName = EPrefabType.DamageFont.ToString();
+    public static GameObject Spawn(Vector3 position, int damage, Color color, float _delayTime = 0.0f)
     {
         GameObject damageFont = PoolManager.Instance.GetFromPool(prefabName);
         damageFont.transform.position = position;
         var textMeshPro = damageFont.GetComponent<TextMeshPro>();
         textMeshPro.text = ((int)damage).ToString();
         textMeshPro.color = color;
+        damageFont.GetComponent<DamageFont>().Invoke_PlayDamageFont(_delayTime);
 
         return damageFont;
     }
 
-    public static GameObject Spawn(Vector3 position, float damage, Color color)
+    public static GameObject Spawn(Vector3 position, float damage, Color color, float _delayTime = 0.0f)
     {
         GameObject damageFont = PoolManager.Instance.GetFromPool(prefabName);
         damageFont.transform.position = position;
         var textMeshPro = damageFont.GetComponent<TextMeshPro>();
         textMeshPro.text =((int)damage).ToString();
         textMeshPro.color = color;
+        damageFont.GetComponent<DamageFont>().Invoke_PlayDamageFont(_delayTime);
 
         return damageFont;
     }
 
-    public static string prefabName = EPrefabType.DamageFont.ToString();
 
+    private Animator animator;
     private TextMeshPro textMeshPro;
 
-    public void Start()
+    public void Awake()
     {
+        animator = GetComponent<Animator>();
         textMeshPro = GetComponent<TextMeshPro>();
+        animator.enabled = false;
     }
 
-    public void OnEnable()
+    public void Invoke_PlayDamageFont(float _delayTime)
     {
-        gameObject.GetComponent<Animator>().Play(prefabName);
+        textMeshPro.enabled = false;
+        animator.enabled = false;
+        if (0 < _delayTime)
+        {
+            Invoke("PlayDamageFont", _delayTime);
+        }
+        else
+        {
+            PlayDamageFont();
+        }
+    }
+
+    public void PlayDamageFont()
+    {
+        animator.enabled = true;
+        textMeshPro.enabled = true;
+        animator.Play(prefabName);
     }
 
     public void AnimationEnd()

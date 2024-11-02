@@ -34,7 +34,7 @@ namespace QUtility
                 Vector3 point1 = center + new Vector3(Mathf.Cos(angle1), Mathf.Sin(angle1), 0) * radius;
                 Vector3 point2 = center + new Vector3(Mathf.Cos(angle2), Mathf.Sin(angle2), 0) * radius;
 
-                Debug.DrawLine(point1, point2, color, 0.1f); // 각 라인 지속 시간
+                Debug.DrawLine(point1, point2, color, 0.2f); // 각 라인 지속 시간
             }
         }
 
@@ -55,6 +55,46 @@ namespace QUtility
             return Color.white;
         }
 
+        public static T FindComponentInChildrenByName<T>(GameObject parent, string childName) where T : Component
+        {
+            Transform[] children = parent.GetComponentsInChildren<Transform>();
+
+            foreach (Transform child in children)
+            {
+                if (child.name == childName)
+                {
+                    T component = child.GetComponent<T>();
+                    if (component != null)
+                    {
+                        return component;
+                    }
+                }
+            }
+
+            Debug.LogWarning($"자식 오브젝트 '{childName}' 또는 해당 컴포넌트를 찾을 수 없습니다.");
+            return null;
+        }
+
+        public static GameObject GetChildAutoCraete(Transform parent, int childIndex)
+        {
+            if (childIndex < parent.childCount)
+            {
+                // 요청한 인덱스에 자식이 존재하면 해당 자식을 반환
+                return parent.GetChild(childIndex).gameObject;
+            }
+            else if (parent.childCount > 0)
+            {
+                // 첫 번째 자식을 복제하여 추가하고 반환
+                GameObject clonedChild = Object.Instantiate(parent.GetChild(0).gameObject, parent);
+                clonedChild.transform.SetSiblingIndex(childIndex);
+                return clonedChild;
+            }
+            else
+            {
+                Debug.LogWarning("부모 오브젝트에 자식이 존재하지 않습니다.");
+                return null;
+            }
+        }
     }
 
 }

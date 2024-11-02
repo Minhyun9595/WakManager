@@ -30,9 +30,7 @@ public class FindEnemyAction : ActionNode
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(unitPosition, 1000);
 
         float closestDistance = Mathf.Infinity;
-        TextMeshPro nameText = null;
-        Transform closestEnemy = null;
-        Unit_AI closestEnemyUnit = null;
+        Unit_AI closestUnitAI = null;
 
         foreach (var collider in hitColliders)
         {
@@ -47,19 +45,17 @@ public class FindEnemyAction : ActionNode
                     if (distance < closestDistance)
                     {
                         closestDistance = distance;
-                        closestEnemy = enemyUnit.transform;
-                        closestEnemyUnit = enemyUnit;
+                        closestUnitAI = enemyUnit;
                     }
                 }
             }
         }
 
-        if (closestEnemy != null && closestEnemyUnit.GetBlackboard().unitFieldInfo.IsDead() == false)
+        if (closestUnitAI != null && closestUnitAI.GetBlackboard().unitFieldInfo.IsDead() == false)
         {
-            blackboard.targetTransform = closestEnemy;
-            blackboard.targetBoard = closestEnemyUnit.GetBlackboard();
+            blackboard.targetUnitAI = closestUnitAI;
 
-            var enemyBlackBoard = closestEnemyUnit.GetBlackboard();
+            var enemyBlackBoard = closestUnitAI.GetBlackboard();
 
             return NodeStatus.Success;
         }

@@ -14,23 +14,24 @@ public class MoveToTargetAction : ActionNode
 
     public override NodeStatus Execute()
     {
-        if (blackboard.targetTransform == null)
+        if (blackboard.targetUnitAI == null)
         {
             // 타겟이 없으면 반환
-            return NodeStatus.Success;
+            return NodeStatus.Failure;
         }
 
         // 타겟의 위치 가져오기
-        Vector3 targetPosition = blackboard.targetTransform.position;
+        Vector3 targetPosition = blackboard.targetUnitAI.transform.position;
         Vector3 currentPosition = blackboard.myTransform.position;
 
         // 타겟과의 거리 계산
         float distance = Vector3.Distance(currentPosition, targetPosition);
 
         // 사거리를 원으로 표시
-        QUtility.UIUtility.DrawDebugCircle(blackboard.myTransform.position, blackboard.unitData.Range, Color.green);
+        var range = blackboard.unitData.GetRange();
+        QUtility.UIUtility.DrawDebugCircle(blackboard.myTransform.position, range, Color.green);
 
-        if (distance <= blackboard.unitData.Range)
+        if (distance <= range)  
         {
             // 목표 지점에 도달하면 성공 반환
             return NodeStatus.Success;
@@ -40,8 +41,15 @@ public class MoveToTargetAction : ActionNode
             // 타겟 방향으로 이동
             var movement = MoveTowards(targetPosition);
 
-            // 방향 전환
-            LookDirection(movement);
+            if(movement != Vector3.zero)
+            {
+                // 애니메이션 전환
+                blackboard.unitAnimator.SetAnimation(EAnimationType.Move);
+
+                // 방향 전환
+                LookDirection(movement);
+            }
+
 
             // 이동 중이므로 Running 반환
             return NodeStatus.Running;

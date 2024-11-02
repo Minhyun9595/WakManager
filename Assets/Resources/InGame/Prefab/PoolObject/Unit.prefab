@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2681532524512041957}
   - component: {fileID: 84427110494927580}
   - component: {fileID: 4104294128036346363}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Unit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,12 +101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52cc86ba42ebf7042991e3fc612c9ff2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayDistance: 5
   layerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  coneAngle: 60
-  rayCount: 10
+    m_Bits: 64
 --- !u!70 &4104294128036346363
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -151,11 +148,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5919474767964201881}
-  - component: {fileID: 7238477878352261786}
   - component: {fileID: 8937320578466236341}
   - component: {fileID: 6828128272308161174}
   - component: {fileID: 2541749863440284982}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,22 +173,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6043669951570773589}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!111 &7238477878352261786
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2788238492363446645}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 6abe33499b9b0d149afe2168c234060e, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 6abe33499b9b0d149afe2168c234060e, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!212 &8937320578466236341
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -234,15 +214,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4723107735738678597, guid: 77ba605bbd83f4448bc8683510c3155e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.5, y: 1.5}
+  m_Size: {x: 1.84, y: 1.37}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &6828128272308161174
@@ -255,7 +235,7 @@ Animator:
   m_GameObject: {fileID: 2788238492363446645}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7de8f5a73a4ff044081589921925d7bb, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -278,7 +258,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc72786bab1d18f42ad0be5b91c3a67b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animation: {fileID: 0}
   animator: {fileID: 0}
 --- !u!1 &5861925062036316114
 GameObject:
@@ -290,7 +269,7 @@ GameObject:
   m_Component:
   - component: {fileID: 316971365199445209}
   - component: {fileID: 7387488542315069053}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -374,13 +353,13 @@ GameObject:
   m_Component:
   - component: {fileID: 2782850532149486802}
   - component: {fileID: 438107217157527732}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2782850532149486802
 Transform:
   m_ObjectHideFlags: 0
@@ -460,7 +439,7 @@ GameObject:
   - component: {fileID: 5084823021280427630}
   - component: {fileID: 6606122499929975406}
   - component: {fileID: 8504866737522937116}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
