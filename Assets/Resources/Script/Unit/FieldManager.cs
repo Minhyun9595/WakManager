@@ -22,7 +22,8 @@ public class FieldManager : MonoBehaviour
     [SerializeField] private List<TeamUnitData> teamUnitIndices = new List<TeamUnitData>();
     [SerializeField] private List<SpawnedUnit> spawnedUnits = new List<SpawnedUnit>();
 
-    [SerializeField] private TeamPanel teamPanel;
+    [SerializeField] private TeamPanel teamPanel_1;
+    [SerializeField] private TeamPanel teamPanel_2;
     private void Start()
     {
         StageBG = GameObject.FindWithTag("StageBG");
@@ -81,7 +82,11 @@ public class FieldManager : MonoBehaviour
 
             if(_teamIndex == 0)
             {
-                teamPanel.Initialize(_teamIndex, spawnedUnits[_teamIndex].units);
+                teamPanel_1.Initialize(_teamIndex, spawnedUnits[_teamIndex].units);
+            }
+            else if (_teamIndex == 1)
+            {
+                teamPanel_2.Initialize(_teamIndex, spawnedUnits[_teamIndex].units);
             }
         }
     }

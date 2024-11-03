@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 
 public class GridItem_Unit
 {
@@ -17,6 +18,11 @@ public class GridItem_Unit
     public Image UnitImage;
     public Animator UnitImageAnimator;
     public Transform GridLayout_Trait;
+
+    private Sprite[] animationSprites;
+    private float frameRate = 0.1f;
+    private int currentFrame = 0;
+    private float timer;
 
     public void Init(GameObject _gameObject)
     {
@@ -32,24 +38,23 @@ public class GridItem_Unit
     public void Set(Unit_AI unitAI)
     {
         NameText.text = unitAI.blackboard.unitData.Name;
-        InfoText.text = $"직업: {unitAI.blackboard.unitData.Role}";
+        InfoText.text = $"직업: {unitAI.blackboard.unitData.GetRoleName()}";
 
-        UnitImageAnimator = unitAI.blackboard.unitAnimator.animator;
+        var animationClips = unitAI.blackboard.unitAnimator.GetAnimationClips();
+        // animationClips중에 이름에 Idle이 들어가는 걸 찾아서 spirtes에 넣는다.
+        UnitImageAnimator.runtimeAnimatorController = unitAI.blackboard.unitAnimator.animator.runtimeAnimatorController;
+        UnitImageAnimator.Play("Idle_Image");
+    }
 
-        //var clips = unitAI.blackboard.unitAnimator.GetAnimationClips();
-        //if (1 <= clips.Count)
-        //{
-        //    var idleKey = clips.Keys.FirstOrDefault(key => key.Contains("Idle"));
-        //    if (string.IsNullOrEmpty(idleKey) == false)
-        //    {
-        //        UnitImageAnimator.clip = clips[idleKey];
-        //    }
-        //    else
-        //    {
-        //        UnitImageAnimator.clip = clips.First().Value;
-        //    }
-        //    UnitImageAnimator.Play();
-        //}
+    public void UpdateAnimation()
+    {
+        timer += Time.deltaTime;
+        if (timer >= frameRate)
+        {
+            timer -= frameRate;
+            currentFrame = (currentFrame + 1) % animationSprites.Length;
+            UnitImage.sprite = animationSprites[currentFrame];
+        }
     }
 }
 
@@ -73,7 +78,7 @@ public class TeamPanel : MonoBehaviour
     public void Initialize(int _focusTeamIndex, List<Unit_AI> _unitAIList)
     {
         focusTeamIndex = _focusTeamIndex;
-        Title.text = $"팀 {_focusTeamIndex}\n팀 이름넣는곳";
+        Title.text = $"팀 {_focusTeamIndex + 1}\n팀 이름넣는곳";
         unitAIList = _unitAIList;
 
         gridItem_Units = new List<GridItem_Unit>();

@@ -6,7 +6,9 @@ public enum EPrefabType
 {
     // ÀÌÆåÆ® °ü·Ã
     DamageFont,
-    Projectile,
+    Projectile_Wizzard,
+    Projectile_Wizzard_Hit,
+
 
 
     // À¯´Ö

@@ -51,7 +51,7 @@ public class PoolManager : CustomSingleton<PoolManager>
 
             for (int i = 0; i < initialPoolSize; i++)
             {
-                GameObject obj = Instantiate(prefab);
+                GameObject obj = Instantiate(prefab, null);
                 obj.SetActive(false);
                 objectPool.Enqueue(obj);
             }
@@ -76,13 +76,15 @@ public class PoolManager : CustomSingleton<PoolManager>
         {
             GameObject obj = objectPool.Dequeue();
             obj.SetActive(true);
+            obj.transform.SetParent(null);
             return obj;
         }
         else
         {
             // 풀에 남은 오브젝트가 없으면 새로운 오브젝트 생성
-            GameObject obj = Instantiate(prefabDictionary[prefabName]);
+            GameObject obj = Instantiate(prefabDictionary[prefabName], null);
             obj.SetActive(true);
+            obj.transform.SetParent(null);
             return obj;
         }
     }
@@ -98,6 +100,7 @@ public class PoolManager : CustomSingleton<PoolManager>
         }
 
         obj.SetActive(false);
+        obj.transform.SetParent(transform);
         poolDictionary[prefabName].Enqueue(obj);
     }
 

@@ -16,7 +16,7 @@ public class Blackboard
     public Transform myTransform { get; set; }
     public Transform myBodyTransform { get; set; }
     public TextMeshPro myNameText { get; set; }
-    public Unit unitData { get; set; }
+    public DT_Unit unitData { get; set; }
     public Unit_FieldData unitFieldInfo { get; set; }
     public UnitAnimator unitAnimator { get; set; }
 
@@ -28,13 +28,12 @@ public class Blackboard
     public Blackboard(int _teamIndex, int _unitIndex, GameObject _myGameObject) 
     {
         teamIndex = _teamIndex;
-        var originalDataRef = DataTable.Instance.GetInfoByIndex(_unitIndex);
+        var originalDataRef = DT_Unit.GetInfoByIndex(_unitIndex);
         if (originalDataRef == null)
         {
             Debug.LogError("originalDataRef is null : " + _unitIndex);
             new OnApplicationPause();
         }
-
 
         this.myGameObject = _myGameObject;
         this.myTransform = _myGameObject.transform;
@@ -43,7 +42,8 @@ public class Blackboard
         this.myUnitAI = myTransform.GetComponent<Unit_AI>();
         this.unitAnimator = myBodyTransform.GetComponent<UnitAnimator>();
 
-        unitData = new Unit(originalDataRef);
+        unitData = new DT_Unit(originalDataRef);
+        myNameText.gameObject.SetActive(true);
         myNameText.text = unitData.Name;
         teamColor = QUtility.UIUtility.GetTeamTextColor(teamIndex);
         unitFieldInfo = new Unit_FieldData(unitData);
@@ -67,6 +67,7 @@ public class Unit_AI : MonoBehaviour
 
     public Action<Unit_AI> OnDeath; // 유닛이 죽을 때 호출되는 이벤트
     private HashSet<int> subscribers = new HashSet<int>(); // 타겟으로 설정한 객체들
+    public LayerMask layerMask;
 
     public static GameObject Spawn(Vector3 position, int teamIndex, int unitIndex)
     {
@@ -81,6 +82,7 @@ public class Unit_AI : MonoBehaviour
     {
         blackboard = new Blackboard(_teamIndex, _unitIndex, this.gameObject);
         rootNode = CreateTankBehaviorTree();
+        gameObject.name = $"{_teamIndex + 1}_{blackboard.unitData.Name}";
     }
 
     BehaviorNode CreateTankBehaviorTree()
@@ -184,7 +186,32 @@ public class Unit_AI : MonoBehaviour
     {
         var myUnitData = blackboard.unitData;
 
-        var myDamageType = myUnitData.GetDamageType();
+        var type = myUnitData.GetAttackType(0);
+
+        if (type == "Melee")
+        {
+            var myDamageType = myUnitData.GetDamageType();
+            var damageList = GetDamageList();
+
+            if (blackboard.targetUnitAI != null)
+            {
+                blackboard.targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, blackboard.targetUnitAI.transform.position);
+                blackboard.unitFieldInfo.Attack();
+            }
+        }
+        else if (type == "Projectile")
+        {
+            var subType = myUnitData.GetAttackType(1);
+            if (subType == "Projectile_Wizzard")
+            {
+                ProjectileAbstract.Spawn_Straight(this, transform.position, blackboard.targetUnitAI.transform.position, 2.0f);
+            }
+        }
+    }
+
+    public List<DamageInfo> GetDamageList()
+    {
+        var myUnitData = blackboard.unitData;
         var myDamageCount = myUnitData.MultiHitCount;
 
         var damageList = new List<DamageInfo>();
@@ -207,14 +234,8 @@ public class Unit_AI : MonoBehaviour
             damageList.Add(damageInfo);
         }
 
-        if(blackboard.targetUnitAI != null)
-        {
-            blackboard.targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, blackboard.targetUnitAI.transform.position);
-            blackboard.unitFieldInfo.Attack();
-        }
+        return damageList;
     }
-
-    public LayerMask layerMask;
 
     private void CheckCone(float _rayDistance = 5.0f, float _coneAngle = 60.0f, int _rayCount = 10)
     {

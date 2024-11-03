@@ -22,6 +22,8 @@ public partial class DataTable : CustomSingleton<DataTable>
 
     public void Initialize()
     {
+        Inltialize_DT_Role();
+        Inltialize_DT_Trait();
         Inltialize_DT_Unit();
     }
 }

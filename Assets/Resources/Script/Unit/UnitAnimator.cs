@@ -65,7 +65,6 @@ public class UnitAnimator : MonoBehaviour
     private IEnumerator CheckAnimationEnd()
     {
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
-        Debug.Log("CheckAnimationEnd: " + eAnimationType.ToString());
         blackboard.isAnimationPlaying = false;
         animationCoroutine = null;
     }

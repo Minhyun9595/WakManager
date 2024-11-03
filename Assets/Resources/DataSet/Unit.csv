@@ -1,15 +1,12 @@
-Index,DescName,Desc,IsDeveloped,Name,Role,Health,DamageType,Damage,MultiHitCount,AttackSpeed,Range,Armor,MagicArmor,MoveSpeed_X,MoveSpeed_Y,CriticalChance,CriticalRatio,MaxTraitCount,FixTraitType,Animation
-1,IsDeveloped,개발 완료,1,Tank,탱커,300,Physical,20,1,1,50,1,1,3,1.5,2000,10000,3,,Warrior
-2,Name,이름,1,Magi,마법사,100,Magical,20,3,1,250,0,0,3,1.5,2000,10000,3,,Wizzard
-3,Role,직업,1,Warr,전사,200,True,20,2,1,50,0,0,3,1.5,2000,10000,3,,Warrior
-4,Health,체력 (HP): 유닛의 최대 체력입니다.,1,Assa,암살자,300,Physical,20,,1,50,0,0,3,1.5,2000,10000,3,,Wizzard
-5,MeleeDamage,공격력 (AD): 유닛의 기본 공격 피해량입니다.,1,Archer,궁수,300,Magical,20,,1,250,0,0,3,1.5,2000,10000,3,,Warrior
-6,Armor,방어력 (Armor): 물리 피해로부터의 피해 감소량입니다.,1,Sup,서포터,300,True,20,,1,250,0,0,3,1.5,2000,10000,3,,Wizzard
-7,MagicArmor,마법 저항력 (MR): 마법 피해로부터의 피해 감소량입니다.,,,,,,,,,,,,,,,,,,
-8,AttackSpeed,공격 속도 (AS): 유닛이 초당 공격하는 횟수입니다.,,,,,,,,,,,,,,,,,,
-9,Range,사거리 (Range): 유닛의 기본 공격 사거리입니다.,,,,,,,,,,,,,,,,,,
-10,MoveSpeed,이동 속도 (MS): 유닛의 이동 속도를 나타내며 X축과 Y축의 속도로 구분됩니다. MoveSpeedXY,,,,,,,,,,,,,,,,,,
-11,CriticalChance,치명타 확률 (Critical Chance): 유닛의 치명타 발생 확률입니다. (100 = 1%),,,,,,,,,,,,,,,,,,
-,CriticalRatio,치명타 배율 (Critical Ratio): 유닛의 치명타 배율입니다. (100 = 1%),,,,,,,,,,,,,,,,,,
-,TraitCount,특성 개수,,,,,,,,,,,,,,,,,,
-,FixTrait,고정 특성,,,,,,,,,,,,,,,,,,
+Index,IsDeveloped,Name,RoleIndex,RoleName,Health,DamageType,Damage,MultiHitCount,AttackType,AttackSpeed,Range,Armor,MagicArmor,MoveSpeed_X,MoveSpeed_Y,CriticalChance,CriticalRatio,MaxTraitCount,FixTraitType,Animation
+1,1,Tank,0,탱커,300,Physical,20,1,Melee,1,50,1,1,3,1.5,2000,10000,3,0,Warrior
+2,1,Magi,1,전사,100,Magical,20,3,Projectile:Projectile_Wizzard,1,250,0,0,3,1.5,2000,10000,3,0,Wizzard
+3,0,Warr,2,마법사,200,True,20,1,Melee,1,50,0,0,3,1.5,2000,10000,3,0,Warrior
+4,0,Assa,3,암살자,300,Physical,20,2,Melee,1,50,0,0,3,1.5,2000,10000,3,0,Wizzard
+5,0,Archer,4,궁수,300,Magical,20,1,Melee,1,250,0,0,3,1.5,2000,10000,3,0,Warrior
+6,0,Sup,5,서포터,300,True,20,1,Melee,1,250,0,0,3,1.5,2000,10000,3,0,Wizzard
+7,,,,,,,,,,,,,,,,,,,,
+8,,,,,,,,,,,,,,,,,,,,
+9,,,,,,,,,,,,,,,,,,,,
+10,,,,,,,,,,,,,,,,,,,,
+11,,,,,,,,,,,,,,,,,,,,
