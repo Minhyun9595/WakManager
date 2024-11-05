@@ -8,6 +8,8 @@ public enum EPrefabType
     DamageFont,
     Projectile_Wizzard,
     Projectile_Wizzard_Hit,
+    Projectile_Bezier,
+    Projectile_Bezier_Hit,
 
 
 

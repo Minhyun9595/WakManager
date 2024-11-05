@@ -12,9 +12,13 @@ public class ProjectileEffect : MonoBehaviour
     public static GameObject Spawn(string _prefabName, Vector3 _startPosition)
     {
         GameObject effectObject = PoolManager.Instance.GetFromPool(_prefabName);
-        effectObject.transform.position = _startPosition;
-        var projectileEffect = effectObject.GetComponent<ProjectileEffect>();
-        projectileEffect.prefabName = _prefabName;
+
+        if(effectObject != null)
+        {
+            effectObject.transform.position = _startPosition;
+            var projectileEffect = effectObject.GetComponent<ProjectileEffect>();
+            projectileEffect.prefabName = _prefabName;
+        }
 
         return effectObject;
     }

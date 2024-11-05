@@ -6,7 +6,7 @@ namespace QUtility
 {
     public static class UIUtility
     {
-        public static string GetTeamTextColor(int teamIndex)
+        public static string GetTeamRichTextColor(int teamIndex)
         {
             switch (teamIndex)
             {
@@ -20,6 +20,19 @@ namespace QUtility
                     return "<color=yellow>";
                 default:
                     return "<color=white>";
+            }
+        }
+
+        public static Color GetTeamColor(int teamIndex)
+        {
+            switch (teamIndex)
+            {
+                case 0:
+                    return Color.red;
+                case 1:
+                    return Color.blue;
+                default:
+                    return Color.white;
             }
         }
 

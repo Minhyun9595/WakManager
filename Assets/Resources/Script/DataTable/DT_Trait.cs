@@ -17,10 +17,9 @@ public class DT_Trait
     public string Desc2;
     public string Desc3;
     public int Value1;
+    public int Value2;
 
     public DT_Trait() { }
-
-
 
     public static DT_Trait GetInfoByIndex(int index)
     {

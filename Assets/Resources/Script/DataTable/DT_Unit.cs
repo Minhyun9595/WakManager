@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using static UnityEngine.UI.CanvasScaler;
 
 [System.Serializable]
 public class DT_Unit
@@ -19,7 +21,6 @@ public class DT_Unit
     public int DamageType;
     public int MultiHitCount;
     public string AttackType;
-    public List<string> AttackTypes;
     public float Damage;
     public float AttackSpeed;
     public int Range;
@@ -32,8 +33,13 @@ public class DT_Unit
     public int MaxTraitCount;
     public int FixTraitType;
     public string Animation;
+    public string Skills;
 
     public DT_Unit() { }
+
+    // Initialize 데이터
+    public List<string> AttackTypes;
+    public List<string> SkillNameList;
 
     public void Initialize()
     {
@@ -42,6 +48,17 @@ public class DT_Unit
         {
             var attackTypeSplit = AttackType.Split(":");
             AttackTypes.AddRange(attackTypeSplit);
+        }
+
+        SkillNameList = new List<string>();
+        if (string.IsNullOrEmpty(Skills) == false)
+        {
+            var skillSplit = Skills.Split(":");
+
+            foreach (var skill in skillSplit)
+            {
+                SkillNameList.Add(skill);
+            }
         }
     }
 
@@ -67,6 +84,7 @@ public class DT_Unit
         MaxTraitCount = _other.MaxTraitCount;
         FixTraitType = _other.FixTraitType;
         Animation = _other.Animation;
+        Skills = _other.Skills;
 
         Initialize();
     }
@@ -122,6 +140,7 @@ public class DT_Unit
 [System.Serializable]
 public class Unit_FieldData
 {
+    private Blackboard blackboard;
     private DT_Unit unit;
     public float FullHp;
     public float Hp;
@@ -132,12 +151,15 @@ public class Unit_FieldData
     private const float AddingFontHeightCoefficient = 0.3f;
     private const float AddingDelayTimeCoefficient = 0.18f;
 
-    public Unit_FieldData(DT_Unit _unit)
+    public Unit_FieldData(Blackboard _blackboard, DT_Unit _unit)
     {
-        this.unit = _unit;
+        blackboard = _blackboard;
+        unit = _unit;
+
         FullHp = _unit.Health;
         Hp = FullHp;
         NormalAction_LeftCoolTime = 1 / _unit.AttackSpeed;
+
         isDead = false;
     }
 
@@ -164,6 +186,7 @@ public class Unit_FieldData
             var damageInfo = _damageList[i];
             var convertDamage = damageInfo.damage;
 
+            //#특성 질긴가죽: 받은 피해의 {0}이 감소된 피해를 입습니다. (도트 당 적용)
             if (_damageType == EDamageType.Magical)
             {
                 // 마법 공격 효과
@@ -179,15 +202,17 @@ public class Unit_FieldData
                 convertDamage = damageInfo.damage;
             }
 
+            //#특성 인내심: 받은 피해를 {0}% 감소시킵니다.
+
             // 1 보다 작은 피해는 무시한다.
-            if(1 <= convertDamage)
+            if (1 <= convertDamage)
             {
                 Hp -= convertDamage;
             }
 
             var addingFontHeight = i * AddingFontHeightCoefficient;
             var addingDelayTime = i * AddingDelayTimeCoefficient;
-            DamageFont.Spawn(_position + new Vector3(0, 1 + (addingFontHeight), 0), convertDamage, QUtility.UIUtility.GetDamageColor(damageInfo.isCritical), addingDelayTime);
+            DamageFont.Spawn(_position + new Vector3(0, 0.5f + (addingFontHeight), 0), convertDamage, QUtility.UIUtility.GetDamageColor(damageInfo.isCritical), addingDelayTime);
         }
 
         // 죽었는지 체크
@@ -195,6 +220,11 @@ public class Unit_FieldData
         {
             Debug.Log($"{unit.Name} 사망");
         }
+
+        // UI 업데이트
+        
+        var teamPanel = FieldManager.Instance.GetTeamPanel(blackboard.teamIndex);
+        teamPanel.UpdateUnit();
 
         return true;
     }

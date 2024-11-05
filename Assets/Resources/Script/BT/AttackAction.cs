@@ -8,6 +8,13 @@ public class DamageInfo
 {
     public float damage { get; set; }
     public bool isCritical { get; set; }
+
+    public DamageInfo() { }
+    public DamageInfo(float damage, bool isCritical)
+    {
+        this.damage = damage;
+        this.isCritical = isCritical;
+    }
 }
 
 public class AttackAction : ActionNode

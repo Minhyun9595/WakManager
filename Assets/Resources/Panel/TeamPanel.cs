@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using System;
+using UnityEditor.Experimental.GraphView;
 
 public class GridItem_Unit
 {
@@ -16,6 +17,7 @@ public class GridItem_Unit
     public TextMeshProUGUI InfoText;
     public Image UnitImageBG;
     public Image UnitImage;
+    public Slider HpSlider;
     public Animator UnitImageAnimator;
     public Transform GridLayout_Trait;
 
@@ -31,14 +33,20 @@ public class GridItem_Unit
         InfoText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "InfoText");
         UnitImageBG = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "UnitImageBG");
         UnitImage = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "UnitImage");
+        HpSlider = UIUtility.FindComponentInChildrenByName<Slider>(gameObject, "HpSlider");
         UnitImageAnimator = UIUtility.FindComponentInChildrenByName<Animator>(gameObject, "UnitImage");
         GridLayout_Trait = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "GridLayout_Trait");
     }
 
     public void Set(Unit_AI unitAI)
     {
-        NameText.text = unitAI.blackboard.unitData.Name;
-        InfoText.text = $"직업: {unitAI.blackboard.unitData.GetRoleName()}";
+        var blackboard = unitAI.blackboard;
+        var unitFieldInfo = blackboard.unitFieldInfo;
+        var teamIndex = blackboard.teamIndex;
+        NameText.text = blackboard.unitData.Name;
+        NameText.faceColor = UIUtility.GetTeamColor(teamIndex);
+
+        Update(unitAI);
 
         var animationClips = unitAI.blackboard.unitAnimator.GetAnimationClips();
         // animationClips중에 이름에 Idle이 들어가는 걸 찾아서 spirtes에 넣는다.
@@ -56,6 +64,14 @@ public class GridItem_Unit
             UnitImage.sprite = animationSprites[currentFrame];
         }
     }
+
+    public void Update(Unit_AI unitAI)
+    {
+        var blackboard = unitAI.blackboard;
+        var unitFieldInfo = blackboard.unitFieldInfo;
+        InfoText.text = $"직업: {blackboard.unitData.GetRoleName()}";
+        HpSlider.value = blackboard.unitFieldInfo.Hp / blackboard.unitFieldInfo.FullHp;
+    }
 }
 
 public class TeamPanel : MonoBehaviour
@@ -65,8 +81,7 @@ public class TeamPanel : MonoBehaviour
     public Transform UnitInfoItem;
 
     private int focusTeamIndex;
-    [SerializeField] private List<Unit_AI> unitAIList;
-    [SerializeField] private List<GridItem_Unit> gridItem_Units;
+    [SerializeField] private List<Tuple<Unit_AI, GridItem_Unit>> tupleList;
 
     void Start()
     {
@@ -79,17 +94,26 @@ public class TeamPanel : MonoBehaviour
     {
         focusTeamIndex = _focusTeamIndex;
         Title.text = $"팀 {_focusTeamIndex + 1}\n팀 이름넣는곳";
-        unitAIList = _unitAIList;
 
-        gridItem_Units = new List<GridItem_Unit>();
-        for (int i = 0; i < unitAIList.Count; i++)
+        tupleList = new List<Tuple<Unit_AI, GridItem_Unit>>();
+        for (int i = 0; i < _unitAIList.Count; i++)
         {
             var childItem = QUtility.UIUtility.GetChildAutoCraete(GridLayout_Unit, i);
             var gridItem_Unit = new GridItem_Unit();
             gridItem_Unit.Init(childItem);
-            gridItem_Unit.Set(unitAIList[i]);
+            gridItem_Unit.Set(_unitAIList[i]);
 
-            gridItem_Units.Add(gridItem_Unit);
+            tupleList.Add(new Tuple<Unit_AI, GridItem_Unit>(_unitAIList[i], gridItem_Unit));
+        }
+    }
+
+    public void UpdateUnit()
+    {
+        foreach (var _tuple in tupleList)
+        {
+            var _unitAI = _tuple.Item1;
+            var _gridItem = _tuple.Item2;
+            _gridItem.Update(_unitAI);
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,6 +20,21 @@ public class SpawnedUnit
 
 public class FieldManager : MonoBehaviour
 {
+    public static FieldManager instance;
+
+    public static FieldManager Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    public void Awake()
+    {
+        instance = this;
+    }
+
     [SerializeField] private List<TeamUnitData> teamUnitIndices = new List<TeamUnitData>();
     [SerializeField] private List<SpawnedUnit> spawnedUnits = new List<SpawnedUnit>();
 
@@ -89,6 +105,38 @@ public class FieldManager : MonoBehaviour
                 teamPanel_2.Initialize(_teamIndex, spawnedUnits[_teamIndex].units);
             }
         }
+    }
+
+    public TeamPanel GetTeamPanel(int _teamIndex)
+    {
+        if(_teamIndex == 0)
+        {
+            return teamPanel_1;
+        }
+        else
+        {
+            return teamPanel_2;
+        }
+    }
+
+    public SpawnedUnit GetEnemySpawnedUnit_ByTeamIndex(int _teamIndex)
+    {
+        if(_teamIndex == 0)
+        {
+            _teamIndex = 1;
+        }
+        else
+        {
+            _teamIndex = 0;
+        }
+
+        if(_teamIndex < spawnedUnits.Count)
+        {
+            return spawnedUnits[_teamIndex];
+        }
+
+        Debug.LogError($"GetSpawnedUnit_ByTeamIndex {_teamIndex}");
+        return null;
     }
 
     public GameObject StageBG;

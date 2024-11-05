@@ -1,6 +1,8 @@
+using QUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
@@ -23,7 +25,6 @@ public class Blackboard
     public Unit_AI targetUnitAI { get; set; } // 현재 타겟을 저장하는 속성
     public bool isAnimationPlaying { get; set; }
     public Vector3 destination { get; set; }
-    public string teamColor { get; set; }
 
     public Blackboard(int _teamIndex, int _unitIndex, GameObject _myGameObject) 
     {
@@ -45,8 +46,9 @@ public class Blackboard
         unitData = new DT_Unit(originalDataRef);
         myNameText.gameObject.SetActive(true);
         myNameText.text = unitData.Name;
-        teamColor = QUtility.UIUtility.GetTeamTextColor(teamIndex);
-        unitFieldInfo = new Unit_FieldData(unitData);
+        myNameText.faceColor = UIUtility.GetTeamColor(teamIndex);
+
+        unitFieldInfo = new Unit_FieldData(this, unitData);
         unitAnimator.InitAnimationController(this, unitData.Animation);
     }
 
@@ -87,9 +89,9 @@ public class Unit_AI : MonoBehaviour
 
     BehaviorNode CreateTankBehaviorTree()
     {
+        var rootSelector = new SelectorNode();
         var deadAction = new DeadAction(blackboard);
         var findTargetAction = new FindTargetAction(blackboard);
-        var findEnemyWarriorAction = new FindEnemyAction(blackboard);
         var moveToTargetAction = new MoveToTargetAction(blackboard);
         var attackAction = new AttackAction(blackboard);
         var idleAction = new IdleAction(blackboard);
@@ -98,21 +100,49 @@ public class Unit_AI : MonoBehaviour
         var deadSequence = new SequenceNode();
         deadSequence.AddChild(deadAction);
 
+        rootSelector.AddChild(deadSequence);
+
+        // 스킬 셀렉터: 스킬 쿨타임을 검사하여 스킬을 사용
+        var skillSelector = new SelectorNode();
+        if (blackboard != null)
+        {
+            foreach (var skillName in blackboard.unitData.SkillNameList)
+            {
+                var skillSequence = new SequenceNode();
+
+                if (skillName == "Sirian_Skill_Node")
+                {
+                    var coolDownNode = new CooldownNode(blackboard, 4); // 쿨타임 설정
+                    var sirianSkillNode = new Sirian_Skill_Node(blackboard);
+
+                    skillSequence.AddChild(coolDownNode);  // 쿨타임이 되면
+                    skillSequence.AddChild(sirianSkillNode); // 스킬 실행
+                }
+
+                skillSelector.AddChild(skillSequence);
+            }
+        }
+
         // 공격 시퀀스
         var attackSequence = new SequenceNode();
         attackSequence.AddChild(findTargetAction);
         attackSequence.AddChild(moveToTargetAction);
         attackSequence.AddChild(attackAction);
 
+        rootSelector.AddChild(attackSequence);
+
+        // 대기 시퀀스
         var idleSequence = new SequenceNode();
         idleSequence.AddChild(idleAction);
 
-        var rootSelector = new SelectorNode();
-        rootSelector.AddChild(deadSequence);
-        rootSelector.AddChild(attackSequence);
         rootSelector.AddChild(idleSequence);
 
-        return rootSelector;
+        // Parallel 시퀀스
+        var rootParallel = new ParallelNode(99, 99);
+        rootParallel.AddChild(skillSelector);
+        rootParallel.AddChild(rootSelector);
+
+        return rootParallel;
     }
 
     private void Update()
@@ -204,7 +234,7 @@ public class Unit_AI : MonoBehaviour
             var subType = myUnitData.GetAttackType(1);
             if (subType == "Projectile_Wizzard")
             {
-                ProjectileAbstract.Spawn_Straight(this, transform.position, blackboard.targetUnitAI.transform.position, 2.0f);
+                Projectile_Straight.Spawn_Straight(subType, this, transform.position, blackboard.targetUnitAI.transform.position, 2.0f);
             }
         }
     }
