@@ -1,0 +1,4 @@
+Name,Description,IconName,SkillType,PrefabName,CastingTime,CastingAnimation,CoolTime,Damage, Value1,Value2,Value3,Value4,Value5,Value6,Value7
+추적 ,추적 미사일을 발사합니다.,UI_Skill_Icon_Chop,Active,Sirian_Skill_Node,0.8,Skill1,8,10,6,3,4,0.07,,,
+추적2,추적 미사일을 발사합니다.,UI_Skill_Icon_Chop,Active,Sirian_Skill_Node,0.8,Skill1,30,10,16,3,4,0.07,,,
+강철,10초마다 방어력이 1 증가합니다.,UI_Skill_Icon_Chop,Passive,,,,,,10,1,,,,,

@@ -9,7 +9,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
-[System.Serializable]
 public class Blackboard
 {
     public int teamIndex { get; set; }
@@ -61,7 +60,6 @@ public class Blackboard
     }
 }
 
-[System.Serializable]
 public class Unit_AI : MonoBehaviour
 {
     private BehaviorNode rootNode;

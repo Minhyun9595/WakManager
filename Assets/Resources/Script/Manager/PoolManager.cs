@@ -14,6 +14,7 @@ public class PoolManager : CustomSingleton<PoolManager>
     // 프리팹 이름 리스트
     private List<string> prefabNames;
 
+    private bool isLoaded = false;
     new void Awake()
     {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
@@ -34,6 +35,11 @@ public class PoolManager : CustomSingleton<PoolManager>
 
     void LoadPrefabs()
     {
+        //if (isLoaded)
+        //    return;
+        //
+        //isLoaded = true;
+
         // Resources 폴더에서 프리팹 로드
         GameObject[] prefabs = Resources.LoadAll<GameObject>("InGame/Prefab/PoolObject");
 

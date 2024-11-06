@@ -39,7 +39,6 @@ public partial class DataTable : CustomSingleton<DataTable>
         {
             DT_Role.infoDictionary[info.Index] = info;
             DT_Role.listInfo.Add(info);
-            Debug.Log($"Index: {info.Index}, Name: {info.Name}");
         }
     }
 }

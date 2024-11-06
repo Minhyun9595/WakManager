@@ -16,14 +16,22 @@ public class Role
 
 public partial class DataTable : CustomSingleton<DataTable>
 {
-    public void Start()
-    {
-    }
+    bool isLoaded = false;
 
     public void Initialize()
     {
+        if (isLoaded)
+            return;
+        isLoaded = true;
+
         Inltialize_DT_Role();
+        Inltialize_DT_Skill();
         Inltialize_DT_Trait();
-        Inltialize_DT_Unit();
+        Inltialize_DT_TraitValue();
+
+        //Inltialize_DT_Unit();
+
+        Inltialize_DT_UnitInfo_Immutable();
+        Inltialize_DT_UnitStat();
     }
 }

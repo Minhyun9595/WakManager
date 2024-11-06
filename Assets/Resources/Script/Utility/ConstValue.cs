@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ESceneType
+{
+    Menu,
+    Lobby,
+    InGame,
+}
+
+
 public enum EPrefabType
 {
     // ÀÌÆåÆ® °ü·Ã
@@ -51,4 +59,21 @@ public class ConstValue : CustomSingleton<ConstValue>
     public static float speedRatio = 0.5f;
     public static float CriticalDamageCoefficient = 0.0001f;
     public static float RangeCoefficient = 0.01f;
+}
+
+
+public class StringUtility
+{
+    public static void AddSplitList(ref List<string> list, string input, string cut)
+    {
+        if (string.IsNullOrEmpty(input) == false)
+        {
+            var skillSplit = input.Split(cut);
+
+            foreach (var skill in skillSplit)
+            {
+                list.Add(skill);
+            }
+        }
+    }
 }
