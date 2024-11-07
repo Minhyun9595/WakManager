@@ -3,23 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public interface GridInterface
+{
+    public void Init(GameObject _gameObject);
+}
+
+public abstract class GridAbstract
+{
+    public GameObject gameObject;
+
+    public void Init(GameObject _gameObject)
+    {
+        gameObject = _gameObject;
+    }
+}
+
+
 public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 {
-    public Transform CanvasTransform;
-    public Transform DisablePanelParent;
 
-    public List<GameObject> PanelPrefabs = new List<GameObject>();
-    public Dictionary<string, GameObject> SpawnedPanels = new Dictionary<string, GameObject>();
-    public List<PanelAbstract> OpenPanelList = new List<PanelAbstract>();
+    public static List<GameObject> PanelPrefabs = new List<GameObject>();
+    public static Dictionary<string, GameObject> SpawnedPanels = new Dictionary<string, GameObject>();
+    public static List<PanelAbstract> OpenPanelList = new List<PanelAbstract>();
 
     void Start()
     {
-        PanelPrefabs.Add(Resources.Load<GameObject>("Panel/Prefabs/Panel1"));
-        PanelPrefabs.Add(Resources.Load<GameObject>("Panel/Prefabs/Panel2"));
-        PanelPrefabs.Add(Resources.Load<GameObject>("Panel/Prefabs/Panel3"));
-
-        CanvasTransform = GameObject.FindWithTag("Canvas").transform;
-        DisablePanelParent = GameObject.FindWithTag("DisablePanelParent").transform;
+        GameObject[] prefabs = Resources.LoadAll<GameObject>("Panel/Prefabs");
+        PanelPrefabs.AddRange(prefabs);
     }
 
     private void Update()
@@ -42,9 +52,11 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
         }
     }
 
-    public void OpenPanel(string panelName)
+    public static void OpenPanel(string panelName)
     {
-        if(SpawnedPanels.TryGetValue(panelName, out GameObject panel) == false)
+        var CanvasTransform = GameObject.FindWithTag("Canvas").transform;
+
+        if (SpawnedPanels.TryGetValue(panelName, out GameObject panel) == false)
         {
             var findPanelPrefab = PanelPrefabs.Find(x => x.name == panelName);
             if (findPanelPrefab != null)
@@ -87,6 +99,7 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 
     public void ClosePanel(PanelAbstract panelAbstract)
     {
+        Transform DisablePanelParent = GameObject.FindWithTag("DisablePanelParent").transform;
         var index = OpenPanelList.FindIndex(x => x.name == panelAbstract.name);
         if (0 <= index)
         {

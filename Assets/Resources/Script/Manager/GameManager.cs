@@ -13,6 +13,11 @@ public class GameManager : MonoBehaviour
         var panel = PanelRenderQueueManager.Instance;
         var poolManager = PoolManager.Instance;
         var playerManager = PlayerManager.Instance;
+
+        if (SceneManager.GetActiveScene().buildIndex == (int)ESceneType.Lobby)
+        {
+            CreateNewCards(10);
+        }
     }
 
     void Update()
@@ -30,13 +35,6 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(2);
         }
 
-        if(SceneManager.GetActiveScene().buildIndex == (int)ESceneType.Lobby)
-        {
-            if(Input.GetKeyUp(KeyCode.K))
-            {
-                CreateNewCards(10);
-            }
-        }
     }
 
     [SerializeField] private List<UnitData> createUnitDataList = new List<UnitData>();

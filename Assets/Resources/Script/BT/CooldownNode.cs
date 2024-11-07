@@ -26,10 +26,8 @@ public class CooldownNode : BehaviorNode
 
     public override NodeStatus Execute()
     {
-        Debug.Log(Time.time - lastExecutionTime);
         if (CanExecute())
         {
-            Debug.Log("Execute");
             lastExecutionTime = Time.time;
             return NodeStatus.Success;
         }

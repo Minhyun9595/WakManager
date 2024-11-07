@@ -9,10 +9,8 @@ using System.Linq;
 using System;
 using UnityEditor.Experimental.GraphView;
 
-public class GridItem_Unit
+public class GridItem_Unit : GridAbstract, GridInterface
 {
-    private GameObject gameObject;
-
     public TextMeshProUGUI NameText;
     public TextMeshProUGUI InfoText;
     public Image UnitImageBG;
@@ -26,9 +24,9 @@ public class GridItem_Unit
     private int currentFrame = 0;
     private float timer;
 
-    public void Init(GameObject _gameObject)
+    public new void Init(GameObject _gameObject)
     {
-        gameObject = _gameObject;
+        base.Init(_gameObject);
         NameText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "NameText");
         InfoText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "InfoText");
         UnitImageBG = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "UnitImageBG");
