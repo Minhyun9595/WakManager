@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public interface GridInterface
 {
@@ -26,6 +27,18 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
     public static Dictionary<string, GameObject> SpawnedPanels = new Dictionary<string, GameObject>();
     public static List<PanelAbstract> OpenPanelList = new List<PanelAbstract>();
 
+    new void Awake()
+    {
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     void Start()
     {
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Panel/Prefabs");
@@ -38,25 +51,44 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
         {
             CloseFrontPanel();
         }
-        if (Input.GetKeyUp(KeyCode.I))
-        {
-            OpenPanel("Panel1");
-        }
-        if (Input.GetKeyUp(KeyCode.O))
-        {
-            OpenPanel("Panel2");
-        }
-        if (Input.GetKeyUp(KeyCode.P))
-        {
-            OpenPanel("Panel3");
-        }
     }
 
-    public static void OpenPanel(string panelName)
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CloseAllPanels();
+
+        GameObject[] prefabs = Resources.LoadAll<GameObject>("Panel/Prefabs");
+        PanelPrefabs.AddRange(prefabs);
+    }
+
+
+    public void OnSceneUnloaded(Scene current)
+    {
+
+    }
+
+    private void CloseAllPanels()
+    {
+        OpenPanelList.Clear();
+        SpawnedPanels.Clear();
+        PanelPrefabs.Clear();
+    }
+
+    public static GameObject OpenPanel(string panelName)
     {
         var CanvasTransform = GameObject.FindWithTag("Canvas").transform;
+        GameObject panel = null;
+        if (SpawnedPanels.TryGetValue(panelName, out panel))
+        {
+            if(panel.activeSelf)
+            {
+                // 이미 열려있는 경우 최상단으로 이동
+                panel.transform.SetAsLastSibling();
+                return panel;
+            }
+        }
 
-        if (SpawnedPanels.TryGetValue(panelName, out GameObject panel) == false)
+        if (SpawnedPanels.TryGetValue(panelName, out panel) == false)
         {
             var findPanelPrefab = PanelPrefabs.Find(x => x.name == panelName);
             if (findPanelPrefab != null)
@@ -70,7 +102,16 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
         {
             panel.GetComponent<PanelAbstract>().Open();
             panel.transform.SetParent(CanvasTransform);
+
+            return panel;
         }
+
+        return null;
+    }
+
+    public static GameObject OpenPanel(EPanelPrefabType ePanelPrefabType)
+    {
+        return OpenPanel(ePanelPrefabType.ToString());
     }
 
     private void CloseFrontPanel()
@@ -107,5 +148,6 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
         }
 
         panelAbstract.gameObject.transform.SetParent(DisablePanelParent);
+        panelAbstract.gameObject.SetActive(false);
     }
 }

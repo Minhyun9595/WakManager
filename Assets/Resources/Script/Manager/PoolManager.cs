@@ -20,6 +20,7 @@ public class PoolManager : CustomSingleton<PoolManager>
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
         prefabDictionary = new Dictionary<string, GameObject>();
         prefabNames = new List<string>();
+        isLoaded = false;
 
         SceneManager.sceneUnloaded += OnSceneUnloaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -63,7 +64,7 @@ public class PoolManager : CustomSingleton<PoolManager>
             }
 
             poolDictionary.Add(prefab.name, objectPool);
-            Debug.Log("PoolManager: " + prefab.name + " 로드 완료.");
+            //Debug.Log("PoolManager: " + prefab.name + " 로드 완료.");
         }
     }
 

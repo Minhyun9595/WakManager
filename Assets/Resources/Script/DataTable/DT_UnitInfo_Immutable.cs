@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
+[System.Serializable]
 public class DT_UnitInfo_Immutable
 {
     public static Dictionary<int, DT_UnitInfo_Immutable> infoDictionary = new Dictionary<int, DT_UnitInfo_Immutable>();
@@ -15,7 +16,7 @@ public class DT_UnitInfo_Immutable
     public int IsDeveloped;
     public int RoleIndex;
     public int Health;
-    public string Animation;
+    public string Animator;
     public string AttackType;
     public string AttackPrefabName;
     public string NormalSkills;

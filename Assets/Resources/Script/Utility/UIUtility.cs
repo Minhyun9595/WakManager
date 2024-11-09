@@ -108,6 +108,12 @@ namespace QUtility
                 return null;
             }
         }
+
+        public static Sprite GetSprite(string iconSprite)
+        {
+            var sprite = Resources.Load<Sprite>($"Sprite/icon/{iconSprite}");
+            return sprite;
+        }
     }
 
 }

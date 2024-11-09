@@ -60,6 +60,18 @@ public class DT_Trait
         Debug.LogWarning($"Trait with Type {type} and Rank {rank} not found in InfoManager.");
         return null;
     }
+
+    public string GetRankString()
+    {
+        var result = "F";
+        if(Rank == 5)       { result = "D"; }
+        else if(Rank == 4) { result = "C";  }
+        else if(Rank == 3) { result = "B";  }
+        else if(Rank == 2) { result = "A";  }
+        else if(Rank == 1) { result = "S"; }
+
+        return result;
+    }
 }
 
 public partial class DataTable : CustomSingleton<DataTable>

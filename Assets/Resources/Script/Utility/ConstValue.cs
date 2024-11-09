@@ -53,6 +53,15 @@ public enum EAnimationType
     Attack2
 }
 
+public enum EPanelPrefabType
+{
+    Panel_SaveData,
+    Panel_Market,
+    Panel_TraitPopup,
+    Panel_Squad,
+}
+
+
 public class ConstValue : CustomSingleton<ConstValue>
 {
     public static float timeValue = 1.0f;

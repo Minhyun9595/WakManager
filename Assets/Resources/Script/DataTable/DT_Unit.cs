@@ -251,7 +251,7 @@ public partial class DataTable : CustomSingleton<DataTable>
             {
                 info.Initialize();
                 DT_Unit.unitListInfo.Add(info);
-                Debug.Log($"Index: {info.Index}, Name: {info.Name}");
+                //Debug.Log($"Index: {info.Index}, Name: {info.Name}");
             }
         }
     }

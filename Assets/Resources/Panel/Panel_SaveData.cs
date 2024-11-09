@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GridItem_SaveData : GridAbstract, GridInterface
@@ -65,16 +66,19 @@ public class Panel_SaveData : PanelAbstract
     public Button SaveButton;
     public Button LoadButton;
     public Button ExitButton;
+    public Button ExitToMenuButton;
     void Start()
     {
         Content = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Content");
         SaveButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "SaveButton");
         LoadButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "LoadButton");
         ExitButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "ExitButton");
+        ExitToMenuButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "ExitToMenuButton");
 
-        ExitButton.onClick.AddListener(Close);
+        ExitButton.onClick.AddListener(OnClick_Close);
         SaveButton.onClick.AddListener(OnClick_SaveButton);
         LoadButton.onClick.AddListener(OnClick_LoadButton);
+        ExitToMenuButton.onClick.AddListener(OnClick_ToMenuButton);
 
         for (int i = 0; i < SlotCount; i++)
         {
@@ -95,7 +99,6 @@ public class Panel_SaveData : PanelAbstract
     {
         // 데이터 없으면 저장하기 활성화 나머지 끄기
         // 0번은 자동저장 슬롯
-
         for (int i = 0; i < SlotCount; i++)
         {
             var saveData = PlayerManager.Instance.LoadData(i);
@@ -103,6 +106,11 @@ public class Panel_SaveData : PanelAbstract
 
             gridItem.Update(saveData);
         }
+
+        bool isNotMenuScene = PlayerManager.Instance.GetSceneType() != ESceneType.Menu;
+        bool isLobbyScene = PlayerManager.Instance.GetSceneType() == ESceneType.Lobby;
+        ExitToMenuButton.gameObject.SetActive(isNotMenuScene);
+        SaveButton.gameObject.SetActive(isLobbyScene);
     }
 
     public void OnClick_GridButton(int _index)
@@ -132,6 +140,23 @@ public class Panel_SaveData : PanelAbstract
             return;
         }
 
-        PlayerManager.Instance.LoadData(focusIndex);
+        var result = PlayerManager.Instance.Load(focusIndex);
+
+        if(result)
+        {
+            PlayerManager.Instance.SetSceneChangeType(SceneChangeType.LoadWorld);
+            SceneManager.LoadScene((int)ESceneType.Lobby);
+        }
+    }
+
+    void OnClick_ToMenuButton()
+    {
+        PlayerManager.Instance.SetSceneChangeType(SceneChangeType.MoveWorld);
+        SceneManager.LoadScene((int)ESceneType.Menu);
+    }
+
+    void OnClick_Close()
+    {
+        PanelRenderQueueManager.Instance.ClosePanel(this);
     }
 }

@@ -26,11 +26,12 @@ public class Panel_MainMenu : PanelAbstract
 
     void OnClick_NewGame()
     {
+        PlayerManager.Instance.SetNewGame();
         SceneManager.LoadScene(1);
     }
 
     void OnClick_LoadPanel()
     {
-        PanelRenderQueueManager.OpenPanel("Panel_SaveData");
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_SaveData);
     }
 }

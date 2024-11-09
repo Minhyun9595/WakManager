@@ -12,8 +12,6 @@ public class PanelAbstract : MonoBehaviour
 
     public void Close()
     {
-        Debug.Log("PanelClose");
-        gameObject.SetActive(false);
         PanelRenderQueueManager.Instance.ClosePanel(this);
     }
 }
