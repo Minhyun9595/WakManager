@@ -15,6 +15,9 @@ public class Panel_MainMenu : PanelAbstract
         NewGameButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "NewGameButton");
         LoadPanelButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "LoadPanelButton");
 
+        NewGameButton.onClick.RemoveAllListeners();
+        LoadPanelButton.onClick.RemoveAllListeners();
+
         NewGameButton.onClick.AddListener(OnClick_NewGame);
         LoadPanelButton.onClick.AddListener(OnClick_LoadPanel);
     }

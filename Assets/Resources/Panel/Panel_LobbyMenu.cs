@@ -37,6 +37,7 @@ public class Panel_LobbyMenu : PanelAbstract
         Button button = UIUtility.FindComponentInChildrenByName<Button>(gameObject, buttonName);
         if (button != null)
         {
+            button.onClick.RemoveAllListeners();
             button.onClick.AddListener(onClickAction);
             buttonList.Add(button);
         }

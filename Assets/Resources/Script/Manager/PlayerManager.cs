@@ -33,6 +33,8 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     new void Awake()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        Load_NewWorld();
     }
 
     void OnDestroy()
@@ -247,6 +249,31 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         }
     }
 
+    public bool SquadActionUnitCard(string unitUniqueID, bool isAdd)
+    {
+        if(isAdd)
+        {
+            var inSquadCard = player_InSquad_UnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
+
+            if (inSquadCard != null)
+            {
+                Debug.Log("이미 스쿼드에 들어가있는 카드");
+                return true;
+            }
+
+            var squadCard = player_Squad_UnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
+            player_InSquad_UnitCardDatas.Add(squadCard);
+        }
+        else
+        {
+            player_InSquad_UnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID);
+            return true;
+        }
+
+        return false;
+    }
+
+
     public List<UnitData> GetMarketDatas()
     {
         return market_UnitCardDatas;
@@ -255,5 +282,10 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     public List<UnitData> GetPlayer_SquadUnitDatas()
     {
         return player_Squad_UnitCardDatas;
+    }
+
+    public List<UnitData> GetPlayer_InSquadUnitDatas()
+    {
+        return player_InSquad_UnitCardDatas;
     }
 }

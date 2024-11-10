@@ -150,4 +150,11 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
         panelAbstract.gameObject.transform.SetParent(DisablePanelParent);
         panelAbstract.gameObject.SetActive(false);
     }
+
+    public T GetPanel<T>() where T : PanelAbstract
+    {
+        var panel = OpenPanelList.OfType<T>().First();
+
+        return panel;
+    }
 }

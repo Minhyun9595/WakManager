@@ -7,18 +7,16 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridItem_MarketTrait : GridAbstract, GridInterface
+public class GridItem_Trait : GridAbstract, GridInterface
 {
-    public Panel_Market panel_Market;
     public int traitIndex = -1;
     public Image TraitImage;
     public TextMeshProUGUI RankText;
 
 
-    public void Init(GameObject _gameObject, Panel_Market _panel_Market)
+    public void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        panel_Market = _panel_Market;
         TraitImage = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "TraitImage");
         RankText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "RankText");
 
@@ -36,9 +34,6 @@ public class GridItem_MarketTrait : GridAbstract, GridInterface
 
     private void OnClick_Trait()
     {
-        // 금액 체크 후 가능하면 구매
-        
-
         var Panel_TraitPopup = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_TraitPopup.ToString());
         Panel_TraitPopup.GetComponent<Panel_TraitPopup>().Open(traitIndex);
     }
@@ -55,12 +50,11 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
     public Transform Content_GridTrait;
     public Transform SellBG;
 
-    public List<GridItem_MarketTrait> gridItem_MarketTraits = new List<GridItem_MarketTrait>();
+    public List<GridItem_Trait> gridItem_Traits = new List<GridItem_Trait>();
 
-    public void Init(GameObject _gameObject, Panel_Market _panel_Market)
+    public void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        panel_Market = _panel_Market;
         UnitImage = UIUtility.FindComponentInChildrenByName<Animator>(gameObject, "UnitImage");
         BuyButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "BuyButton");
         NameText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "NameText");
@@ -86,16 +80,16 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
 
     private void UpdateMarket(UnitData _unitData)
     {
-        gridItem_MarketTraits = new List<GridItem_MarketTrait>();
+        gridItem_Traits = new List<GridItem_Trait>();
         for (int i = 0; i < _unitData.traitList.Count; i++)
         {
             var childItem = UIUtility.GetChildAutoCraete(Content_GridTrait, i);
-            var gridItem_MarketTrait = new GridItem_MarketTrait();
+            var gridItem_MarketTrait = new GridItem_Trait();
             var trait = _unitData.traitList[i];
-            gridItem_MarketTrait.Init(childItem, panel_Market);
+            gridItem_MarketTrait.Init(childItem);
             gridItem_MarketTrait.SetTrait(trait);
 
-            gridItem_MarketTraits.Add(gridItem_MarketTrait);
+            gridItem_Traits.Add(gridItem_MarketTrait);
             childItem.SetActive(true);
         }
 
@@ -134,7 +128,7 @@ public class Panel_Market : PanelAbstract
             var gridItem_MarketCard = new GridItem_MarketCard();
             var index = i;
 
-            gridItem_MarketCard.Init(childItem, this);
+            gridItem_MarketCard.Init(childItem);
             gridItem_MarketCard.BuyButton.onClick.AddListener(() => OnClick_Buy(index));
             gridList.Add(gridItem_MarketCard);
             gridItem_MarketCard.gameObject.SetActive(false);
