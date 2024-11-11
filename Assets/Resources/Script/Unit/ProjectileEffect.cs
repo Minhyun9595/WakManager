@@ -6,6 +6,7 @@ using UnityEngine;
 public class ProjectileEffect : MonoBehaviour
 {
     Animator animator;
+    SpriteRenderer spriteRenderer;
     WaitUntil waitUntil;
     public string prefabName;
 
@@ -26,6 +27,8 @@ public class ProjectileEffect : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = ConstValue.Layer_Effect;
     }
     void OnEnable()
     {

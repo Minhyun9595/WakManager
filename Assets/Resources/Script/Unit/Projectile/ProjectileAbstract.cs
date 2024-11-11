@@ -18,6 +18,12 @@ public abstract class ProjectileAbstract : MonoBehaviour, ProjectileInterface
 
     public Unit_AI ownerUnitAI;
     public Collider2D myCollider2D;
+    public SpriteRenderer spriteRenderer;
+    public void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = ConstValue.Layer_Effect;
+    }
 
     public void Init(Unit_AI _ownerAI)
     {

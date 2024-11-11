@@ -33,8 +33,9 @@ public class Projectile_Bezier : ProjectileAbstract
     public float life;
     private float time;  // 이동을 위한 시간 값 (0 ~ 1 사이)
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
         prefabName = EPrefabType.Projectile_Bezier.ToString();
     }
 

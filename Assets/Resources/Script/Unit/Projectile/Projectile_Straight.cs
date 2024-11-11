@@ -26,10 +26,6 @@ public class Projectile_Straight : ProjectileAbstract
     public Vector3 normalizeDirection = Vector3.zero;
     public float speed;
 
-    private void Awake()
-    {
-    }
-
     void Start()
     {
     }

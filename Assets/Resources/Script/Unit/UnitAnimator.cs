@@ -5,6 +5,7 @@ using UnityEngine;
 public class UnitAnimator : MonoBehaviour
 {
     public Animator animator;
+    public SpriteRenderer spriteRenderer;
     private EAnimationType eAnimationType = EAnimationType.Idle;
     private Blackboard blackboard;
     private Coroutine animationCoroutine;
@@ -12,6 +13,10 @@ public class UnitAnimator : MonoBehaviour
     // 애니메이션 클립들을 저장할 딕셔너리
     private Dictionary<string, AnimationClip> animationClips = new Dictionary<string, AnimationClip>();
 
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
     public void InitAnimationController(Blackboard _blackboard, string _animationControllerName)
     {
         blackboard = _blackboard;
@@ -33,6 +38,11 @@ public class UnitAnimator : MonoBehaviour
         {
             animationClips[clip.name] = clip;
         }
+    }
+
+    private void LateUpdate()
+    {
+        spriteRenderer.sortingOrder = ConstValue.Layer_Character - Mathf.CeilToInt(transform.position.y * 10);
     }
 
     public void SetAnimation(EAnimationType _eAnimation, float _animationSpeed = 1.0f)

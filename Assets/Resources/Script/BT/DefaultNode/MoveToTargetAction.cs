@@ -66,7 +66,7 @@ public class MoveToTargetAction : ActionNode
 
         // 실제 이동 적용
         blackboard.myTransform.position += movement;
-
+        
         return movement;
     }
 
@@ -76,12 +76,11 @@ public class MoveToTargetAction : ActionNode
 
         if (movement.x > 0)
         {
-            // Keep the original scale, only adjusting the sign for x
-            blackboard.myBodyTransform.localScale = new Vector3(Mathf.Abs(localScale.x), localScale.y, localScale.z);
+            blackboard.myBodyTransform.localScale = new Vector3(-Mathf.Abs(localScale.x), localScale.y, localScale.z);
         }
         else if (movement.x < 0)
         {
-            blackboard.myBodyTransform.localScale = new Vector3(-Mathf.Abs(localScale.x), localScale.y, localScale.z);
+            blackboard.myBodyTransform.localScale = new Vector3(Mathf.Abs(localScale.x), localScale.y, localScale.z);
         }
     }
 }

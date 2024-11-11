@@ -75,7 +75,9 @@ public class ConstValue : CustomSingleton<ConstValue>
     public static float timeValue = 1.0f;
     public static float speedRatio = 0.5f;
     public static float CriticalDamageCoefficient = 0.0001f;
-    public static float RangeCoefficient = 0.01f;
+    public static float RangeCoefficient = 0.015f;
+    public static int Layer_Character = 1000;
+    public static int Layer_Effect = 10000;
 }
 
 
