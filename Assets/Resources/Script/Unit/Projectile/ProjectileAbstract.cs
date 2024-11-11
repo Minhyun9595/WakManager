@@ -19,7 +19,6 @@ public abstract class ProjectileAbstract : MonoBehaviour, ProjectileInterface
     public Unit_AI ownerUnitAI;
     public Collider2D myCollider2D;
 
-
     public void Init(Unit_AI _ownerAI)
     {
         ownerUnitAI = _ownerAI;

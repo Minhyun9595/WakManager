@@ -41,7 +41,7 @@ public class GridItem_Unit : GridAbstract, GridInterface
         var blackboard = unitAI.blackboard;
         var unitFieldInfo = blackboard.unitFieldInfo;
         var teamIndex = blackboard.teamIndex;
-        NameText.text = blackboard.unitData.Name;
+        NameText.text = blackboard.realUnitData.unitInfo_Immutable.Name;
         NameText.faceColor = UIUtility.GetTeamColor(teamIndex);
 
         Update(unitAI);
@@ -67,8 +67,8 @@ public class GridItem_Unit : GridAbstract, GridInterface
     {
         var blackboard = unitAI.blackboard;
         var unitFieldInfo = blackboard.unitFieldInfo;
-        InfoText.text = $"직업: {blackboard.unitData.GetRoleName()}";
-        HpSlider.value = blackboard.unitFieldInfo.Hp / blackboard.unitFieldInfo.FullHp;
+        InfoText.text = $"직업: {blackboard.realUnitData.GetRoleName()}";
+        HpSlider.value = unitFieldInfo.Hp / unitFieldInfo.FullHp;
     }
 }
 

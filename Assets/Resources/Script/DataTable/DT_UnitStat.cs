@@ -12,7 +12,7 @@ public class DT_UnitStat
     public int Index;
     public string Name;
     public int Health;
-    public int DamageType;
+    public string DamageType;
     public float Damage;
     public int MultiHitCount;
     public float AttackSpeed;
@@ -36,13 +36,28 @@ public class DT_UnitStat
         Debug.LogWarning($"Index {rank} not found in InfoManager.");
         return null;
     }
+
+    public EDamageType GetDamageType()
+    {
+        switch (DamageType)
+        {
+            case "Physical":
+                return EDamageType.Physical;
+            case "Magic":
+                return EDamageType.Magical;
+            case "True":
+                return EDamageType.True;
+            default:
+                return EDamageType.Physical;
+        }
+    }
+
 }
 
 public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Inltialize_DT_UnitStat()
     {
-        Debug.Log("Inltialize_DT_UnitStat");
         List<DT_UnitStat> infoList = DataLoader.Instance.LoadCSV<DT_UnitStat>(Path.Combine(Application.dataPath, "Resources/DataSet/UnitStat.csv"));
 
         // Dictionary에 데이터를 저장

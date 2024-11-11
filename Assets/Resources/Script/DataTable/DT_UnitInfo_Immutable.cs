@@ -15,14 +15,13 @@ public class DT_UnitInfo_Immutable
     public string Name;
     public int IsDeveloped;
     public int RoleIndex;
-    public int Health;
+    public int MaxTraitCount;
+    public int FixTraitType;
     public string Animator;
     public string AttackType;
     public string AttackPrefabName;
     public string NormalSkills;
     public string SpecialSkills;
-    public int MaxTraitCount;
-    public int FixTraitType;
 
     // Initialize 데이터
     public List<string> SkillNameList;
@@ -58,7 +57,6 @@ public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Inltialize_DT_UnitInfo_Immutable()
     {
-        Debug.Log("Inltialize_DT_UnitInfo_Immutable");
         List<DT_UnitInfo_Immutable> infoList = DataLoader.Instance.LoadCSV<DT_UnitInfo_Immutable>(Path.Combine(Application.dataPath, "Resources/DataSet/UnitInfo_Immutable.csv"));
 
         // Dictionary에 데이터를 저장

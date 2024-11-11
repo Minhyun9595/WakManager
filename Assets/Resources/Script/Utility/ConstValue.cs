@@ -50,7 +50,15 @@ public enum EAnimationType
     Hit,
     Death,
     Attack1,
-    Attack2
+    Attack2,
+    Skill,
+}
+
+public enum EAxsType
+{
+    X,
+    Y,
+    Z
 }
 
 public enum EPanelPrefabType

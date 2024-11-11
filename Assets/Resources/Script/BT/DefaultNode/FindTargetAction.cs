@@ -88,7 +88,7 @@ public class FindTargetAction : ActionNode
         // 탐색 반경 내의 모든 Collider 가져오기
         Collider2D[] colliders = Physics2D.OverlapCircleAll(blackboard.myTransform.position, 1000);
 
-        QUtility.UIUtility.DrawDebugCircle(blackboard.myTransform.position, blackboard.unitData.GetRange(), Color.yellow);
+        QUtility.UIUtility.DrawDebugCircle(blackboard.myTransform.position, blackboard.realUnitData.GetRange(), Color.yellow);
         foreach (Collider2D collider in colliders)
         {
             Unit_AI enemyUnit = collider.GetComponent<Unit_AI>();

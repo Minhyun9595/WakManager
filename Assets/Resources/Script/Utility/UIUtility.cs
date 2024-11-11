@@ -47,7 +47,7 @@ namespace QUtility
                 Vector3 point1 = center + new Vector3(Mathf.Cos(angle1), Mathf.Sin(angle1), 0) * radius;
                 Vector3 point2 = center + new Vector3(Mathf.Cos(angle2), Mathf.Sin(angle2), 0) * radius;
 
-                Debug.DrawLine(point1, point2, color, 0.2f); // 각 라인 지속 시간
+                Debug.DrawLine(point1, point2, color, Time.deltaTime); // 각 라인 지속 시간
             }
         }
 

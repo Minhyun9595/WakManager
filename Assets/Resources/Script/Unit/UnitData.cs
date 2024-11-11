@@ -49,32 +49,48 @@ public class UnitData
         return unitData;
     }
 
+    public static UnitData CopyNewUnit(UnitData originUnitData)
+    {
+        var origin_UnitIndex = originUnitData.unitIndex;
+        UnitData newUnitData = CreateNewUnit(origin_UnitIndex);
+        newUnitData.unitUniqueID = originUnitData.unitUniqueID;
+        newUnitData.traitIndexList = originUnitData.traitIndexList;
+
+        newUnitData.InitializeSkill();
+        newUnitData.InitializeTrait();
+
+        return newUnitData;
+    }
+
     public void LoadUnit()
     {
         // 이미 로드된 상태이므로 캐릭터 고정 스탯만 다시 로드
         unitStat = DT_UnitStat.GetInfoByIndex(unitIndex);
         unitInfo_Immutable = DT_UnitInfo_Immutable.GetInfoByIndex(unitIndex);
 
-        skillList.Clear();
-        traitList.Clear();
+        InitializeSkill();
+        InitializeTrait();
+    }
 
+    private void InitializeSkill()
+    {
+        skillList.Clear();
         skillList = new List<DT_Skill>();
         foreach (var skillNmae in unitInfo_Immutable.SkillNameList)
         {
             var dtSkill = DT_Skill.GetInfoByIndex(skillNmae);
             skillList.Add(dtSkill);
         }
+    }
 
+    private void InitializeTrait()
+    {
+        traitList.Clear();
         for (int i = 0; i < traitIndexList.Count; i++)
         {
             var dt_trait = DT_Trait.GetInfoByIndex(traitIndexList[i]);
             traitList.Add(dt_trait);
         }
-    }
-
-    public string SaveUnit()
-    {
-        return JsonUtility.ToJson(this);
     }
 
     public int GetUnitValue()
@@ -90,7 +106,7 @@ public class UnitData
         return point;
     }
 
-    public void CreateTrait(ref List<string> _types)
+    private void CreateTrait(ref List<string> _types)
     {
         // 특성 정하기
         var rand = Random.Range(0, _types.Count);
@@ -124,5 +140,32 @@ public class UnitData
                 break;
             }
         }
+    }
+
+    public EDamageType GetDamageType()
+    {
+        return unitStat.GetDamageType();
+    }
+
+    public float GetMoveSpeed(EAxsType eAxsType)
+    {
+        switch (eAxsType)
+        {
+            case EAxsType.X:
+                return unitStat.MoveSpeed_X;
+            case EAxsType.Y:
+                return unitStat.MoveSpeed_Y;
+        }
+        return 0;
+    }
+
+    public float GetRange()
+    {
+        return unitStat.Range * ConstValue.RangeCoefficient;
+    }
+
+    public string GetRoleName()
+    {
+        return DT_Role.GetInfoByIndex(unitInfo_Immutable.RoleIndex).Name;
     }
 }

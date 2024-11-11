@@ -78,7 +78,6 @@ public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Inltialize_DT_Trait()
     {
-        Debug.Log("Inltialize_DT_Trait");
         List<DT_Trait> infoList = DataLoader.Instance.LoadCSV<DT_Trait>(Path.Combine(Application.dataPath, "Resources/DataSet/Trait.csv"));
 
         // Dictionary에 데이터를 저장

@@ -17,23 +17,15 @@ public class Blackboard
     public Transform myTransform { get; set; }
     public Transform myBodyTransform { get; set; }
     public TextMeshPro myNameText { get; set; }
-    public DT_Unit unitData { get; set; }
+    public UnitData realUnitData { get; set; }
     public Unit_FieldData unitFieldInfo { get; set; }
     public UnitAnimator unitAnimator { get; set; }
-
     public Unit_AI targetUnitAI { get; set; } // 현재 타겟을 저장하는 속성
     public bool isAnimationPlaying { get; set; }
     public Vector3 destination { get; set; }
-
-    public Blackboard(int _teamIndex, int _unitIndex, GameObject _myGameObject) 
+    public Blackboard(int _teamIndex, UnitData _unitData, GameObject _myGameObject) 
     {
         teamIndex = _teamIndex;
-        var originalDataRef = DT_Unit.GetInfoByIndex(_unitIndex);
-        if (originalDataRef == null)
-        {
-            Debug.LogError("originalDataRef is null : " + _unitIndex);
-            new OnApplicationPause();
-        }
 
         this.myGameObject = _myGameObject;
         this.myTransform = _myGameObject.transform;
@@ -42,13 +34,16 @@ public class Blackboard
         this.myUnitAI = myTransform.GetComponent<Unit_AI>();
         this.unitAnimator = myBodyTransform.GetComponent<UnitAnimator>();
 
-        unitData = new DT_Unit(originalDataRef);
-        myNameText.gameObject.SetActive(true);
-        myNameText.text = unitData.Name;
-        myNameText.faceColor = UIUtility.GetTeamColor(teamIndex);
+        realUnitData = UnitData.CopyNewUnit(_unitData);
 
-        unitFieldInfo = new Unit_FieldData(this, unitData);
-        unitAnimator.InitAnimationController(this, unitData.Animation);
+        var name = realUnitData.unitInfo_Immutable.Name;
+        myNameText.gameObject.SetActive(true);
+        myNameText.text = name;
+        myNameText.faceColor = UIUtility.GetTeamColor(teamIndex);
+        myGameObject.name = $"{_teamIndex + 1}_{name}";
+
+        unitFieldInfo = new Unit_FieldData(this, realUnitData);
+        unitAnimator.InitAnimationController(this, realUnitData.unitInfo_Immutable.Animator);
     }
 
     public void Update(float deltaTime)
@@ -57,6 +52,32 @@ public class Blackboard
             return;
 
         unitFieldInfo.Update(deltaTime);
+    }
+
+    public List<DamageInfo> GetDamageList()
+    {
+        var MultiHitCount = realUnitData.unitStat.MultiHitCount;
+
+        var damageList = new List<DamageInfo>();
+        for (int i = 0; i < MultiHitCount; i++)
+        {
+            var myDamage = realUnitData.unitStat.Damage;
+            var rand = UnityEngine.Random.Range(0, 9999);
+            var isCritical = rand < realUnitData.unitStat.CriticalChance;
+
+            if (isCritical)
+            {
+                myDamage *= 1 + (realUnitData.unitStat.CriticalRatio * ConstValue.CriticalDamageCoefficient);
+            }
+
+            var damageInfo = new DamageInfo();
+            damageInfo.damage = myDamage;
+            damageInfo.isCritical = isCritical;
+
+            damageList.Add(damageInfo);
+        }
+
+        return damageList;
     }
 }
 
@@ -69,57 +90,60 @@ public class Unit_AI : MonoBehaviour
     private HashSet<int> subscribers = new HashSet<int>(); // 타겟으로 설정한 객체들
     public LayerMask layerMask;
 
-    public static GameObject Spawn(Vector3 position, int teamIndex, int unitIndex)
+    public static GameObject TestSpawn(Vector3 _position, int _teamIndex, int _unitIndex)
     {
+        UnitData testUnitData = UnitData.CreateNewUnit(_unitIndex);
         GameObject unit = PoolManager.Instance.GetFromPool(EPrefabType.Unit.ToString());
-        unit.transform.position = position;
-        unit.GetComponent<Unit_AI>().Initialize(teamIndex, unitIndex);
+        unit.transform.position = _position;
+        unit.GetComponent<Unit_AI>().Initialize(_teamIndex, testUnitData);
 
         return unit;
     }
 
-    public void Initialize(int _teamIndex, int _unitIndex)
+    public static GameObject Spawn(Vector3 _position, int _teamIndex, UnitData _unitData)
     {
-        blackboard = new Blackboard(_teamIndex, _unitIndex, this.gameObject);
+        GameObject unit = PoolManager.Instance.GetFromPool(EPrefabType.Unit.ToString());
+        unit.transform.position = _position;
+        unit.GetComponent<Unit_AI>().Initialize(_teamIndex, _unitData);
+
+        return unit;
+    }
+
+    public void Initialize(int _teamIndex, UnitData _unitData)
+    {
+        blackboard = new Blackboard(_teamIndex, _unitData, this.gameObject);
         rootNode = CreateTankBehaviorTree();
-        gameObject.name = $"{_teamIndex + 1}_{blackboard.unitData.Name}";
     }
 
     BehaviorNode CreateTankBehaviorTree()
     {
-        var rootSelector = new SelectorNode();
-        var deadAction = new DeadAction(blackboard);
-        var findTargetAction = new FindTargetAction(blackboard);
-        var moveToTargetAction = new MoveToTargetAction(blackboard);
-        var attackAction = new AttackAction(blackboard);
-        var idleAction = new IdleAction(blackboard);
-
         // 사망 시퀀스
         var deadSequence = new SequenceNode();
+        var deadAction = new DeadAction(blackboard);
         deadSequence.AddChild(deadAction);
-
-        rootSelector.AddChild(deadSequence);
 
         // 스킬 셀렉터: 스킬 쿨타임을 검사하여 스킬을 사용
         var skillSelector = new SelectorNode();
-        if (blackboard != null)
+        foreach (var dT_Skill in blackboard.realUnitData.skillList)
         {
-            foreach (var skillName in blackboard.unitData.SkillNameList)
+            var skillSequence = new SequenceNode();
+        
+            if (dT_Skill.Name == "Sirian_Skill_Node")
             {
-                var skillSequence = new SequenceNode();
-
-                if (skillName == "Sirian_Skill_Node")
-                {
-                    var coolDownNode = new CooldownNode(blackboard, 4); // 쿨타임 설정
-                    var sirianSkillNode = new Sirian_Skill_Node(blackboard);
-
-                    skillSequence.AddChild(coolDownNode);  // 쿨타임이 되면
-                    skillSequence.AddChild(sirianSkillNode); // 스킬 실행
-                }
-
-                skillSelector.AddChild(skillSequence);
+                var coolDownNode = new CooldownNode(blackboard, 4); // 쿨타임 설정
+                var sirianSkillNode = new Sirian_Skill_Node(blackboard);
+        
+                skillSequence.AddChild(coolDownNode);  // 쿨타임이 되면
+                skillSequence.AddChild(sirianSkillNode); // 스킬 실행
             }
+        
+            skillSelector.AddChild(skillSequence);
         }
+
+        var rootSelector = new SelectorNode();
+        var findTargetAction = new FindTargetAction(blackboard);
+        var moveToTargetAction = new MoveToTargetAction(blackboard);
+        var attackAction = new AttackAction(blackboard);
 
         // 공격 시퀀스
         var attackSequence = new SequenceNode();
@@ -131,13 +155,13 @@ public class Unit_AI : MonoBehaviour
 
         // 대기 시퀀스
         var idleSequence = new SequenceNode();
+        var idleAction = new IdleAction(blackboard);
         idleSequence.AddChild(idleAction);
-
         rootSelector.AddChild(idleSequence);
 
         // Parallel 시퀀스
-        var rootParallel = new ParallelNode(99, 99);
-        rootParallel.AddChild(skillSelector);
+        var rootParallel = new ParallelNode(1, 99);
+        rootParallel.AddChild(deadSequence); // Death에서 Succress반환하면 이후 안함
         rootParallel.AddChild(rootSelector);
 
         return rootParallel;
@@ -212,57 +236,34 @@ public class Unit_AI : MonoBehaviour
 
     public void Attack1()
     {
-        var myUnitData = blackboard.unitData;
+        var myUnitData = blackboard.realUnitData;
 
-        var type = myUnitData.GetAttackType(0);
+        var attackType = myUnitData.unitInfo_Immutable.AttackType;
+        var myDamageType = myUnitData.GetDamageType();
 
-        if (type == "Melee")
+        if (attackType == "Melee")
         {
-            var myDamageType = myUnitData.GetDamageType();
             var damageList = GetDamageList();
 
             if (blackboard.targetUnitAI != null)
             {
                 blackboard.targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, blackboard.targetUnitAI.transform.position);
-                blackboard.unitFieldInfo.Attack();
+                blackboard.unitFieldInfo.AttackActionResetCoolTime();
             }
         }
-        else if (type == "Projectile")
+        else if (attackType == "Projectile")
         {
-            var subType = myUnitData.GetAttackType(1);
-            if (subType == "Projectile_Wizzard")
+            var attackPrefabName = myUnitData.unitInfo_Immutable.AttackPrefabName;
+            if (attackPrefabName == "Projectile_Wizzard")
             {
-                Projectile_Straight.Spawn_Straight(subType, this, transform.position, blackboard.targetUnitAI.transform.position, 2.0f);
+                Projectile_Straight.Spawn_Straight(attackPrefabName, this, transform.position, blackboard.targetUnitAI.transform.position, 2.0f);
             }
         }
     }
 
     public List<DamageInfo> GetDamageList()
     {
-        var myUnitData = blackboard.unitData;
-        var myDamageCount = myUnitData.MultiHitCount;
-
-        var damageList = new List<DamageInfo>();
-        for (int i = 0; i < myDamageCount; i++)
-        {
-            var myDamage = myUnitData.Damage;
-            //var isCritical = myUnitData.IsCritical();
-            var rand = UnityEngine.Random.Range(0, 9999);
-            var isCritical = rand < myUnitData.CriticalChance;
-
-            if (isCritical)
-            {
-                myDamage *= 1 + (myUnitData.CriticalRatio * ConstValue.CriticalDamageCoefficient);
-            }
-
-            var damageInfo = new DamageInfo();
-            damageInfo.damage = myDamage;
-            damageInfo.isCritical = isCritical;
-
-            damageList.Add(damageInfo);
-        }
-
-        return damageList;
+        return blackboard.GetDamageList();
     }
 
     private void CheckCone(float _rayDistance = 5.0f, float _coneAngle = 60.0f, int _rayCount = 10)

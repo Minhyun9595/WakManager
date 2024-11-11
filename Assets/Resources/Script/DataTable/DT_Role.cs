@@ -31,7 +31,6 @@ public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Inltialize_DT_Role()
     {
-        Debug.Log("Inltialize_DT_Role");
         List<DT_Role> infoList = DataLoader.Instance.LoadCSV<DT_Role>(Path.Combine(Application.dataPath, "Resources/DataSet/Role.csv"));
 
         // Dictionary에 데이터를 저장

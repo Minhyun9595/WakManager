@@ -28,7 +28,7 @@ public class MoveToTargetAction : ActionNode
         float distance = Vector3.Distance(currentPosition, targetPosition);
 
         // 사거리를 원으로 표시
-        var range = blackboard.unitData.GetRange();
+        var range = blackboard.realUnitData.GetRange();
         QUtility.UIUtility.DrawDebugCircle(blackboard.myTransform.position, range, Color.green);
 
         if (distance <= range)  
@@ -62,7 +62,7 @@ public class MoveToTargetAction : ActionNode
         Vector3 direction = (targetPosition - blackboard.myTransform.position).normalized;
 
         // 이동 속도 적용
-        Vector3 movement = new Vector3(blackboard.unitData.MoveSpeed_X * direction.x, blackboard.unitData.MoveSpeed_Y * direction.y, 0) * Time.deltaTime * ConstValue.speedRatio;
+        Vector3 movement = new Vector3(blackboard.realUnitData.unitStat.MoveSpeed_X * direction.x, blackboard.realUnitData.unitStat.MoveSpeed_Y * direction.y, 0) * Time.deltaTime * ConstValue.speedRatio;
 
         // 실제 이동 적용
         blackboard.myTransform.position += movement;

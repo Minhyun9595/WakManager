@@ -36,7 +36,7 @@ public class AttackAction : ActionNode
 
         // 공격 범위 내에 있는지 확인
         float distance = Vector3.Distance(blackboard.myTransform.position, blackboard.targetUnitAI.transform.position);
-        if (distance <= blackboard.unitData.GetRange())
+        if (distance <= blackboard.realUnitData.GetRange())
         {
             // 공격 수행
             blackboard.unitAnimator.SetAnimation(EAnimationType.Attack1);

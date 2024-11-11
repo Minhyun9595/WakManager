@@ -74,11 +74,11 @@ public class FieldManager : MonoBehaviour
         {
             var spawnedUnit = new SpawnedUnit();
             spawnedUnits.Add(spawnedUnit);
-            CreateTeam(i, teamUnitIndices[i].unitIndices);
+            CreateTestTeam(i, teamUnitIndices[i].unitIndices);
         }
     }
 
-    private void CreateTeam(int _teamIndex, List<int> _unitIndexList)
+    private void CreateTestTeam(int _teamIndex, List<int> _unitIndexList)
     {
         foreach(var unitIndex in _unitIndexList)
         {
@@ -92,7 +92,7 @@ public class FieldManager : MonoBehaviour
                 position = GetRandomLeftPosition();
             }
 
-            var unitObject = Unit_AI.Spawn(position, _teamIndex, unitIndex);
+            var unitObject = Unit_AI.TestSpawn(position, _teamIndex, unitIndex);
             var unitAI = unitObject.GetComponent<Unit_AI>();
             spawnedUnits[_teamIndex].units.Add(unitAI);
 

@@ -47,7 +47,6 @@ public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Inltialize_DT_Skill()
     {
-        Debug.Log("Inltialize_DT_Skill");
         List<DT_Skill> infoList = DataLoader.Instance.LoadCSV<DT_Skill>(Path.Combine(Application.dataPath, "Resources/DataSet/Skill.csv"));
 
         // Dictionary에 데이터를 저장

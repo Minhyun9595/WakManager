@@ -8,8 +8,6 @@ using UnityEngine.UIElements;
 
 public class Projectile_Straight : ProjectileAbstract
 {
-    public Vector3 normalizeDirection = Vector3.zero;
-    public float speed;
 
     public static GameObject Spawn_Straight(string prefabName, Unit_AI _ownerUnitAI, Vector3 _startPosition, Vector3 _targetPosition, float _speed)
     {
@@ -24,6 +22,9 @@ public class Projectile_Straight : ProjectileAbstract
         projectile.SetProjectile(_ownerUnitAI, calculatedDirection, _speed);
         return projectileObject;
     }
+
+    public Vector3 normalizeDirection = Vector3.zero;
+    public float speed;
 
     private void Awake()
     {
@@ -73,10 +74,10 @@ public class Projectile_Straight : ProjectileAbstract
 
         var blackboard = ownerUnitAI.blackboard;
         var damageList = ownerUnitAI.GetDamageList();
-        var myDamageType = blackboard.unitData.GetDamageType();
+        var myDamageType = blackboard.realUnitData.GetDamageType();
 
         targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, targetUnitAI.transform.position);
-        blackboard.unitFieldInfo.Attack();
+        blackboard.unitFieldInfo.AttackActionResetCoolTime();
         ProjectileEffect.Spawn(EPrefabType.Projectile_Wizzard_Hit.ToString(), targetUnitAI.transform.position);
         PoolManager.Instance.ReturnToPool(prefabName, gameObject);
     }

@@ -87,17 +87,24 @@ public class UnitAnimator : MonoBehaviour
         return eAnimationType;
     }
 
+    public Dictionary<string, AnimationClip> GetAnimationClips()
+    {
+        return animationClips;
+    }
+
     public void OnEvent_Attack1()
     {
         if (blackboard != null && blackboard.myGameObject != null)
         {
-            // Unit_AI 스크립트의 Attack 메서드를 호출
             blackboard.myGameObject.SendMessage("Attack1", SendMessageOptions.DontRequireReceiver);
         }
     }
 
-    public Dictionary<string, AnimationClip> GetAnimationClips()
+    public void OnEvent_Skill()
     {
-        return animationClips;
+        if (blackboard != null && blackboard.myGameObject != null)
+        {
+            blackboard.myGameObject.SendMessage("Skill", SendMessageOptions.DontRequireReceiver);
+        }
     }
 }

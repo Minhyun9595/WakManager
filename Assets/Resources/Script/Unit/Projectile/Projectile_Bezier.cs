@@ -8,15 +8,6 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Projectile_Bezier : ProjectileAbstract
 {
-    public Vector3 startPosition;
-    public Vector3 controlPoint1;
-    public Vector3 controlPoint2;
-    public Vector3 endPosition;
-    public Unit_AI targetAI;
-    public Transform targetTransform; // 타겟을 Transform으로 받아서 항상 추적
-    public float life;
-    private float time;  // 이동을 위한 시간 값 (0 ~ 1 사이)
-
     public static GameObject Spawn_Bezier(string prefabName, Unit_AI ownerUnitAI, Unit_AI targetUnitAI, Vector3 start, Vector3 _endPosition, 
         float control1Range, float control2Range, float _life, float _startDelayTime)
     {
@@ -32,6 +23,15 @@ public class Projectile_Bezier : ProjectileAbstract
 
         return projectileObject;
     }
+
+    public Vector3 startPosition;
+    public Vector3 controlPoint1;
+    public Vector3 controlPoint2;
+    public Vector3 endPosition;
+    public Unit_AI targetAI;
+    public Transform targetTransform; // 타겟을 Transform으로 받아서 항상 추적
+    public float life;
+    private float time;  // 이동을 위한 시간 값 (0 ~ 1 사이)
 
     private void Awake()
     {

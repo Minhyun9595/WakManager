@@ -29,7 +29,6 @@ public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Inltialize_DT_TraitValue()
     {
-        Debug.Log("Inltialize_DT_TraitValue");
         List<DT_TraitValue> infoList = DataLoader.Instance.LoadCSV<DT_TraitValue>(Path.Combine(Application.dataPath, "Resources/DataSet/TraitValue.csv"));
 
         // Dictionary에 데이터를 저장
