@@ -33,5 +33,28 @@ namespace QUtility
 
             return indices;
         }
+
+        public static IEnumerable<Unit_AI> GetAllEnemiesInRange(Unit_AI _myUnitAI, int _myTeamIndex, Vector3 _startPosition, float _range)
+        {
+            List<Unit_AI> enemiesInRange = new List<Unit_AI>();
+
+            // 탐색 반경 내의 모든 Collider 가져오기
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(_startPosition, 1000);
+
+            QUtility.UIUtility.DrawDebugCircle(_startPosition, _range, Color.yellow);
+            foreach (Collider2D collider in colliders)
+            {
+                Unit_AI enemyUnit = collider.GetComponent<Unit_AI>();
+                if (enemyUnit != null &&
+                    enemyUnit != _myUnitAI &&
+                    enemyUnit.blackboard.unitFieldInfo.IsDead() == false &&
+                    enemyUnit.GetBlackboard().teamIndex != _myTeamIndex) // 자신은 제외 // 같은 팀은 제외 // 죽은 유닛 제외
+                {
+                    enemiesInRange.Add(enemyUnit);
+                }
+            }
+
+            return enemiesInRange;
+        }
     }
 }

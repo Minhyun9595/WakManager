@@ -8,19 +8,20 @@ public class CooldownNode : BehaviorNode
     private float cooldownTime;
     private float lastExecutionTime;
     private Blackboard blackboard;
+    private DT_Skill dT_Skill;
 
-    public CooldownNode(Blackboard bb, float _cooldownTime)
+    public CooldownNode(Blackboard bb, DT_Skill _dT_Skill)
     {
         blackboard = bb;
-        cooldownTime = _cooldownTime;
-        lastExecutionTime = Time.time; // 쿨타임 대기 후 실행
+        dT_Skill = _dT_Skill;
+        cooldownTime = dT_Skill.CoolTime;
 
+        lastExecutionTime = Time.time; // 쿨타임 대기 후 실행
         //lastExecutionTime = -cooldownTime; // 처음에는 바로 실행 가능하도록 설정
     }
 
     public bool CanExecute()
     {
-        Debug.Log((Time.time - lastExecutionTime >= cooldownTime).ToString());
         return (Time.time - lastExecutionTime >= cooldownTime);
     }
 
@@ -28,6 +29,7 @@ public class CooldownNode : BehaviorNode
     {
         if (CanExecute())
         {
+            Debug.Log($"스킬 발동 {dT_Skill.Name}");
             lastExecutionTime = Time.time;
             return NodeStatus.Success;
         }

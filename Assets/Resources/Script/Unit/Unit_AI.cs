@@ -115,56 +115,79 @@ public class Unit_AI : MonoBehaviour
         rootNode = CreateTankBehaviorTree();
     }
 
+    /*
+     Root
+├── Selector
+    ├── Death Sequence (Check IsDead)
+    │   └── Condition: IsDead?
+    │       ├── True: Action: DoNothing
+    │       └── False: Proceed to next node
+    ├── Skill Selector (Skill Usage)
+    │   ├── Sequence (Skill 1)
+    │   │   ├── Condition: IsSkillReady(Skill1)
+    │   │   └── Action: CastSkill(Skill1)
+    │   ├── Sequence (Skill 2)
+    │   │   ├── Condition: IsSkillReady(Skill2)
+    │   │   └── Action: CastSkill(Skill2)
+    │   └── ... (추가 스킬)
+    └── Default_Sequence (Default Behavior)
+        ├── Default_Selector
+        │   ├── AttackEnemyAction_Sequence
+        │   │   ├── Condition: IsEnemyFound()
+        │   │   └── AttackAction_Selector
+        │   │       ├── Attack_Sequence
+        │   │       │   ├── Condition: IsEnemyInRange()
+        │   │       │   └── Action: Attack()
+        │   │       └── Action: MoveToEnemy()
+        │   └── Action: Idle()
+     */
+
     BehaviorNode CreateTankBehaviorTree()
     {
+        var rootSelectorNode = new SelectorNode();
         // 사망 시퀀스
-        var deadSequence = new SequenceNode();
+        var dead_SequenceNode = new SequenceNode();
         var deadAction = new DeadAction(blackboard);
-        deadSequence.AddChild(deadAction);
+        dead_SequenceNode.AddChild(deadAction);
+        rootSelectorNode.AddChild(dead_SequenceNode); // Death에서 Succress반환하면 이후 안함
 
         // 스킬 셀렉터: 스킬 쿨타임을 검사하여 스킬을 사용
-        var skillSelector = new SelectorNode();
+        var skill_SelectorNode = new SelectorNode();
         foreach (var dT_Skill in blackboard.realUnitData.skillList)
         {
             var skillSequence = new SequenceNode();
+            var coolDownNode = new CooldownNode(blackboard, dT_Skill); // 쿨타임 설정
+            skillSequence.AddChild(coolDownNode);
+            skillSequence.AddChild(new SkillActionNode(blackboard, dT_Skill));
+
+            //if (dT_Skill.Name == "Sirian_Skill_Node")
+            //{
+            //    var sirianSkillNode = new Sirian_Skill_Node(blackboard);
+            //
+            //    skillSequence.AddChild(sirianSkillNode); // 스킬 실행
+            //}
         
-            if (dT_Skill.Name == "Sirian_Skill_Node")
-            {
-                var coolDownNode = new CooldownNode(blackboard, 4); // 쿨타임 설정
-                var sirianSkillNode = new Sirian_Skill_Node(blackboard);
-        
-                skillSequence.AddChild(coolDownNode);  // 쿨타임이 되면
-                skillSequence.AddChild(sirianSkillNode); // 스킬 실행
-            }
-        
-            skillSelector.AddChild(skillSequence);
+            skill_SelectorNode.AddChild(skillSequence);
         }
+        rootSelectorNode.AddChild(skill_SelectorNode);
 
-        var rootSelector = new SelectorNode();
-        var findTargetAction = new FindTargetAction(blackboard);
-        var moveToTargetAction = new MoveToTargetAction(blackboard);
-        var attackAction = new AttackAction(blackboard);
+        var Default_Sequence = new SequenceNode();
+        var Default_Selector = new SelectorNode();
+        var AttackEnemyAction_Sequence = new SequenceNode();
+        AttackEnemyAction_Sequence.AddChild(new IsEnemyFoundCondition(blackboard));
+        var AttackAction_Selector = new SelectorNode();
+        var Attack_Sequence = new SequenceNode();
+        Attack_Sequence.AddChild(new IsEnemyInRangeCondition(blackboard));
+        Attack_Sequence.AddChild(new AttackAction(blackboard));
+        AttackAction_Selector.AddChild(Attack_Sequence);
+        AttackAction_Selector.AddChild(new MoveToTargetAction(blackboard));
+        AttackEnemyAction_Sequence.AddChild(AttackAction_Selector);
+        Default_Selector.AddChild(AttackEnemyAction_Sequence);
+        Default_Selector.AddChild(new IdleAction(blackboard));
+        Default_Sequence.AddChild(Default_Selector);
+        rootSelectorNode.AddChild(Default_Sequence);
 
-        // 공격 시퀀스
-        var attackSequence = new SequenceNode();
-        attackSequence.AddChild(findTargetAction);
-        attackSequence.AddChild(moveToTargetAction);
-        attackSequence.AddChild(attackAction);
-
-        rootSelector.AddChild(attackSequence);
-
-        // 대기 시퀀스
-        var idleSequence = new SequenceNode();
-        var idleAction = new IdleAction(blackboard);
-        idleSequence.AddChild(idleAction);
-        rootSelector.AddChild(idleSequence);
-
-        // Parallel 시퀀스
-        var rootParallel = new ParallelNode(1, 99);
-        rootParallel.AddChild(deadSequence); // Death에서 Succress반환하면 이후 안함
-        rootParallel.AddChild(rootSelector);
-
-        return rootParallel;
+        return rootSelectorNode;
     }
 
     private void Update()
