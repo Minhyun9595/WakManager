@@ -1,4 +1,9 @@
-Index,Name,IsDeveloped,RoleIndex,RoleName,MaxTraitCount,FixTraitType,Animator,AttackType,AttackPrefabName,NormalSkills,SpecialSkills,MaxTraitCount,FixTraitType
-1,단답벌레,1,3,암살자,3,0,단답벌레,Melee,,,,3,0
-2,풍신,1,2,마법사,3,0,풍신,Projectile,Projectile_Wizzard,추적 ,추적2,3,0
-3,진희,1,0,탱커,3,0,Warrior,Melee,,,,3,0
+Index,Name,IsDeveloped,RoleIndex,RoleName,Animator,AttackType,AttackPrefabName,NormalSkills,SpecialSkills,MaxTraitCount,FixTraitType
+1,단답벌레,1,3,암살자,단답벌레,Melee,,,,3,0
+2,풍신,1,2,마법사,풍신,Projectile,Projectile_Wizzard,추적 ,추적2,3,0
+3,진희,1,0,탱커,진희,Melee,,,,3,0
+4,비즈니스킴,1,3,암살자,비즈니스킴,Melee,,,,3,0
+5,빅토리,1,5,서포터,빅토리,Projectile,Projectile_Wizzard,,,3,0
+6,샬롯,1,1,전사,샬롯,Melee,,,,3,0
+7,크리즈,1,0,탱커,크리즈,Melee,,,,3,0
+8,히키킹,1,1,전사,히키킹,Melee,,,,3,0

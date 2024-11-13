@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,24 +20,31 @@ public class UnitAnimator : MonoBehaviour
     }
     public void InitAnimationController(Blackboard _blackboard, string _animationControllerName)
     {
-        blackboard = _blackboard;
-        if (animationCoroutine != null)
+        try
         {
-            StopCoroutine(animationCoroutine);
-            animationCoroutine = null;
-            blackboard.isAnimationPlaying = false;
+            blackboard = _blackboard;
+            if (animationCoroutine != null)
+            {
+                StopCoroutine(animationCoroutine);
+                animationCoroutine = null;
+                blackboard.isAnimationPlaying = false;
+            }
+
+            animator = gameObject.GetComponent<Animator>();
+            var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{_animationControllerName}/{_animationControllerName}");
+            animator.runtimeAnimatorController = controller;
+            animator.Play(EAnimationType.Idle.ToString());
+
+            // 애니메이션 클립 저장
+            animationClips.Clear();
+            foreach (var clip in controller.animationClips)
+            {
+                animationClips[clip.name] = clip;
+            }
         }
-
-        animator = gameObject.GetComponent<Animator>();
-        var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{_animationControllerName}/{_animationControllerName}");
-        animator.runtimeAnimatorController = controller;
-        animator.Play(EAnimationType.Idle.ToString());
-
-        // 애니메이션 클립 저장
-        animationClips.Clear();
-        foreach (var clip in controller.animationClips)
+        catch (Exception e)
         {
-            animationClips[clip.name] = clip;
+            Debug.LogError(e.ToString());
         }
     }
 
