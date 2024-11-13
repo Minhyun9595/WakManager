@@ -3,6 +3,98 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public class Unitcondition
+{
+    public int CurrentContdition;
+    public EUnitConditionType EConditionType;
+    public EUnitTier eUnitTier;
+
+    public int Professionalism;
+    public int Ambition;
+    public int Injury_Proneness;
+    public int Consistency;
+    public int Pressure_Handling;
+    public int Teamwork;
+    public int Preparation;
+    public int Diligence;
+
+    public Unitcondition(EUnitTier _eUnitTier)
+    {
+        eUnitTier = _eUnitTier;
+        
+        Professionalism = Random.Range(1, 21);
+        Ambition = Random.Range(1, 21);
+        Injury_Proneness = Random.Range(1, 21);
+        Consistency = Random.Range(1, 21);
+        Pressure_Handling = Random.Range(1, 21);
+        Teamwork = Random.Range(1, 21);
+        Preparation = Random.Range(1, 21);
+        Diligence = Random.Range(1, 21);
+
+        CurrentContdition = 80;
+    }
+
+    public EUnitConditionType GetCondition()
+    {
+        if (CurrentContdition >= 90)
+        {
+            EConditionType = EUnitConditionType.Superb;
+        }
+        else if (CurrentContdition >= 80)
+        {
+            EConditionType = EUnitConditionType.Good;
+        }
+        else if (CurrentContdition >= 65)
+        {
+            EConditionType = EUnitConditionType.Okay;
+        }
+        else if (CurrentContdition >= 40)
+        {
+            EConditionType = EUnitConditionType.Poor;
+        }
+        else
+        {
+            EConditionType = EUnitConditionType.VeryPoor;
+        }
+
+        return EConditionType;
+    }
+
+    public void ProgressCondition()
+    {
+        var addPoint = 0;
+        switch (eUnitTier)
+        {
+            case EUnitTier.WorldClass:
+                addPoint += 50;
+                break;
+            case EUnitTier.LeagueStar:
+                addPoint += 30;
+                break;
+            case EUnitTier.FirstTeam:
+                addPoint += 25;
+                break;
+            case EUnitTier.Rotation:
+                addPoint += 20;
+                break;
+            case EUnitTier.Prospect:
+                addPoint += 10;
+                break;
+            case EUnitTier.SurplustoRequirements:
+                addPoint += 0;
+                break;
+        }
+
+    }
+
+    public int GetConditionValue()
+    {
+        var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Pressure_Handling + Teamwork + Preparation + Diligence);
+        totalValue /= 20;
+        return totalValue;
+    }
+}
+
 [System.Serializable]
 public class UnitData
 {
@@ -12,7 +104,9 @@ public class UnitData
     public DT_UnitInfo_Immutable unitInfo_Immutable;
 
     // 캐릭터 생성할 때 고정
+    public EUnitTier eUnitTier;
     public List<int> traitIndexList;
+    public Unitcondition unitCondition;
 
     // 성장 한계치
 
@@ -20,14 +114,16 @@ public class UnitData
     public List<DT_Skill> skillList;
     public List<DT_Trait> traitList;
 
-    public static UnitData CreateNewUnit(int _unitIndex)
+    public static UnitData CreateNewUnit(EUnitTier _eUnitTier, int _unitIndex)
     {
         UnitData unitData = new UnitData();
+        unitData.eUnitTier = _eUnitTier;
         unitData.unitUniqueID = System.Guid.NewGuid().ToString();
         unitData.unitIndex = _unitIndex;
         unitData.unitStat = DT_UnitStat.GetInfoByIndex(_unitIndex);
         unitData.unitInfo_Immutable = DT_UnitInfo_Immutable.GetInfoByIndex(_unitIndex);
 
+        unitData.unitCondition = new Unitcondition(_eUnitTier);
         unitData.skillList = new List<DT_Skill>();
         foreach (var skillNmae in unitData.unitInfo_Immutable.SkillNameList)
         {
@@ -52,7 +148,7 @@ public class UnitData
     public static UnitData CopyNewUnit(UnitData originUnitData)
     {
         var origin_UnitIndex = originUnitData.unitIndex;
-        UnitData newUnitData = CreateNewUnit(origin_UnitIndex);
+        UnitData newUnitData = CreateNewUnit(originUnitData.eUnitTier, origin_UnitIndex);
         newUnitData.unitUniqueID = originUnitData.unitUniqueID;
         newUnitData.traitIndexList = originUnitData.traitIndexList;
 
@@ -102,6 +198,10 @@ public class UnitData
             var trait = traitList[i];
             point += DT_TraitValue.GetInfoByIndex(trait.Rank).Value;
         }
+        
+        // 컨디션 점수
+        
+        // 티어 점수
 
         return point;
     }

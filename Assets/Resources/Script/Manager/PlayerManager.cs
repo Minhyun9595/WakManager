@@ -218,17 +218,21 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     private List<UnitData> CreateNewCards(int _createCount)
     {
         Debug.Log($"CreateNewCards - {_createCount}");
+
         List<UnitData> cards = new List<UnitData>();
-
+        // EUnitTier¸¦ ¼øÈ¸
         var keys = DT_UnitInfo_Immutable.GetKeys();
-        for (int i = 0; i < _createCount; i++)
+
+        foreach (var item in Enum.GetValues(typeof(EUnitTier)))
         {
-            var randUnitIndex = UnityEngine.Random.Range(0, keys.Count);
-            var unitIndex = keys[randUnitIndex];
+            var unitTier = (EUnitTier)item;
+            for (int i = 0; i < keys.Count; i++)
+            {
+                var unitIndex = keys[i];
+                var unitData = UnitData.CreateNewUnit(unitTier, unitIndex);
 
-            var unitData = UnitData.CreateNewUnit(unitIndex);
-
-            cards.Add(unitData);
+                cards.Add(unitData);
+            }
         }
 
         return cards;
