@@ -16,8 +16,9 @@ public class SaveData
 
     public List<UnitData> worldUnitDatas = new List<UnitData>();
     public List<UnitData> market_UnitCardDatas = new List<UnitData>();
-    public List<UnitData> player_Squad_UnitCardDatas = new List<UnitData>();
-    public List<UnitData> player_InSquad_UnitCardDatas = new List<UnitData>();
+    public TeamInfo playerTeamInfo = new TeamInfo();
+    public List<TeamInfo> worldTeamList = new List<TeamInfo>();
+    public string gameScheduleData;
 }
 
 public enum SceneChangeType
@@ -50,8 +51,9 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     private float playTime;
     [SerializeField] private List<UnitData> worldUnitCardDatas = new List<UnitData>();
     [SerializeField] private List<UnitData> market_UnitCardDatas = new List<UnitData>();
-    [SerializeField] private List<UnitData> player_Squad_UnitCardDatas = new List<UnitData>();
-    [SerializeField] private List<UnitData> player_InSquad_UnitCardDatas = new List<UnitData>();
+    [SerializeField] private TeamInfo playerTeamInfo = new TeamInfo();
+    [SerializeField] private List<TeamInfo> worldTeamList = new List<TeamInfo>();
+    [SerializeField] private GameSchedule gameSchedule = new GameSchedule();
 
     void Start()
     {
@@ -81,8 +83,9 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         saveData.playTime = playTime;
         saveData.worldUnitDatas = worldUnitCardDatas;
         saveData.market_UnitCardDatas = market_UnitCardDatas;
-        saveData.player_Squad_UnitCardDatas = player_Squad_UnitCardDatas;
-        saveData.player_InSquad_UnitCardDatas = player_InSquad_UnitCardDatas;
+        saveData.playerTeamInfo = playerTeamInfo;
+        saveData.worldTeamList = worldTeamList;
+        saveData.gameScheduleData = gameSchedule.ToJson();
 
         var filePath = Path.Combine(saveFolderPath, $"saveData_{index}.json");
         string json = JsonUtility.ToJson(saveData, true);
@@ -162,10 +165,32 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     {
         Debug.Log("Load_NewWorld");
         playTime = 0.0f;
-        worldUnitCardDatas = CreateNewCards(20);
+        worldUnitCardDatas = CreateWorldCard(20);
         market_UnitCardDatas.Clear();
-        player_Squad_UnitCardDatas.Clear();
-        player_InSquad_UnitCardDatas.Clear();
+        playerTeamInfo.Clear();
+        playerTeamInfo.Initialize();
+
+        // 팀 32개 만들기
+        worldTeamList.Clear();
+        for (int i = 0; i < 32; i++)
+        {
+            var team = new TeamInfo();
+            team.Initialize();
+            worldTeamList.Add(team);
+        }
+
+        foreach (var team in worldTeamList)
+        {
+            var teamCardList = CreateCard(EUnitTier.SurplustoRequirements, 5);
+            foreach(var unit in teamCardList)
+            {
+                team.AddInSquadUnit(unit);
+            }
+        }
+
+        // 스케줄 생성
+        gameSchedule.GenerateMonthlyCalendar(2525, 1);
+        gameSchedule.GenerateMonthlyCalendar(2525, 2);
     }
 
     // 로딩한 게임
@@ -177,13 +202,17 @@ public class PlayerManager : CustomSingleton<PlayerManager>
 
         worldUnitCardDatas = loadData.worldUnitDatas;
         market_UnitCardDatas = loadData.market_UnitCardDatas;
-        player_Squad_UnitCardDatas = loadData.player_Squad_UnitCardDatas;
-        player_InSquad_UnitCardDatas = loadData.player_InSquad_UnitCardDatas;
+        playerTeamInfo = loadData.playerTeamInfo;
+        worldTeamList = loadData.worldTeamList;
+        gameSchedule.FromJson(loadData.gameScheduleData);
 
         Load_UnitInit(worldUnitCardDatas);
         Load_UnitInit(market_UnitCardDatas);
-        Load_UnitInit(player_Squad_UnitCardDatas);
-        Load_UnitInit(player_InSquad_UnitCardDatas);
+        playerTeamInfo.Load_UnitInit();
+        foreach (var team in worldTeamList)
+        {
+            team.Load_UnitInit();
+        }
     }
 
     private void Load_UnitInit(List<UnitData> unitDatas)
@@ -193,6 +222,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
             unitData.LoadUnit();
         }
     }
+
     public ESceneType GetSceneType() { return sceneType; }
 
     public List<UnitData> GetRandomWorldCard(int cardCount)
@@ -214,11 +244,28 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         return list;
     }
 
-
-    private List<UnitData> CreateNewCards(int _createCount)
+    private List<UnitData> CreateCard(EUnitTier _tier, int _createCount)
     {
-        Debug.Log($"CreateNewCards - {_createCount}");
+        List<UnitData> cards = new List<UnitData>();
+        // EUnitTier를 순회
+        var keys = DT_UnitInfo_Immutable.GetKeys();
 
+        for (int i = 0; i < keys.Count; i++)
+        {
+            if (_createCount <= i)
+                break;
+
+            var unitIndex = keys[i];
+            var unitData = UnitData.CreateNewUnit(_tier, unitIndex);
+
+            cards.Add(unitData);
+        }
+
+        return cards;
+    }
+
+    private List<UnitData> CreateWorldCard(int _createCount)
+    {
         List<UnitData> cards = new List<UnitData>();
         // EUnitTier를 순회
         var keys = DT_UnitInfo_Immutable.GetKeys();
@@ -243,7 +290,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         var buyCard = worldUnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
         if (buyCard != null)
         {
-            player_Squad_UnitCardDatas.Add(buyCard);
+            playerTeamInfo.AddSquadUnit(buyCard);
             market_UnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID);
             worldUnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID); // ID와 일치하는 모든 항목 제거
         }
@@ -253,43 +300,23 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         }
     }
 
-    public bool SquadActionUnitCard(string unitUniqueID, bool isAdd)
-    {
-        if(isAdd)
-        {
-            var inSquadCard = player_InSquad_UnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
-
-            if (inSquadCard != null)
-            {
-                Debug.Log("이미 스쿼드에 들어가있는 카드");
-                return true;
-            }
-
-            var squadCard = player_Squad_UnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
-            player_InSquad_UnitCardDatas.Add(squadCard);
-        }
-        else
-        {
-            player_InSquad_UnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID);
-            return true;
-        }
-
-        return false;
-    }
-
-
     public List<UnitData> GetMarketDatas()
     {
         return market_UnitCardDatas;
     }
 
+    public bool SquadActionUnitCard(string unitUniqueID, bool isAdd)
+    {
+        return playerTeamInfo.SquadActionUnitCard(unitUniqueID, isAdd);
+    }
+
     public List<UnitData> GetPlayer_SquadUnitDatas()
     {
-        return player_Squad_UnitCardDatas;
+        return playerTeamInfo.GetPlayer_SquadUnitDatas();
     }
 
     public List<UnitData> GetPlayer_InSquadUnitDatas()
     {
-        return player_InSquad_UnitCardDatas;
+        return playerTeamInfo.GetPlayer_InSquadUnitDatas();
     }
 }
