@@ -4,6 +4,7 @@ using System.Collections.Generic;
 [System.Serializable]
 public class TeamInfo
 {
+    public int Money; // 돈
     public int Population; // 인기도
     public int MaintenanceCosts; // 유지비
     public int Reputation; // 평판
@@ -14,6 +15,7 @@ public class TeamInfo
 
     public void Initialize()
     {
+        Money = 0;
         Population = 0;
         MaintenanceCosts = 0;
         Reputation = 0;
@@ -24,6 +26,7 @@ public class TeamInfo
 
     public void Clear()
     {
+        Money = 0;
         Population = 0;
         MaintenanceCosts = 0;
         Reputation = 0;

@@ -86,6 +86,8 @@ public enum EPanelPrefabType
     Panel_Market,
     Panel_TraitPopup,
     Panel_Squad,
+    Panel_Schedule,
+    Panel_Traning,
 }
 
 

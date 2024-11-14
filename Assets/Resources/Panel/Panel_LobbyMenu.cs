@@ -18,6 +18,7 @@ public class Panel_LobbyMenu : PanelAbstract
     public Button Button_TeamInfo;
     public Button Button_TeamRecord;
     public Button Button_SavePanel;
+    public Button Button_InternationalActivity;
 
     void Start()
     {
@@ -30,6 +31,7 @@ public class Panel_LobbyMenu : PanelAbstract
         Button_TeamInfo = InitializeButton("Button_TeamInfo", OnClick_TeamInfo);
         Button_TeamRecord = InitializeButton("Button_TeamRecord", OnClick_TeamRecord);
         Button_SavePanel = InitializeButton("Button_SavePanel", OnClick_SavePanel);
+        Button_InternationalActivity = InitializeButton("Button_InternationalActivity", OnClick_InternationalActivity);
     }
 
     private Button InitializeButton(string buttonName, UnityAction onClickAction)
@@ -57,14 +59,27 @@ public class Panel_LobbyMenu : PanelAbstract
     }
 
     private void OnClick_CardGacha() { /* CardGacha 버튼 클릭 시 실행할 코드 */ }
-    private void OnClick_Schedule() { /* Schedule 버튼 클릭 시 실행할 코드 */ }
-    private void OnClick_Traning() { /* Traning 버튼 클릭 시 실행할 코드 */ }
+
+    private void OnClick_Schedule() 
+    {
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Schedule);
+    }
+
+    private void OnClick_Traning() 
+    { 
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Traning);
+    }
     private void OnClick_TeamInfo() { /* TeamInfo 버튼 클릭 시 실행할 코드 */ }
     private void OnClick_TeamRecord() { /* TeamRecord 버튼 클릭 시 실행할 코드 */ }
 
     private void OnClick_SavePanel() 
     {
         PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_SaveData);
+    }
+
+    private void OnClick_InternationalActivity()
+    {
+
     }
 
 }

@@ -590,26 +590,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1612088011052061649, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_TeamInfo
-      objectReference: {fileID: 0}
-    - target: {fileID: 1735265188500371281, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_Schedule
-      objectReference: {fileID: 0}
-    - target: {fileID: 1814207348828623816, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Color.b
-      value: 0.8962264
-      objectReference: {fileID: 0}
-    - target: {fileID: 1814207348828623816, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1814207348828623816, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Color.r
-      value: 0.012725322
-      objectReference: {fileID: 0}
     - target: {fileID: 2995468792809225338, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -662,10 +642,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Panel_LobbyMenu
       objectReference: {fileID: 0}
-    - target: {fileID: 4689766854540605154, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_Squad
-      objectReference: {fileID: 0}
     - target: {fileID: 5152095545625940367, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -714,10 +690,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5868464527045061317, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_Market
-      objectReference: {fileID: 0}
     - target: {fileID: 6268447774099583583, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -742,10 +714,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6628291899367736679, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_CardGacha
-      objectReference: {fileID: 0}
     - target: {fileID: 6687619429182840619, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -769,10 +737,6 @@ PrefabInstance:
     - target: {fileID: 6687619429182840619, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7068505253151950267, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_SavePanel
       objectReference: {fileID: 0}
     - target: {fileID: 7339553873288118722, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_Pivot.x
@@ -854,21 +818,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7827802501441044578, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_Traning
+    - target: {fileID: 8102630204979421136, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8175455541591909394, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_TeamRecord
+    - target: {fileID: 8102630204979421136, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8188199981759265059, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_text
-      value: "\uC120\uC218 \uCE74\uB4DC \uBF51\uAE30"
+    - target: {fileID: 8102630204979421136, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8375097050933533555, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 8102630204979421136, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8102630204979421136, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8102630204979421136, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8376478459135675397, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_AnchorMax.y
@@ -917,14 +889,6 @@ PrefabInstance:
     - target: {fileID: 8464290548167518645, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8599925442199526258, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_Name
-      value: Button_News
-      objectReference: {fileID: 0}
-    - target: {fileID: 9032090568663226949, guid: a4e715a78949cf64ba90b2ffd3684e18, type: 3}
-      propertyPath: m_text
-      value: "\uC2A4\uCFFC\uB4DC"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

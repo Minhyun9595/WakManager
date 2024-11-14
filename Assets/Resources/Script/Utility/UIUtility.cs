@@ -114,6 +114,26 @@ namespace QUtility
             var sprite = Resources.Load<Sprite>($"Sprite/icon/{iconSprite}");
             return sprite;
         }
+
+        public static Color HexToColor(string hex)
+        {
+            if (hex.StartsWith("#"))
+            {
+                hex = hex.Substring(1);
+            }
+
+            if (hex.Length != 6)
+            {
+                Debug.LogWarning("Invalid hex color length. Expected 6 characters (e.g., '00AB40').");
+                return Color.black;
+            }
+
+            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+
+            return new Color32(r, g, b, 255);
+        }
     }
 
 }

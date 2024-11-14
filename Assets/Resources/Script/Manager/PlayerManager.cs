@@ -53,7 +53,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     [SerializeField] private List<UnitData> market_UnitCardDatas = new List<UnitData>();
     [SerializeField] private TeamInfo playerTeamInfo = new TeamInfo();
     [SerializeField] private List<TeamInfo> worldTeamList = new List<TeamInfo>();
-    [SerializeField] private GameSchedule gameSchedule = new GameSchedule();
+    [SerializeField] public GameSchedule gameSchedule = new GameSchedule(2525, 1);
 
     void Start()
     {

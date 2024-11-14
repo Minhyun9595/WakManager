@@ -14,7 +14,7 @@ public class GridItem_Trait : GridAbstract, GridInterface
     public TextMeshProUGUI RankText;
 
 
-    public void Init(GameObject _gameObject)
+    public new void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         TraitImage = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "TraitImage");
@@ -52,7 +52,7 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
 
     public List<GridItem_Trait> gridItem_Traits = new List<GridItem_Trait>();
 
-    public void Init(GameObject _gameObject)
+    public new void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         UnitImage = UIUtility.FindComponentInChildrenByName<Animator>(gameObject, "UnitImage");
@@ -142,11 +142,6 @@ public class Panel_Market : PanelAbstract
                 SetCard(i, marketDatas[i]);
             }
         }
-    }
-
-    void Update()
-    {
-        
     }
 
     void OnClick_Make()
