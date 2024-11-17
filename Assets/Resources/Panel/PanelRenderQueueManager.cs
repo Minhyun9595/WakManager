@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 
 public interface GridInterface
 {
-    public void Init(GameObject _gameObject);
+    public abstract void Init(GameObject _gameObject);
 }
 
 public abstract class GridAbstract
 {
     public GameObject gameObject;
 
-    public void Init(GameObject _gameObject)
+    public virtual void Init(GameObject _gameObject)
     {
         gameObject = _gameObject;
     }
@@ -22,6 +22,12 @@ public abstract class GridAbstract
 
 public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 {
+    public enum ECanvasType
+    {
+        Canvas,
+        FrontCanvas,
+    }
+
 
     public static List<GameObject> PanelPrefabs = new List<GameObject>();
     public static Dictionary<string, GameObject> SpawnedPanels = new Dictionary<string, GameObject>();
@@ -74,9 +80,9 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
         PanelPrefabs.Clear();
     }
 
-    public static GameObject OpenPanel(string panelName)
+    public static GameObject OpenPanel(string panelName, ECanvasType eCanvasType = ECanvasType.Canvas)
     {
-        var CanvasTransform = GameObject.FindWithTag("Canvas").transform;
+        var CanvasTransform = GameObject.FindWithTag(eCanvasType.ToString()).transform;
         GameObject panel = null;
         if (SpawnedPanels.TryGetValue(panelName, out panel))
         {
@@ -109,9 +115,9 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
         return null;
     }
 
-    public static GameObject OpenPanel(EPanelPrefabType ePanelPrefabType)
+    public static GameObject OpenPanel(EPanelPrefabType ePanelPrefabType, ECanvasType eCanvasType = ECanvasType.Canvas)
     {
-        return OpenPanel(ePanelPrefabType.ToString());
+        return OpenPanel(ePanelPrefabType.ToString(), eCanvasType);
     }
 
     private void CloseFrontPanel()
@@ -132,7 +138,7 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
     {
         if (OpenPanelList.Count == 0)
             return null;
-        var last = OpenPanelList.Last();
+        var last = OpenPanelList.Last(x => x.isCanClose == true);
         OpenPanelList.RemoveAt(OpenPanelList.Count - 1);
 
         return last;

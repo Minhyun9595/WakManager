@@ -1,20 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class TeamInfo
 {
+    public string TeamIndex;
+    public string Name;
     public int Money; // 돈
     public int Population; // 인기도
     public int MaintenanceCosts; // 유지비
     public int Reputation; // 평판
+    
 
     public List<UnitData> player_Squad_UnitCardDatas = new List<UnitData>();
     public List<UnitData> player_InSquad_UnitCardDatas = new List<UnitData>();
     public List<BattleReport> teamBattleReports = new List<BattleReport>();
 
-    public void Initialize()
+    // AI 팀용 데이터
+    public EUnitTier teamTier;
+
+    public void Initialize(EUnitTier _teamTier, string teamName)
     {
+        TeamIndex = System.Guid.NewGuid().ToString();
+        teamTier = _teamTier;
+        Name = teamName;
         Money = 0;
         Population = 0;
         MaintenanceCosts = 0;
@@ -66,7 +76,12 @@ public class TeamInfo
 
             if (inSquadCard != null)
             {
-                return true;
+                return false;
+            }
+
+            if (5 < player_InSquad_UnitCardDatas.Count)
+            { 
+                return false;
             }
 
             var squadCard = player_Squad_UnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
@@ -75,10 +90,9 @@ public class TeamInfo
         else
         {
             player_InSquad_UnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID);
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     public List<UnitData> GetPlayer_SquadUnitDatas()
@@ -89,5 +103,22 @@ public class TeamInfo
     public List<UnitData> GetPlayer_InSquadUnitDatas()
     {
         return player_InSquad_UnitCardDatas;
+    }
+
+    public void AddMoney(int _money)
+    {
+        Money += _money;
+        FrontInfoCanvas.Instance?.SetMoneyText(Money);
+    }
+
+    public bool ReduceMoney(int _money)
+    {
+        if (Money < _money)
+            return false;
+
+        Money -= _money;
+        FrontInfoCanvas.Instance?.SetMoneyText(Money);
+
+        return true;
     }
 }

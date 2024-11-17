@@ -3,14 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class UnitReport
 {
     public int unitIndex;
     public string unitUniqueID;
-    public int DamagePoint;
-    public int GetDamagePoint;
-    public int HealPoint;
 
+    public float Damage_Total;
+    public float Damage_Physical;
+    public float Damage_Magical;
+    public float Damage_True;
+    public float DamageReceive_Total;
+    public float DamageReceive_Physical;
+    public float DamageReceive_Magical;
+    public float DamageReceive_True;
+
+    public float Heal_Amount;
+    public float Heal_Receive;
+    public float MoveDistance;
+
+    public int KillCount;
+    public int DeathCount;
+    public int AssistCount;
+
+    public void Set(Unit_AI unit_AI)
+    {
+        var bb = unit_AI.blackboard;
+        unitIndex = unit_AI.blackboard.realUnitData.unitIndex;
+        unitUniqueID = unit_AI.blackboard.realUnitData.unitUniqueID;
+
+    }
 }
 
 [System.Serializable]
@@ -25,14 +47,8 @@ public class TeamBattleReport
 
     public void AddUnitReport(Unit_AI unitAI)
     {
-        UnitReport unitReport = new UnitReport();
-        unitReport.unitIndex = unitAI.blackboard.realUnitData.unitIndex;
-        unitReport.unitUniqueID = unitAI.blackboard.realUnitData.unitUniqueID;
-
-        //unitReport.DamagePoint = unitAI.DamagePoint;
-        //unitReport.GetDamagePoint = unitAI.GetDamagePoint;
-        //unitReport.HealPoint = unitAI.HealPoint;
-
+        UnitReport unitReport = unitAI.blackboard.unitReport;
+        unitReport.Set(unitAI);
         unitReports.Add(unitReport);
     }
 }

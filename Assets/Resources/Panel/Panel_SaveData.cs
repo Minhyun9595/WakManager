@@ -17,7 +17,7 @@ public class GridItem_SaveData : GridAbstract, GridInterface
     public TextMeshProUGUI TimeText;
     public TextMeshProUGUI SaveText;
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         FocusButton = gameObject.GetComponent<Button>();
@@ -46,7 +46,10 @@ public class GridItem_SaveData : GridAbstract, GridInterface
         }
         else
         {
-            NameText.text = saveData.saveName;
+            GameSchedule gameSchedule = new GameSchedule(1, 1);
+            gameSchedule.FromJson(saveData.gameScheduleData);
+
+            NameText.text = $"{saveData.saveName} - {gameSchedule.GetPlayDay()}ÀÏÂ÷";
             TimeText.text = saveData.saveTime.ToString();
             IndexText.gameObject.SetActive(true);
             TimeText.gameObject.SetActive(true);

@@ -9,6 +9,7 @@ using System.Reflection;
 
 public class GridItem_Day : GridAbstract, GridInterface
 {
+    public Outline outline;
     public Image image;
     public TextMeshProUGUI DayText;
     public TextMeshProUGUI ScheduleText;
@@ -17,6 +18,7 @@ public class GridItem_Day : GridAbstract, GridInterface
     {
         base.Init(_gameObject);
         image = gameObject.GetComponent<Image>();
+        outline = gameObject.GetComponent<Outline>();
         DayText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "DayText");
         ScheduleText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "ScheduleText");
         DayText.text = "";
@@ -33,6 +35,7 @@ public class GridItem_Day : GridAbstract, GridInterface
     public void Set(Schedule _schedule)
     {
         SetColorAlpha(true);
+        outline.enabled = false;
         DayText.text = _schedule.Day.ToString();
 
         switch (_schedule.Type)
@@ -58,6 +61,11 @@ public class GridItem_Day : GridAbstract, GridInterface
                 break;
         }
     }
+
+    public void SetToday()
+    {
+        outline.enabled = true;
+    }
 }
 
 public class Panel_Schedule : PanelAbstract
@@ -70,11 +78,13 @@ public class Panel_Schedule : PanelAbstract
 
     public int currentShowYear = -1;
     public int currentShowMonth = -1;
-    void Start()
-    {
-        currentShowYear = PlayerManager.Instance.gameSchedule.CurrentYear;
-        currentShowMonth = PlayerManager.Instance.gameSchedule.CurrentMonth;
+    public int currentDay = -1;
 
+    private void Awake()
+    {
+        currentShowYear = PlayerManager.Instance.gameSchedule.CurrentDate.Year;
+        currentShowMonth = PlayerManager.Instance.gameSchedule.CurrentDate.Month;
+        currentDay = PlayerManager.Instance.gameSchedule.CurrentDate.Day;
         CurrentMonthText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "CurrentMonthText");
         BeforeButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "BeforeButton");
         AfterButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "AfterButton");
@@ -93,6 +103,20 @@ public class Panel_Schedule : PanelAbstract
 
         BeforeButton.onClick.AddListener(() => OnClick_MoveMonthButton(-1));
         AfterButton.onClick.AddListener(() => OnClick_MoveMonthButton(1));
+    }
+
+    void Start()
+    {
+        PanelUpdate();
+    }
+
+    public override void Open()
+    {
+        base.Open();
+        FrontInfoCanvas.Instance.SetPanelName("스케줄");
+        currentShowYear = PlayerManager.Instance.gameSchedule.CurrentDate.Year;
+        currentShowMonth = PlayerManager.Instance.gameSchedule.CurrentDate.Month;
+        currentDay = PlayerManager.Instance.gameSchedule.CurrentDate.Day;
         PanelUpdate();
     }
 
@@ -103,6 +127,8 @@ public class Panel_Schedule : PanelAbstract
 
         DateTime firstDay = new DateTime(currentShowYear, currentShowMonth, 1);
         int startOffset = (int)firstDay.DayOfWeek;
+
+        DateTime today = PlayerManager.Instance.gameSchedule.CurrentDate;
 
         for (int i = 0; i < gridList.Count; i++)
         {
@@ -117,12 +143,22 @@ public class Panel_Schedule : PanelAbstract
             {
                 Schedule schedule = monthlyScheduleList[day - 1];
                 gridList[gridIndex].Set(schedule);
+                gridList[gridIndex].gameObject.GetComponent<Outline>().enabled = false;
+
+                // 오늘 날짜와 같은 날이면 컬러 변경
+                if (currentShowYear == today.Year && currentShowMonth == today.Month && day == today.Day)
+                {
+                    gridList[gridIndex].SetToday();
+                }
             }
         }
     }
 
     void OnClick_MoveMonthButton(int direction)
     {
+            var beforeYear = currentShowYear;
+        var beforeMonth = currentShowMonth;
+
         currentShowMonth += direction;
 
         if (13 <= currentShowMonth)
@@ -134,6 +170,14 @@ public class Panel_Schedule : PanelAbstract
         {
             currentShowYear -= 1;
             currentShowMonth = 12;
+        }
+
+        if(currentShowYear < PlayerManager.Instance.gameSchedule.StartDate.Year)
+        {
+            // 과거로 못감.
+            currentShowYear = beforeYear;
+            currentShowMonth = beforeMonth;
+            return;
         }
 
         PanelUpdate();

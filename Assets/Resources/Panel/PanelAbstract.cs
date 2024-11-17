@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PanelAbstract : MonoBehaviour
 {
-    public void Open()
+    public bool isCanClose = true;
+    public virtual void Open()
     {
         PanelRenderQueueManager.Instance.PushPanel(this);
         gameObject.SetActive(true);
     }
 
-    public void Close()
+    public virtual void Close()
     {
         PanelRenderQueueManager.Instance.ClosePanel(this);
     }

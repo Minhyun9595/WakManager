@@ -1,19 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 [System.Serializable]
 public class TeamUnitData
 {
+    public string TeamIndex;
     public List<int> unitIndices = new List<int>();
+    public List<UnitData> unitDatas = new List<UnitData>();
 }
 
 [System.Serializable]
 public class SpawnedUnit
 {
+    public string TeamIndex;
     public List<Unit_AI> units = new List<Unit_AI>();
 }
 
@@ -32,7 +37,9 @@ public class FieldManager : MonoBehaviour
 
     public void Awake()
     {
+        StageBG = GameObject.FindWithTag("StageBG");
         instance = this;
+        InitMapData();
     }
 
     [SerializeField] private List<TeamUnitData> teamUnitIndices = new List<TeamUnitData>();
@@ -40,10 +47,49 @@ public class FieldManager : MonoBehaviour
 
     [SerializeField] private TeamPanel teamPanel_1;
     [SerializeField] private TeamPanel teamPanel_2;
-    private void Start()
+
+    private void Update()
     {
-        StageBG = GameObject.FindWithTag("StageBG");
-        InitMapData();
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            StartGame();
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            ResetGame();
+        }
+    }
+
+    public void SetInGame(List<TeamInfo> _teamInfoList)
+    {
+        spawnedUnits.Clear();
+        teamUnitIndices.Clear();
+
+        foreach (var teamInfo in _teamInfoList)
+        {
+            var teamUnitData = new TeamUnitData();
+            teamUnitData.TeamIndex = teamInfo.TeamIndex;
+            foreach (var unit in teamInfo.player_InSquad_UnitCardDatas)
+            {
+                teamUnitData.unitDatas.Add(unit);
+            }
+
+            teamUnitIndices.Add(teamUnitData);
+        }
+
+        // 게임 시작
+        var teamCount = teamUnitIndices.Count;
+
+        spawnedUnits = new List<SpawnedUnit>();
+        for (int i = 0, length = teamCount; i < length; i++)
+        {
+            var spawnedUnit = new SpawnedUnit();
+            spawnedUnit.TeamIndex = _teamInfoList[i].TeamIndex;
+            spawnedUnits.Add(spawnedUnit);
+            CreateTeam(_teamInfoList[i], i, teamUnitIndices[i].unitDatas);
+        }
+
+        InvokeRepeating("InvokeCheckGameOver", 0.0f, 1.0f);
     }
 
 #if UNITY_EDITOR
@@ -98,14 +144,44 @@ public class FieldManager : MonoBehaviour
 
             if(_teamIndex == 0)
             {
-                teamPanel_1.Initialize(_teamIndex, spawnedUnits[_teamIndex].units);
+                teamPanel_1.InitializeTest(_teamIndex, spawnedUnits[_teamIndex].units);
             }
             else if (_teamIndex == 1)
             {
-                teamPanel_2.Initialize(_teamIndex, spawnedUnits[_teamIndex].units);
+                teamPanel_2.InitializeTest(_teamIndex, spawnedUnits[_teamIndex].units);
             }
         }
     }
+
+    private void CreateTeam(TeamInfo _teamInfo, int _teamIndex, List<UnitData> _unitDataList)
+    {
+        foreach (var unitData in _unitDataList)
+        {
+            Vector3 position = Vector3.zero;
+            if (_teamIndex % 2 == 0)
+            {
+                position = GetRandomRightPosition();
+            }
+            else
+            {
+                position = GetRandomLeftPosition();
+            }
+
+            var unitObject = Unit_AI.Spawn(position, _teamIndex, unitData);
+            var unitAI = unitObject.GetComponent<Unit_AI>();
+            spawnedUnits[_teamIndex].units.Add(unitAI);
+
+            if (_teamIndex == 0)
+            {
+                teamPanel_1.Initialize(_teamInfo, _teamIndex, spawnedUnits[_teamIndex].units);
+            }
+            else if (_teamIndex == 1)
+            {
+                teamPanel_2.Initialize(_teamInfo, _teamIndex, spawnedUnits[_teamIndex].units);
+            }
+        }
+    }
+
 
     public TeamPanel GetTeamPanel(int _teamIndex)
     {
@@ -137,6 +213,49 @@ public class FieldManager : MonoBehaviour
 
         Debug.LogError($"GetSpawnedUnit_ByTeamIndex {_teamIndex}");
         return null;
+    }
+
+    private void InvokeCheckGameOver()
+    {
+        foreach(var teamSpawnedUnit in spawnedUnits)
+        {
+            bool allUnitDead = true;
+            foreach(var unit in teamSpawnedUnit.units)
+            {
+                if(unit.blackboard.unitFieldInfo.IsDead() == false)
+                {
+                    allUnitDead = false;
+                    break;
+                }
+            }
+
+            if(allUnitDead)
+            {
+                Debug.Log("전투 종료");
+                CancelInvoke("InvokeCheckGameOver");
+                Invoke("InGameOver", 1.0f);
+            }
+        }
+    }
+
+    private void InGameOver()
+    {
+        Debug.Log("InGameOver");
+        // 팀 1 전투보고서 추가
+        var team0Info = PlayerManager.Instance.GetTeamInfo(spawnedUnits[0].TeamIndex);
+        BattleReport team0battleReport = new BattleReport(spawnedUnits[0].units, spawnedUnits[1].units);
+        team0Info.teamBattleReports.Add(team0battleReport);
+
+        // 팀 2 전투보고서 추가
+        var team1Info = PlayerManager.Instance.GetTeamInfo(spawnedUnits[1].TeamIndex);
+        BattleReport team1battleReport = new BattleReport(spawnedUnits[1].units, spawnedUnits[0].units);
+        team1Info.teamBattleReports.Add(team0battleReport);
+
+        // 연출보고나서 
+
+        // 로비로 이동
+        PlayerManager.Instance.SetSceneChangeType(SceneChangeType.FieldBattle_Scream_End);
+        SceneManager.LoadScene((int)ESceneType.Lobby);
     }
 
     public GameObject StageBG;
@@ -226,17 +345,5 @@ public class FieldManager : MonoBehaviour
         Gizmos.DrawLine(topRight, bottomRight); // 오른쪽 선
         Gizmos.DrawLine(bottomRight, bottomLeft); // 아래쪽 선
         Gizmos.DrawLine(bottomLeft, topLeft);    // 왼쪽 선
-    }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            StartGame();
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            ResetGame();
-        }
     }
 }

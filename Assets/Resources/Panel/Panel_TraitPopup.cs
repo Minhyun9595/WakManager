@@ -34,6 +34,7 @@ public class Panel_TraitPopup : PanelAbstract
 
     public void Open(int _index)
     {
+        base.Open();
         Init();
 
         Debug.Log(_index);

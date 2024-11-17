@@ -88,6 +88,9 @@ public enum EPanelPrefabType
     Panel_Squad,
     Panel_Schedule,
     Panel_Traning,
+    Panel_StoryDialogue,
+    Panel_Scream,
+    Panel_ToastMessage,
 }
 
 

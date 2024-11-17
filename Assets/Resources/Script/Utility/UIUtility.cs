@@ -134,6 +134,26 @@ namespace QUtility
 
             return new Color32(r, g, b, 255);
         }
+
+        public static string GetUnitizeText(int unit)
+        {
+            string formattedMoney;
+
+            if (unit >= 1_000_000) // 100만 이상이면 M 단위
+            {
+                formattedMoney = $"{unit / 1_000_000f:0.##}M";
+            }
+            else if (unit >= 1_000) // 1000 이상이면 K 단위
+            {
+                formattedMoney = $"{unit / 1_000f:0.##}K";
+            }
+            else // 1000 미만이면 그냥 숫자 표시
+            {
+                formattedMoney = unit.ToString();
+            }
+
+            return formattedMoney;
+        }
     }
 
 }

@@ -12,7 +12,7 @@ public class Panel_LobbyMenu : PanelAbstract
     public Button Button_Squad;
     public Button Button_News;
     public Button Button_Market;
-    public Button Button_CardGacha;
+    public Button Button_RandomRecruit;
     public Button Button_Schedule;
     public Button Button_Traning;
     public Button Button_TeamInfo;
@@ -25,7 +25,7 @@ public class Panel_LobbyMenu : PanelAbstract
         Button_Squad = InitializeButton("Button_Squad", OnClick_Squad);
         Button_News = InitializeButton("Button_News", OnClick_News);
         Button_Market = InitializeButton("Button_Market", OnClick_Market);
-        Button_CardGacha = InitializeButton("Button_CardGacha", OnClick_CardGacha);
+        Button_RandomRecruit = InitializeButton("Button_RandomRecruit", OnClick_RandomRecruit);
         Button_Schedule = InitializeButton("Button_Schedule", OnClick_Schedule);
         Button_Traning = InitializeButton("Button_Traning", OnClick_Traning);
         Button_TeamInfo = InitializeButton("Button_TeamInfo", OnClick_TeamInfo);
@@ -58,7 +58,7 @@ public class Panel_LobbyMenu : PanelAbstract
         PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Market);
     }
 
-    private void OnClick_CardGacha() { /* CardGacha 버튼 클릭 시 실행할 코드 */ }
+    private void OnClick_RandomRecruit() { /* CardGacha 버튼 클릭 시 실행할 코드 */ }
 
     private void OnClick_Schedule() 
     {

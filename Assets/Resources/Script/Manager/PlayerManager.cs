@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,6 +28,7 @@ public enum SceneChangeType
     NewWorld,
     LoadWorld,
     MoveWorld,
+    FieldBattle_Scream_End,
 }
 
 public class PlayerManager : CustomSingleton<PlayerManager>
@@ -35,7 +37,10 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        Load_NewWorld();
+        if (SceneManager.GetActiveScene().buildIndex != (int)ESceneType.Menu)
+        {
+            Load_NewWorld();
+        }
     }
 
     void OnDestroy()
@@ -49,11 +54,17 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     private string saveFolderPath;
     private SaveData loadData = null;
     private float playTime;
+    private string inputTeamName = string.Empty;
+    private const int storyStartYear = 250;
     [SerializeField] private List<UnitData> worldUnitCardDatas = new List<UnitData>();
     [SerializeField] private List<UnitData> market_UnitCardDatas = new List<UnitData>();
     [SerializeField] private TeamInfo playerTeamInfo = new TeamInfo();
     [SerializeField] private List<TeamInfo> worldTeamList = new List<TeamInfo>();
-    [SerializeField] public GameSchedule gameSchedule = new GameSchedule(2525, 1);
+    [SerializeField] public GameSchedule gameSchedule = new GameSchedule(storyStartYear, 1);
+
+
+    // 스크림용 데이터
+    private List<TeamInfo> screamTeamInfo = new List<TeamInfo>();
 
     void Start()
     {
@@ -120,8 +131,9 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         }
     }
 
-    public void SetNewGame()
+    public void SetNewGame(string _inputTeamName)
     {
+        inputTeamName = _inputTeamName;
         SetSceneChangeType(SceneChangeType.NewWorld);
         loadData = null;
     }
@@ -153,11 +165,26 @@ public class PlayerManager : CustomSingleton<PlayerManager>
             case SceneChangeType.MoveWorld:
                 // 이동만 했을 경우 아무것도 하지 않는다.
                 break;
+            case SceneChangeType.FieldBattle_Scream_End:
+                // 전투 참가한 유닛 성장, 컨디션 조절 등
+
+                // 스크림 결과 UI 띄워주기
+                break;
             default:
                 break;
         }
 
         sceneType = (ESceneType)scene.buildIndex;
+
+        if(gameSchedule != null && FrontInfoCanvas.Instance != null)
+        {
+            FrontInfoCanvas.Instance.SetDateText(gameSchedule.CurrentDate);
+        }
+
+        if(sceneType == ESceneType.InGame)
+        {
+            FieldManager.Instance.SetInGame(screamTeamInfo);
+        }
     }
 
     // 새로운 게임
@@ -168,29 +195,42 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         worldUnitCardDatas = CreateWorldCard(20);
         market_UnitCardDatas.Clear();
         playerTeamInfo.Clear();
-        playerTeamInfo.Initialize();
+        playerTeamInfo.Initialize(EUnitTier.SurplustoRequirements, "우왁굳");
+        playerTeamInfo.AddMoney(500000);
 
         // 팀 32개 만들기
+        TeamNameGenerator teamNameGenerator = new TeamNameGenerator();
         worldTeamList.Clear();
-        for (int i = 0; i < 32; i++)
+
+        foreach(var unitTierType in Enum.GetValues(typeof(EUnitTier)))
         {
-            var team = new TeamInfo();
-            team.Initialize();
-            worldTeamList.Add(team);
+            List<TeamInfo> newTeamInfos = new List<TeamInfo>();
+            for (int i = 0; i < 32; i++)
+            {
+                var team = new TeamInfo();
+                team.Initialize((EUnitTier)unitTierType, teamNameGenerator.GetRandomName());
+                newTeamInfos.Add(team);
+            }
+
+            foreach (var team in newTeamInfos)
+            {
+                var teamCardList = CreateWorldTeamCard((EUnitTier)unitTierType, 5);
+                foreach (var unit in teamCardList)
+                {
+                    team.AddInSquadUnit(unit);
+                }
+            }
+
+            worldTeamList.AddRange(newTeamInfos);
         }
 
-        foreach (var team in worldTeamList)
-        {
-            var teamCardList = CreateCard(EUnitTier.SurplustoRequirements, 5);
-            foreach(var unit in teamCardList)
-            {
-                team.AddInSquadUnit(unit);
-            }
-        }
 
         // 스케줄 생성
-        gameSchedule.GenerateMonthlyCalendar(2525, 1);
-        gameSchedule.GenerateMonthlyCalendar(2525, 2);
+        gameSchedule.GenerateMonthlyCalendar(storyStartYear, 1);
+
+        var dlg = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_StoryDialogue, PanelRenderQueueManager.ECanvasType.FrontCanvas);
+        if(dlg != null)
+            dlg.GetComponent<Panel_StoryDialogue>().PlayDialogue(1);
     }
 
     // 로딩한 게임
@@ -244,20 +284,18 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         return list;
     }
 
-    private List<UnitData> CreateCard(EUnitTier _tier, int _createCount)
+    private List<UnitData> CreateWorldTeamCard(EUnitTier _tier, int _createCount)
     {
         List<UnitData> cards = new List<UnitData>();
         // EUnitTier를 순회
         var keys = DT_UnitInfo_Immutable.GetKeys();
 
-        for (int i = 0; i < keys.Count; i++)
+        for (int i = 0; i < _createCount; i++)
         {
-            if (_createCount <= i)
-                break;
-
-            var unitIndex = keys[i];
+            var rand = UnityEngine.Random.Range(0, keys.Count);
+            var unitIndex = keys[rand];
+            keys.RemoveAt(rand);
             var unitData = UnitData.CreateNewUnit(_tier, unitIndex);
-
             cards.Add(unitData);
         }
 
@@ -293,6 +331,8 @@ public class PlayerManager : CustomSingleton<PlayerManager>
             playerTeamInfo.AddSquadUnit(buyCard);
             market_UnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID);
             worldUnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID); // ID와 일치하는 모든 항목 제거
+
+            gameSchedule.AdvanceDay();
         }
         else
         {
@@ -318,5 +358,34 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     public List<UnitData> GetPlayer_InSquadUnitDatas()
     {
         return playerTeamInfo.GetPlayer_InSquadUnitDatas();
+    }
+
+    public List<TeamInfo> GetTeamInfos(EUnitTier eUnitTier)
+    {
+        return worldTeamList;
+    }
+
+    public bool ScreamDataSet(TeamInfo enemyTeamInfo)
+    {
+        if (playerTeamInfo.player_InSquad_UnitCardDatas.Count < 1)
+        {
+            return false;
+        }
+        screamTeamInfo = new List<TeamInfo>();
+        screamTeamInfo.Add(playerTeamInfo);
+        screamTeamInfo.Add(enemyTeamInfo);
+        return true;
+    }
+
+    public TeamInfo GetTeamInfo(string TeamIndex)
+    {
+        if(playerTeamInfo.TeamIndex.Equals(TeamIndex))
+        {
+            return playerTeamInfo;
+        }
+        else
+        {
+            return worldTeamList.Find(x => x.TeamIndex == TeamIndex);
+        }
     }
 }

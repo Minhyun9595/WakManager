@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System;
 using UnityEditor.Experimental.GraphView;
+using System.Globalization;
 
 public class GridItem_Unit : GridAbstract, GridInterface
 {
@@ -74,6 +75,7 @@ public class GridItem_Unit : GridAbstract, GridInterface
 
 public class TeamPanel : MonoBehaviour
 {
+    public TeamInfo teamInfo;
     public TextMeshProUGUI Title;
     public Transform GridLayout_Unit;
     public Transform UnitInfoItem;
@@ -81,17 +83,35 @@ public class TeamPanel : MonoBehaviour
     private int focusTeamIndex;
     [SerializeField] private List<Tuple<Unit_AI, GridItem_Unit>> tupleList;
 
-    void Start()
+    void Awake()
     {
         Title = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "Title");
         GridLayout_Unit = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "GridLayout_Unit");
         UnitInfoItem = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "UnitInfoItem");
     }
 
-    public void Initialize(int _focusTeamIndex, List<Unit_AI> _unitAIList)
+    public void Initialize(TeamInfo _teamInfo, int _focusTeamIndex, List<Unit_AI> _unitAIList)
+    {
+        teamInfo = _teamInfo;
+        focusTeamIndex = _focusTeamIndex;
+        Title.text = $"ÆÀ [{teamInfo.Name}]";
+
+        tupleList = new List<Tuple<Unit_AI, GridItem_Unit>>();
+        for (int i = 0; i < _unitAIList.Count; i++)
+        {
+            var childItem = QUtility.UIUtility.GetChildAutoCraete(GridLayout_Unit, i);
+            var gridItem_Unit = new GridItem_Unit();
+            gridItem_Unit.Init(childItem);
+            gridItem_Unit.Set(_unitAIList[i]);
+
+            tupleList.Add(new Tuple<Unit_AI, GridItem_Unit>(_unitAIList[i], gridItem_Unit));
+        }
+    }
+
+    public void InitializeTest(int _focusTeamIndex, List<Unit_AI> _unitAIList)
     {
         focusTeamIndex = _focusTeamIndex;
-        Title.text = $"ÆÀ {_focusTeamIndex + 1}\nÆÀ ÀÌ¸§³Ö´Â°÷";
+        Title.text = $"ÆÀ Å×½ºÆ® {_focusTeamIndex + 1}";
 
         tupleList = new List<Tuple<Unit_AI, GridItem_Unit>>();
         for (int i = 0; i < _unitAIList.Count; i++)

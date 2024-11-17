@@ -877,6 +877,7 @@ MonoBehaviour:
   Button_TeamInfo: {fileID: 0}
   Button_TeamRecord: {fileID: 0}
   Button_SavePanel: {fileID: 0}
+  Button_InternationalActivity: {fileID: 0}
 --- !u!1 &4689766854540605154
 GameObject:
   m_ObjectHideFlags: 0
@@ -1646,7 +1647,7 @@ GameObject:
   - component: {fileID: 3264368757691396011}
   - component: {fileID: 2679261719186158890}
   m_Layer: 5
-  m_Name: Button_CardGacha
+  m_Name: Button_RandomRecruit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1819,7 +1820,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC120\uC218 \uCE74\uB4DC \uBF51\uAE30"
+  m_text: "\uBB34\uC791\uC704 \uC601\uC785"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 99aeaa53637bb634cb22b0416c2246b5, type: 2}
   m_sharedMaterial: {fileID: 8724638627582598421, guid: 99aeaa53637bb634cb22b0416c2246b5, type: 2}

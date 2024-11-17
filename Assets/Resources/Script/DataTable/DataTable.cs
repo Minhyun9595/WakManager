@@ -28,6 +28,7 @@ public partial class DataTable : CustomSingleton<DataTable>
         Inltialize_DT_Skill();
         Inltialize_DT_Trait();
         Inltialize_DT_TraitValue();
+        Inltialize_DT_Dialogue();
 
         Inltialize_DT_UnitInfo_Immutable();
         Inltialize_DT_UnitStat();

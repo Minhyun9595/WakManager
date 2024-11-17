@@ -9,6 +9,7 @@ TagManager:
   - Unit
   - StageBG
   - GameManager
+  - FrontCanvas
   layers:
   - Default
   - TransparentFX

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -43,6 +44,7 @@ public class Unit_FieldData
         if (IsDead())
             return false;
 
+        var beforeDeadState = IsDead();
         var myArmor = unitData.unitStat.Armor;
         var myMagicArmor = unitData.unitStat.MagicArmor;
 
@@ -72,8 +74,24 @@ public class Unit_FieldData
             // 1 보다 작은 피해는 무시한다.
             if (1 <= convertDamage)
             {
-                Hp -= convertDamage;
+                convertDamage = 0;
             }
+
+            Hp -= convertDamage;
+
+            switch(_damageType)
+            {
+                case EDamageType.Physical:
+                    blackboard.unitReport.DamageReceive_Physical += convertDamage;
+                    break;
+                case EDamageType.Magical:
+                    blackboard.unitReport.DamageReceive_Magical += convertDamage;
+                    break;
+                case EDamageType.True:
+                    blackboard.unitReport.DamageReceive_True += convertDamage;
+                    break;
+            }
+            blackboard.unitReport.DamageReceive_Total += convertDamage;
 
             var addingFontHeight = i * AddingFontHeightCoefficient;
             var addingDelayTime = i * AddingDelayTimeCoefficient;

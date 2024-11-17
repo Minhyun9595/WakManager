@@ -21,8 +21,10 @@ public class Blackboard
     public Unit_FieldData unitFieldInfo { get; set; }
     public UnitAnimator unitAnimator { get; set; }
     public Unit_AI targetUnitAI { get; set; } // 현재 타겟을 저장하는 속성
+    public UnitReport unitReport { get; set; }
     public bool isAnimationPlaying { get; set; }
     public Vector3 destination { get; set; }
+
     public Blackboard(int _teamIndex, UnitData _unitData, GameObject _myGameObject) 
     {
         teamIndex = _teamIndex;
@@ -33,7 +35,7 @@ public class Blackboard
         this.myBodyTransform = myTransform.Find("Body").GetComponent<Transform>();
         this.myUnitAI = myTransform.GetComponent<Unit_AI>();
         this.unitAnimator = myBodyTransform.GetComponent<UnitAnimator>();
-
+        this.unitReport = new UnitReport();
         realUnitData = UnitData.CopyNewUnit(_unitData);
 
         var name = realUnitData.unitInfo_Immutable.Name;

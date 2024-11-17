@@ -144,6 +144,12 @@ public class Panel_Market : PanelAbstract
         }
     }
 
+    public override void Open()
+    {
+        base.Open();
+        FrontInfoCanvas.Instance.SetPanelName("이적시장");
+    }
+
     void OnClick_Make()
     {
         FindNewCard();

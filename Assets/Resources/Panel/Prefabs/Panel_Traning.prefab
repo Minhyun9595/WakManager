@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9084138003581958964}
   - component: {fileID: 1129459478570717445}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: TraningButton_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 681074890565426801}
   - component: {fileID: 3896660780192066453}
   m_Layer: 5
-  m_Name: Button
+  m_Name: TraningButton_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -949,7 +949,7 @@ GameObject:
   - component: {fileID: 1463423823840425832}
   - component: {fileID: 973435603590524705}
   m_Layer: 5
-  m_Name: Button (3)
+  m_Name: TraningButton_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1147,6 +1147,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1446f21031495043806b13fbf63388b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TraningButton_1: {fileID: 0}
+  TraningButton_2: {fileID: 0}
+  TraningButton_3: {fileID: 0}
+  TraningButton_4: {fileID: 0}
 --- !u!1 &8492511264787883625
 GameObject:
   m_ObjectHideFlags: 0
@@ -1160,7 +1164,7 @@ GameObject:
   - component: {fileID: 5217104936501080811}
   - component: {fileID: 5675286299404413626}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: TraningButton_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

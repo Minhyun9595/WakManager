@@ -3,98 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Unitcondition
-{
-    public int CurrentContdition;
-    public EUnitConditionType EConditionType;
-    public EUnitTier eUnitTier;
-
-    public int Professionalism;
-    public int Ambition;
-    public int Injury_Proneness;
-    public int Consistency;
-    public int Pressure_Handling;
-    public int Teamwork;
-    public int Preparation;
-    public int Diligence;
-
-    public Unitcondition(EUnitTier _eUnitTier)
-    {
-        eUnitTier = _eUnitTier;
-        
-        Professionalism = Random.Range(1, 21);
-        Ambition = Random.Range(1, 21);
-        Injury_Proneness = Random.Range(1, 21);
-        Consistency = Random.Range(1, 21);
-        Pressure_Handling = Random.Range(1, 21);
-        Teamwork = Random.Range(1, 21);
-        Preparation = Random.Range(1, 21);
-        Diligence = Random.Range(1, 21);
-
-        CurrentContdition = 80;
-    }
-
-    public EUnitConditionType GetCondition()
-    {
-        if (CurrentContdition >= 90)
-        {
-            EConditionType = EUnitConditionType.Superb;
-        }
-        else if (CurrentContdition >= 80)
-        {
-            EConditionType = EUnitConditionType.Good;
-        }
-        else if (CurrentContdition >= 65)
-        {
-            EConditionType = EUnitConditionType.Okay;
-        }
-        else if (CurrentContdition >= 40)
-        {
-            EConditionType = EUnitConditionType.Poor;
-        }
-        else
-        {
-            EConditionType = EUnitConditionType.VeryPoor;
-        }
-
-        return EConditionType;
-    }
-
-    public void ProgressCondition()
-    {
-        var addPoint = 0;
-        switch (eUnitTier)
-        {
-            case EUnitTier.WorldClass:
-                addPoint += 50;
-                break;
-            case EUnitTier.LeagueStar:
-                addPoint += 30;
-                break;
-            case EUnitTier.FirstTeam:
-                addPoint += 25;
-                break;
-            case EUnitTier.Rotation:
-                addPoint += 20;
-                break;
-            case EUnitTier.Prospect:
-                addPoint += 10;
-                break;
-            case EUnitTier.SurplustoRequirements:
-                addPoint += 0;
-                break;
-        }
-
-    }
-
-    public int GetConditionValue()
-    {
-        var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Pressure_Handling + Teamwork + Preparation + Diligence);
-        totalValue /= 20;
-        return totalValue;
-    }
-}
-
 [System.Serializable]
 public class UnitData
 {
@@ -107,8 +15,10 @@ public class UnitData
     public EUnitTier eUnitTier;
     public List<int> traitIndexList;
     public Unitcondition unitCondition;
+    public int PotentialPoints;
 
     // 성장 한계치
+    public AddStat addStat;
 
     // 고정이지만 로딩할 때 매 번 새로 생성 (변경될 수 있으므로)
     public List<DT_Skill> skillList;
@@ -118,29 +28,8 @@ public class UnitData
     {
         UnitData unitData = new UnitData();
         unitData.eUnitTier = _eUnitTier;
-        unitData.unitUniqueID = System.Guid.NewGuid().ToString();
         unitData.unitIndex = _unitIndex;
-        unitData.unitStat = DT_UnitStat.GetInfoByIndex(_unitIndex);
-        unitData.unitInfo_Immutable = DT_UnitInfo_Immutable.GetInfoByIndex(_unitIndex);
-
-        unitData.unitCondition = new Unitcondition(_eUnitTier);
-        unitData.skillList = new List<DT_Skill>();
-        foreach (var skillNmae in unitData.unitInfo_Immutable.SkillNameList)
-        {
-            var dtSkill = DT_Skill.GetInfoByIndex(skillNmae);
-            unitData.skillList.Add(dtSkill);
-        }
-
-        unitData.traitIndexList = new List<int>();
-        unitData.traitList = new List<DT_Trait>();
-        var Types = DT_Trait.GetTypes();
-
-        // 특성 생성
-        var randomTraitCount = Random.Range(0, unitData.unitInfo_Immutable.MaxTraitCount + 1);
-        for (int i = 0; i < randomTraitCount; i++)
-        {
-            unitData.CreateTrait(ref Types);
-        }
+        unitData.InitializeTier(_eUnitTier);
 
         return unitData;
     }
@@ -156,6 +45,67 @@ public class UnitData
         newUnitData.InitializeTrait();
 
         return newUnitData;
+    }
+    
+    public void InitializeTier(EUnitTier _eUnitTier)
+    {
+        eUnitTier = _eUnitTier;
+
+        unitUniqueID = System.Guid.NewGuid().ToString();
+        unitStat = DT_UnitStat.GetInfoByIndex(unitIndex);
+        unitInfo_Immutable = DT_UnitInfo_Immutable.GetInfoByIndex(unitIndex);
+
+        int AddStatPoint = 0;
+        switch (eUnitTier)
+        {
+            case EUnitTier.WorldClass:
+                AddStatPoint = 150;
+                PotentialPoints = Random.Range(0, 100);
+                break;
+            case EUnitTier.LeagueStar:
+                AddStatPoint = 100;
+                PotentialPoints = Random.Range(0, 100);
+                break;
+            case EUnitTier.FirstTeam:
+                AddStatPoint = 70;
+                PotentialPoints = Random.Range(0, 100);
+                break;
+            case EUnitTier.Rotation:
+                AddStatPoint = 40;
+                PotentialPoints = Random.Range(0, 100);
+                break;
+            case EUnitTier.Prospect:
+                AddStatPoint = 20;
+                PotentialPoints = Random.Range(0, 100);
+                break;
+            case EUnitTier.SurplustoRequirements:
+                AddStatPoint = 10;
+                PotentialPoints = Random.Range(0, 100);
+                break;
+            default:
+                break;
+        }
+
+        unitCondition = new Unitcondition(_eUnitTier);
+        skillList = new List<DT_Skill>();
+        foreach (var skillNmae in unitInfo_Immutable.SkillNameList)
+        {
+            var dtSkill = DT_Skill.GetInfoByIndex(skillNmae);
+            skillList.Add(dtSkill);
+        }
+
+        traitIndexList = new List<int>();
+        traitList = new List<DT_Trait>();
+        var Types = DT_Trait.GetTypes();
+
+        // 특성 생성
+        var randomTraitCount = 0;
+        randomTraitCount = Random.Range(0, unitInfo_Immutable.MaxTraitCount + 1);
+        for (int i = 0; i < randomTraitCount; i++)
+        {
+            CreateTrait(ref Types);
+        }
+
     }
 
     public void LoadUnit()
@@ -268,4 +218,167 @@ public class UnitData
     {
         return DT_Role.GetInfoByIndex(unitInfo_Immutable.RoleIndex).Name;
     }
+}
+
+
+public class Unitcondition
+{
+    public int CurrentContdition;
+    public EUnitConditionType EConditionType;
+    public EUnitTier eUnitTier;
+
+    public int Professionalism;
+    public int Ambition;
+    public int Injury_Proneness;
+    public int Consistency;
+    public int Pressure_Handling;
+    public int Teamwork;
+    public int Preparation;
+    public int Diligence;
+
+    public Unitcondition(EUnitTier _eUnitTier)
+    {
+        eUnitTier = _eUnitTier;
+
+        int min = 1;
+        int max = 21;
+        switch (_eUnitTier)
+        {
+            case EUnitTier.WorldClass:
+                min = 15;
+                max = 21;
+                break;
+            case EUnitTier.LeagueStar:
+                min = 11;
+                max = 19;
+                break;
+            case EUnitTier.FirstTeam:
+                min = 10;
+                max = 17;
+                break;
+            case EUnitTier.Rotation:
+                min = 3;
+                max = 13;
+                break;
+            case EUnitTier.Prospect:
+                min = 2;
+                max = 10;
+                break;
+            case EUnitTier.SurplustoRequirements:
+                min = 1;
+                max = 7;
+                break;
+        }
+
+        Professionalism = Random.Range(min, max);
+        Ambition = Random.Range(min, max);
+        Injury_Proneness = Random.Range(min, max);
+        Consistency = Random.Range(min, max);
+        Pressure_Handling = Random.Range(min, max);
+        Teamwork = Random.Range(min, max);
+        Preparation = Random.Range(min, max);
+        Diligence = Random.Range(min, max);
+
+        CurrentContdition = 80;
+    }
+
+    public EUnitConditionType GetCondition()
+    {
+        if (CurrentContdition >= 90)
+        {
+            EConditionType = EUnitConditionType.Superb;
+        }
+        else if (CurrentContdition >= 80)
+        {
+            EConditionType = EUnitConditionType.Good;
+        }
+        else if (CurrentContdition >= 65)
+        {
+            EConditionType = EUnitConditionType.Okay;
+        }
+        else if (CurrentContdition >= 40)
+        {
+            EConditionType = EUnitConditionType.Poor;
+        }
+        else
+        {
+            EConditionType = EUnitConditionType.VeryPoor;
+        }
+
+        return EConditionType;
+    }
+
+    public void ProgressCondition()
+    {
+        var addPoint = 0;
+        switch (eUnitTier)
+        {
+            case EUnitTier.WorldClass:
+                addPoint += 50;
+                break;
+            case EUnitTier.LeagueStar:
+                addPoint += 30;
+                break;
+            case EUnitTier.FirstTeam:
+                addPoint += 25;
+                break;
+            case EUnitTier.Rotation:
+                addPoint += 20;
+                break;
+            case EUnitTier.Prospect:
+                addPoint += 10;
+                break;
+            case EUnitTier.SurplustoRequirements:
+                addPoint += 0;
+                break;
+        }
+    }
+
+    public int GetConditionValue()
+    {
+        var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Pressure_Handling + Teamwork + Preparation + Diligence);
+        totalValue /= 5;
+        return totalValue;
+    }
+
+    public void AddStat(EAddStatType eAddStatType)
+    {
+        switch(eAddStatType)
+        {
+            case EAddStatType.Health:
+                break;
+            case EAddStatType.Damage:
+                break;
+            case EAddStatType.Armor:
+                break;
+            case EAddStatType.MagicArmor:
+                break;
+            case EAddStatType.CriticalChance:
+                break;
+            case EAddStatType.CriticalDamage:
+                break;
+        }
+    }
+
+}
+
+public enum EAddStatType
+{
+    Health,
+    Damage,
+    Armor,
+    MagicArmor,
+    CriticalChance,
+    CriticalDamage,
+}
+public class AddStat
+{
+    public int Health;
+    public float Damage;
+    public float AttackSpeed;
+    public int Range;
+    public int Armor;
+    public int MagicArmor;
+    public int CriticalChance;
+    public int CriticalRatio;
 }

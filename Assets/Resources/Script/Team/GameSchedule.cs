@@ -31,24 +31,22 @@ public class Schedule
 
 public class GameSchedule
 {
-    public int CurrentYear { get; private set; }
-    public int CurrentMonth { get; private set; }
+    public DateTime StartDate { get; private set; }
+    public DateTime CurrentDate { get; private set; }
 
     public Dictionary<string, Schedule> monthlyCalendar;
 
     public GameSchedule(int year, int month)
     {
-        CurrentYear = year;
-        CurrentMonth = month;
+        StartDate = new DateTime(year, month, 1);
+        CurrentDate = new DateTime(year, month, 1);
         monthlyCalendar = new Dictionary<string, Schedule>();
-        GenerateMonthlyCalendar(CurrentYear, CurrentMonth);
+        GenerateMonthlyCalendar(CurrentDate.Year, CurrentDate.Month);
     }
 
     // 연도와 월을 입력받아 달력을 생성합니다.
     public void GenerateMonthlyCalendar(int year, int month)
     {
-        CurrentYear = year;
-        CurrentMonth = month;
         int daysInMonth = DateTime.DaysInMonth(year, month);
 
         // 월의 첫날부터 마지막 날까지 각 날짜에 대해 초기화
@@ -94,6 +92,18 @@ public class GameSchedule
         return monthlySchedules;
     }
 
+    // 특정 날짜로 이동
+    public void AdvanceDay()
+    {
+        CurrentDate = CurrentDate.AddDays(1); // 다음날로 이동
+        FrontInfoCanvas.Instance.SetDateText(CurrentDate);
+    }
+
+    public int GetPlayDay()
+    {
+        return (CurrentDate - StartDate).Days;
+    }
+
     // JSON으로 저장하기 위한 메서드
     public string ToJson()
     {
@@ -104,8 +114,8 @@ public class GameSchedule
     public void FromJson(string json)
     {
         var wrapper = JsonUtility.FromJson<SerializableGameScheduleWrapper>(json);
-        CurrentYear = wrapper.Year;
-        CurrentMonth = wrapper.Month;
+        CurrentDate = DateTime.Parse(wrapper.CurrentDate); // DateTime 복원
+        StartDate = DateTime.Parse(wrapper.StartDate); // DateTime 복원
         monthlyCalendar = wrapper.ToDictionary();
     }
 }
@@ -114,14 +124,14 @@ public class GameSchedule
 [Serializable]
 public class SerializableGameScheduleWrapper
 {
-    public int Year;
-    public int Month;
+    public string CurrentDate; // DateTime을 string으로 저장
+    public string StartDate; // DateTime을 string으로 저장
     public List<CalendarDayEntry> Entries;
 
     public SerializableGameScheduleWrapper(GameSchedule gameSchedule)
     {
-        Year = gameSchedule.CurrentYear;
-        Month = gameSchedule.CurrentMonth;
+        CurrentDate = gameSchedule.CurrentDate.ToString("yyyy-MM-dd");
+        StartDate = gameSchedule.StartDate.ToString("yyyy-MM-dd");
         Entries = new List<CalendarDayEntry>();
 
         foreach (var kvp in gameSchedule.monthlyCalendar)

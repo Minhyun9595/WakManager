@@ -159,6 +159,12 @@ public class Panel_Squad : PanelAbstract
         Grid_Squad = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Grid_Squad");
     }
 
+    public override void Open()
+    {
+        base.Open();
+        FrontInfoCanvas.Instance.SetPanelName("스쿼드");
+    }
+
     public void PanelUpdate()
     {
         Init_Squad();
