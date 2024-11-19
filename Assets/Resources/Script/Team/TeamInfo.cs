@@ -111,10 +111,17 @@ public class TeamInfo
         FrontInfoCanvas.Instance?.SetMoneyText(Money);
     }
 
-    public bool ReduceMoney(int _money)
+    public bool ReduceMoney(int _money, bool doToast = true)
     {
         if (Money < _money)
+        {
+            if(doToast)
+            {
+                Panel_ToastMessage.OpenToast("돈이 부족합니다.", false);
+            }
+
             return false;
+        }
 
         Money -= _money;
         FrontInfoCanvas.Instance?.SetMoneyText(Money);

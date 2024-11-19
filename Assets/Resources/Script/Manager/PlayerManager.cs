@@ -18,6 +18,7 @@ public class SaveData
     public List<UnitData> worldUnitDatas = new List<UnitData>();
     public List<UnitData> market_UnitCardDatas = new List<UnitData>();
     public TeamInfo playerTeamInfo = new TeamInfo();
+    public TeamUpgrade playerTeamUpgrade = new TeamUpgrade();
     public List<TeamInfo> worldTeamList = new List<TeamInfo>();
     public string gameScheduleData;
 }
@@ -59,9 +60,14 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     [SerializeField] private List<UnitData> worldUnitCardDatas = new List<UnitData>();
     [SerializeField] private List<UnitData> market_UnitCardDatas = new List<UnitData>();
     [SerializeField] private TeamInfo playerTeamInfo = new TeamInfo();
+    [SerializeField] private TeamUpgrade playerTeamUpgrade = new TeamUpgrade();
     [SerializeField] private List<TeamInfo> worldTeamList = new List<TeamInfo>();
     [SerializeField] public GameSchedule gameSchedule = new GameSchedule(storyStartYear, 1);
 
+
+    // Getter
+    public TeamInfo PlayerTeamInfo { get { return playerTeamInfo; } }
+    public TeamUpgrade PlayerTeamUpgrade { get { return playerTeamUpgrade; } }
 
     // 스크림용 데이터
     private List<TeamInfo> screamTeamInfo = new List<TeamInfo>();
@@ -192,11 +198,18 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     {
         Debug.Log("Load_NewWorld");
         playTime = 0.0f;
-        worldUnitCardDatas = CreateWorldCard(20);
+        worldUnitCardDatas = CreateWorldCard(5);
         market_UnitCardDatas.Clear();
         playerTeamInfo.Clear();
         playerTeamInfo.Initialize(EUnitTier.SurplustoRequirements, "우왁굳");
-        playerTeamInfo.AddMoney(500000);
+
+        int multiple = 1;
+#if UNITY_EDITOR
+        multiple = 10;
+#endif
+        playerTeamInfo.AddMoney(DT_Const.GetInfoByIndex("START_GOLD") * multiple);
+
+        playerTeamUpgrade = new TeamUpgrade();
 
         // 팀 32개 만들기
         TeamNameGenerator teamNameGenerator = new TeamNameGenerator();
@@ -243,6 +256,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         worldUnitCardDatas = loadData.worldUnitDatas;
         market_UnitCardDatas = loadData.market_UnitCardDatas;
         playerTeamInfo = loadData.playerTeamInfo;
+        playerTeamUpgrade = loadData.playerTeamUpgrade;
         worldTeamList = loadData.worldTeamList;
         gameSchedule.FromJson(loadData.gameScheduleData);
 
@@ -313,31 +327,43 @@ public class PlayerManager : CustomSingleton<PlayerManager>
             var unitTier = (EUnitTier)item;
             for (int i = 0; i < keys.Count; i++)
             {
-                var unitIndex = keys[i];
-                var unitData = UnitData.CreateNewUnit(unitTier, unitIndex);
-
-                cards.Add(unitData);
+                for (int j = 0; j < _createCount; j++)
+                {
+                    var unitIndex = keys[i];
+                    var unitData = UnitData.CreateNewUnit(unitTier, unitIndex);
+                    cards.Add(unitData);
+                }
             }
         }
 
         return cards;
     }
 
-    public void BuyUnit(string unitUniqueID)
+    public bool BuyUnit(string unitUniqueID)
     {
         var buyCard = worldUnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
         if (buyCard != null)
         {
+            var dt_TierInfo = DT_TierInfo.GetInfoByIndex(buyCard.eUnitTier);
+            if (playerTeamInfo.ReduceMoney(dt_TierInfo.RecurtCost) == false)
+            {
+                return false;
+            }
+
             playerTeamInfo.AddSquadUnit(buyCard);
             market_UnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID);
             worldUnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID); // ID와 일치하는 모든 항목 제거
 
             gameSchedule.AdvanceDay();
+
+            return true;
         }
         else
         {
             Debug.LogWarning($"Card with ID {unitUniqueID} not found in worldUnitCardDatas.");
         }
+
+        return false;
     }
 
     public List<UnitData> GetMarketDatas()

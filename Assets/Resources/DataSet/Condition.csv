@@ -1,0 +1,6 @@
+Index,Type,Range,Desc
+0,Superb,90~100,매우 좋음
+1,Good,80~89,좋음
+2,Okay,65~79,보통
+3,Poor,40~64,나쁨
+4,VeryPoor,0~39,매우 나쁨

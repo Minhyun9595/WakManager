@@ -224,7 +224,7 @@ public class UnitData
 public class Unitcondition
 {
     public int CurrentContdition;
-    public EUnitConditionType EConditionType;
+    public DT_Condition dt_Condition;
     public EUnitTier eUnitTier;
 
     public int Professionalism;
@@ -240,35 +240,9 @@ public class Unitcondition
     {
         eUnitTier = _eUnitTier;
 
-        int min = 1;
-        int max = 21;
-        switch (_eUnitTier)
-        {
-            case EUnitTier.WorldClass:
-                min = 15;
-                max = 21;
-                break;
-            case EUnitTier.LeagueStar:
-                min = 11;
-                max = 19;
-                break;
-            case EUnitTier.FirstTeam:
-                min = 10;
-                max = 17;
-                break;
-            case EUnitTier.Rotation:
-                min = 3;
-                max = 13;
-                break;
-            case EUnitTier.Prospect:
-                min = 2;
-                max = 10;
-                break;
-            case EUnitTier.SurplustoRequirements:
-                min = 1;
-                max = 7;
-                break;
-        }
+        var tierInfo = DT_TierInfo.GetInfoByIndex(eUnitTier);
+        int min = tierInfo.ConditionStatMin;
+        int max = tierInfo.ConditionStatMax;
 
         Professionalism = Random.Range(min, max);
         Ambition = Random.Range(min, max);
@@ -279,33 +253,19 @@ public class Unitcondition
         Preparation = Random.Range(min, max);
         Diligence = Random.Range(min, max);
 
-        CurrentContdition = 80;
+        CurrentContdition = DT_Const.GetInfoByIndex("CONDITION_START");
+        UpdateCondition();
+    }
+
+    private void UpdateCondition()
+    {
+        dt_Condition = DT_Condition.GetCondition(CurrentContdition);
     }
 
     public EUnitConditionType GetCondition()
     {
-        if (CurrentContdition >= 90)
-        {
-            EConditionType = EUnitConditionType.Superb;
-        }
-        else if (CurrentContdition >= 80)
-        {
-            EConditionType = EUnitConditionType.Good;
-        }
-        else if (CurrentContdition >= 65)
-        {
-            EConditionType = EUnitConditionType.Okay;
-        }
-        else if (CurrentContdition >= 40)
-        {
-            EConditionType = EUnitConditionType.Poor;
-        }
-        else
-        {
-            EConditionType = EUnitConditionType.VeryPoor;
-        }
-
-        return EConditionType;
+        UpdateCondition();
+        return dt_Condition.eUnitConditionType;
     }
 
     public void ProgressCondition()

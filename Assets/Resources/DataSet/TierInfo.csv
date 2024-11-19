@@ -1,0 +1,7 @@
+Index,Type,Desc,ConditionStatMin,ConditionStatMax,RecurtCost
+0,WorldClass,1부,15,21,4000000
+1,LeagueStar,2부,11,19,1600000
+2,FirstTeam,3부,10,17,750000
+3,Rotation,4부,3,13,400000
+4,Prospect,5부,2,10,200000
+5,SurplustoRequirements,6부,1,7,100000

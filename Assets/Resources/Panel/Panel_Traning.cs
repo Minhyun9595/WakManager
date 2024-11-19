@@ -19,7 +19,7 @@ public class Panel_Traning : PanelAbstract
         TraningButton_3 = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "TraningButton_3");
         TraningButton_4 = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "TraningButton_4");
 
-        TraningButton_1.onClick.AddListener(OnClick_Traning_Stat);
+        TraningButton_1.onClick.AddListener(OnClick_Traning_Stat_Health);
         TraningButton_2.onClick.AddListener(OnClick_Traning_Trait);
         TraningButton_3.onClick.AddListener(OnClick_Traning_Mental);
         TraningButton_4.onClick.AddListener(OnClick_Traning_Scream);
@@ -31,10 +31,21 @@ public class Panel_Traning : PanelAbstract
         FrontInfoCanvas.Instance.SetPanelName("ศฦทร");
     }
 
-    void OnClick_Traning_Stat()
+    void OnClick_Traning_Stat_Health()
     {
         Debug.Log("OnClick_Traning_Stat");
     }
+
+    void OnClick_Traning_Stat_Health2()
+    {
+        Debug.Log("OnClick_Traning_Stat");
+    }
+
+    void OnClick_Traning_Stat_Health3()
+    {
+        Debug.Log("OnClick_Traning_Stat");
+    }
+
 
     void OnClick_Traning_Trait()
     {

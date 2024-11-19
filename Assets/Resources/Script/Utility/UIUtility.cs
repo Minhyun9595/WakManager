@@ -70,7 +70,7 @@ namespace QUtility
 
         public static T FindComponentInChildrenByName<T>(GameObject parent, string childName) where T : Component
         {
-            Transform[] children = parent.GetComponentsInChildren<Transform>();
+            Transform[] children = parent.GetComponentsInChildren<Transform>(true);
 
             foreach (Transform child in children)
             {
