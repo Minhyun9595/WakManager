@@ -61,7 +61,7 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        CloseAllPanels();
+        ClearAllPanels();
 
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Panel/Prefabs");
         PanelPrefabs.AddRange(prefabs);
@@ -73,7 +73,16 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 
     }
 
-    private void CloseAllPanels()
+    public void CloseAllPanel()
+    {
+        var frontPanel = PopPanel();
+        while (frontPanel != null)
+        {
+            frontPanel.Close();
+            frontPanel = PopPanel();
+        }
+    }
+    private void ClearAllPanels()
     {
         OpenPanelList.Clear();
         SpawnedPanels.Clear();
@@ -90,6 +99,7 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
             {
                 // 이미 열려있는 경우 최상단으로 이동
                 panel.transform.SetAsLastSibling();
+                panel.GetComponent<PanelAbstract>().Open();
                 return panel;
             }
         }

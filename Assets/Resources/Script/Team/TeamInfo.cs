@@ -100,6 +100,11 @@ public class TeamInfo
         return player_Squad_UnitCardDatas;
     }
 
+    public UnitData GetUnitData_ByUniqueID(string uniqueID)
+    {
+        return player_Squad_UnitCardDatas.Find(x => x.unitUniqueID.Equals(uniqueID));
+    }
+
     public List<UnitData> GetPlayer_InSquadUnitDatas()
     {
         return player_InSquad_UnitCardDatas;

@@ -16,6 +16,9 @@ public class DT_TierInfo
     public int ConditionStatMin;
     public int ConditionStatMax;
     public int RecurtCost;
+    public int AddStatPoint;
+    public int PotentialPointMin;
+    public int PotentialPointMax;
 
     public EUnitTier eUnitTier;
 

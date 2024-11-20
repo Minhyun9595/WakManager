@@ -196,7 +196,7 @@ public class Unit_AI : MonoBehaviour
     {
         if(blackboard  != null)
         {
-            blackboard.Update(Time.deltaTime);
+            blackboard.Update(ConstValue.DeltaTimeValue);
         }
 
         if(blackboard != null && blackboard.isAnimationPlaying == false && rootNode != null)

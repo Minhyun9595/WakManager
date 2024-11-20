@@ -34,7 +34,7 @@ public class UnitAnimator : MonoBehaviour
             var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{_animationControllerName}/{_animationControllerName}");
             animator.runtimeAnimatorController = controller;
             animator.Play(EAnimationType.Idle.ToString());
-
+            animator.speed = ConstValue.timeValueWithoutDeltaTime;
             // 애니메이션 클립 저장
             animationClips.Clear();
             foreach (var clip in controller.animationClips)
@@ -65,8 +65,8 @@ public class UnitAnimator : MonoBehaviour
         }
 
         eAnimationType = _eAnimation;
-        animator.speed = _animationSpeed;
         animator.Play(_eAnimation.ToString());
+        animator.speed = _animationSpeed * ConstValue.timeValueWithoutDeltaTime;
 
         if (_eAnimation == EAnimationType.Attack1 || _eAnimation == EAnimationType.Attack2)
         {
@@ -97,7 +97,7 @@ public class UnitAnimator : MonoBehaviour
 
         blackboard.isAnimationPlaying = false;
         eAnimationType = EAnimationType.Death;
-        animator.Play(EAnimationType.Death.ToString());
+        blackboard.unitAnimator.SetAnimation(eAnimationType);
     }
 
     public EAnimationType GetEAnimationType()

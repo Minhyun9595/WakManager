@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,11 @@ public class UnitData
     public EUnitTier eUnitTier;
     public List<int> traitIndexList;
     public Unitcondition unitCondition;
+    public int AddStatPoint;
     public int PotentialPoints;
+
+    // 일정
+    public ScheduleDate schedule;
 
     // 성장 한계치
     public AddStat addStat;
@@ -55,36 +60,9 @@ public class UnitData
         unitStat = DT_UnitStat.GetInfoByIndex(unitIndex);
         unitInfo_Immutable = DT_UnitInfo_Immutable.GetInfoByIndex(unitIndex);
 
-        int AddStatPoint = 0;
-        switch (eUnitTier)
-        {
-            case EUnitTier.WorldClass:
-                AddStatPoint = 150;
-                PotentialPoints = Random.Range(0, 100);
-                break;
-            case EUnitTier.LeagueStar:
-                AddStatPoint = 100;
-                PotentialPoints = Random.Range(0, 100);
-                break;
-            case EUnitTier.FirstTeam:
-                AddStatPoint = 70;
-                PotentialPoints = Random.Range(0, 100);
-                break;
-            case EUnitTier.Rotation:
-                AddStatPoint = 40;
-                PotentialPoints = Random.Range(0, 100);
-                break;
-            case EUnitTier.Prospect:
-                AddStatPoint = 20;
-                PotentialPoints = Random.Range(0, 100);
-                break;
-            case EUnitTier.SurplustoRequirements:
-                AddStatPoint = 10;
-                PotentialPoints = Random.Range(0, 100);
-                break;
-            default:
-                break;
-        }
+        var tierInfo = DT_TierInfo.GetInfoByIndex(eUnitTier);
+        AddStatPoint = tierInfo.AddStatPoint;
+        PotentialPoints = UnityEngine.Random.Range(tierInfo.PotentialPointMin, tierInfo.PotentialPointMax); 
 
         unitCondition = new Unitcondition(_eUnitTier);
         skillList = new List<DT_Skill>();
@@ -100,7 +78,7 @@ public class UnitData
 
         // 특성 생성
         var randomTraitCount = 0;
-        randomTraitCount = Random.Range(0, unitInfo_Immutable.MaxTraitCount + 1);
+        randomTraitCount = UnityEngine.Random.Range(0, unitInfo_Immutable.MaxTraitCount + 1);
         for (int i = 0; i < randomTraitCount; i++)
         {
             CreateTrait(ref Types);
@@ -159,7 +137,7 @@ public class UnitData
     private void CreateTrait(ref List<string> _types)
     {
         // 특성 정하기
-        var rand = Random.Range(0, _types.Count);
+        var rand = UnityEngine.Random.Range(0, _types.Count);
         var TraitIndex = _types[rand];
 
         // 한번 뽑은 특성은 빼기
@@ -169,7 +147,7 @@ public class UnitData
         var infoList = DT_Trait.GetInfoByIndex_Type(TraitIndex).OrderBy(x => x.Value.Rank).ToList();
         // 앞에서부터 45, 35, 10, 7%, 3% 확률로 지급
         var percentTable = new List<int>() { 45, 80, 90, 97, 100 };
-        var rateRand = Random.Range(0, 100); // 0 ~ 99
+        var rateRand = UnityEngine.Random.Range(0, 100); // 0 ~ 99
 
         // 등급 정하기 (개수가 부족한 경우는? 일단 없다고 가정)
         foreach (var info in infoList)
@@ -218,6 +196,49 @@ public class UnitData
     {
         return DT_Role.GetInfoByIndex(unitInfo_Immutable.RoleIndex).Name;
     }
+
+    public bool AddSchedule(int day, EUnitScheduleType eUnitScheduleType)
+    {
+        // 현재 날짜 가져오기
+        DateTime currentDate = PlayerManager.Instance.gameSchedule.CurrentDate;
+        // 오늘부터 day일을 더한 날짜 계산
+        DateTime targetDate = currentDate.AddDays(day);
+
+        // 스케줄이 존재하고, 오늘 이후라면 실패 반환
+        if (schedule != null)
+        {
+            DateTime existingScheduleDate = new DateTime(schedule.Year, schedule.Month, schedule.Day);
+
+            if (existingScheduleDate > currentDate)
+            {
+                return false; // 실패
+            }
+        }
+
+        // 스케줄이 null이거나 오늘이라면 새 스케줄을 생성
+        schedule = new ScheduleDate(targetDate.Year, targetDate.Month, targetDate.Day);
+
+        return true;
+    }
+
+    public int GetScheduleLeftDay()
+    {
+        // 스케줄이 null이면 -1 반환 (스케줄이 없음을 나타냄)
+        if (schedule == null)
+            return 0;
+
+        // 현재 날짜 가져오기
+        DateTime currentDate = PlayerManager.Instance.gameSchedule.CurrentDate;
+
+        // 스케줄 날짜 생성
+        DateTime scheduleDate = new DateTime(schedule.Year, schedule.Month, schedule.Day);
+
+        // 남은 일수를 계산
+        int daysLeft = (scheduleDate - currentDate).Days;
+
+        // 남은 일수가 음수라면 0 반환 (스케줄이 이미 지난 경우)
+        return daysLeft < 0 ? 0 : daysLeft;
+    }
 }
 
 
@@ -227,14 +248,15 @@ public class Unitcondition
     public DT_Condition dt_Condition;
     public EUnitTier eUnitTier;
 
-    public int Professionalism;
-    public int Ambition;
-    public int Injury_Proneness;
-    public int Consistency;
-    public int Pressure_Handling;
-    public int Teamwork;
-    public int Preparation;
-    public int Diligence;
+    public int Professionalism; // 프로페셔널리즘
+    public int Ambition; // 야망
+    public int Injury_Proneness; // 부상 성향
+    public int Consistency; // 일관성
+    public int Pressure_Handling; // 압박 처리 능력
+    public int Teamwork; // 팀워크
+    public int Preparation; // 준비성
+    public int Diligence; // 근면성
+    public int Royalty; // 충성심
 
     public Unitcondition(EUnitTier _eUnitTier)
     {
@@ -244,14 +266,15 @@ public class Unitcondition
         int min = tierInfo.ConditionStatMin;
         int max = tierInfo.ConditionStatMax;
 
-        Professionalism = Random.Range(min, max);
-        Ambition = Random.Range(min, max);
-        Injury_Proneness = Random.Range(min, max);
-        Consistency = Random.Range(min, max);
-        Pressure_Handling = Random.Range(min, max);
-        Teamwork = Random.Range(min, max);
-        Preparation = Random.Range(min, max);
-        Diligence = Random.Range(min, max);
+        Professionalism = UnityEngine.Random.Range(min, max);
+        Ambition = UnityEngine.Random.Range(min, max);
+        Injury_Proneness = UnityEngine.Random.Range(min, max);
+        Consistency = UnityEngine.Random.Range(min, max);
+        Pressure_Handling = UnityEngine.Random.Range(min, max);
+        Teamwork = UnityEngine.Random.Range(min, max);
+        Preparation = UnityEngine.Random.Range(min, max);
+        Diligence = UnityEngine.Random.Range(min, max);
+        Royalty = UnityEngine.Random.Range(min, max);
 
         CurrentContdition = DT_Const.GetInfoByIndex("CONDITION_START");
         UpdateCondition();
@@ -296,7 +319,7 @@ public class Unitcondition
 
     public int GetConditionValue()
     {
-        var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Pressure_Handling + Teamwork + Preparation + Diligence);
+        var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Pressure_Handling + Teamwork + Preparation + Diligence + Royalty);
         totalValue /= 5;
         return totalValue;
     }
@@ -320,6 +343,10 @@ public class Unitcondition
         }
     }
 
+    public void SetSchedule(int day)
+    {
+
+    }
 }
 
 public enum EAddStatType

@@ -44,7 +44,7 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
     public Panel_Market panel_Market;
     public string unitUniqueID;
     public Button BuyButton;
-    public Animator UnitImage;
+    public Animator UnitImage_Animator;
     public TextMeshProUGUI NameText;
     public TextMeshProUGUI PointText;
     public Transform Content_GridTrait;
@@ -55,7 +55,7 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
     public new void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        UnitImage = UIUtility.FindComponentInChildrenByName<Animator>(gameObject, "UnitImage");
+        UnitImage_Animator = UIUtility.FindComponentInChildrenByName<Animator>(gameObject, "UnitImage");
         BuyButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "BuyButton");
         NameText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "NameText");
         PointText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "PointText");
@@ -71,8 +71,9 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
         //_unitData.unitInfo_Immutable.Animation
 
         var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{_unitData.unitInfo_Immutable.Animator}/{_unitData.unitInfo_Immutable.Animator}");
-        UnitImage.runtimeAnimatorController = controller;
-
+        UnitImage_Animator.runtimeAnimatorController = controller;
+        UnitImage_Animator.keepAnimatorStateOnDisable = true;
+        UnitImage_Animator.Play("Idle_Image");
         UpdateMarket(_unitData);
 
         SellBG.gameObject.SetActive(false);
@@ -101,7 +102,7 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
 
     public void PlayAnimation()
     {
-        UnitImage.Play("Idle_Image");
+        UnitImage_Animator.Play("Idle_Image");
     }
 }
 
@@ -166,7 +167,6 @@ public class Panel_Market : PanelAbstract
         }
 
         var dt_TeamUpgrade = DT_TeamUpgrade.GetInfoByIndex("¿Œ¿Á πﬂ±º", PlayerManager.Instance.PlayerTeamUpgrade.FindUnitLevel);
-        PlayerManager.Instance.PlayerTeamUpgrade.FindUnitLevel += 1;
         var randomWorldCardList = PlayerManager.Instance.GetRandomWorldCard(dt_TeamUpgrade.Value1);
 
         BG.gameObject.SetActive(true);

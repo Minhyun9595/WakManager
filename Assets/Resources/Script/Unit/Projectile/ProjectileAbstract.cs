@@ -50,7 +50,7 @@ public abstract class ProjectileAbstract : MonoBehaviour, ProjectileInterface
         {
             if (0 <= startDelayTime)
             {
-                startDelayTime -= Time.deltaTime;
+                startDelayTime -= ConstValue.DeltaTimeValue;
                 return false;
             }
             else

@@ -1,6 +1,8 @@
 using QUtility;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -9,6 +11,7 @@ public class Panel_LobbyMenu : PanelAbstract
 {
     private List<Button> buttonList = new List<Button>();
 
+    public Button Button_Office;
     public Button Button_Squad;
     public Button Button_News;
     public Button Button_Market;
@@ -20,8 +23,10 @@ public class Panel_LobbyMenu : PanelAbstract
     public Button Button_SavePanel;
     public Button Button_InternationalActivity;
 
+    private Dictionary<string, OfficeUnitObject> dicOfficeUnit = new Dictionary<string, OfficeUnitObject>();
     void Start()
     {
+        Button_Office = InitializeButton("Button_Office", OnClick_Office);
         Button_Squad = InitializeButton("Button_Squad", OnClick_Squad);
         Button_News = InitializeButton("Button_News", OnClick_News);
         Button_Market = InitializeButton("Button_Market", OnClick_Market);
@@ -48,8 +53,37 @@ public class Panel_LobbyMenu : PanelAbstract
 
     private void OnClick_Squad()
     {
+        FrontInfoCanvas.Instance.SetPanelName("사무실");
         var panel_Squad = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Squad);
         panel_Squad.GetComponent<Panel_Squad>().PanelUpdate();
+    }
+
+    private void OnClick_Office()
+    {
+        // 로비 소환 유닛 업데이트
+        var playerSquadUnitDatas = PlayerManager.Instance.GetPlayer_SquadUnitDatas();
+        var playerUnitIDs = new HashSet<string>(playerSquadUnitDatas.Select(x => x.unitUniqueID)); // 현재 플레이어 유닛 ID 목록
+
+        // 현재 사무실에 있는 유닛 중, 플레이어 스쿼드에 없는 유닛 제거
+        var unitsToRemove = dicOfficeUnit.Where(pair => !playerUnitIDs.Contains(pair.Key)).ToList(); // 리스트로 변환해 안전하게 순회
+
+        foreach (var pair in unitsToRemove)
+        {
+            pair.Value.ReturnToPool();
+            dicOfficeUnit.Remove(pair.Key); // 딕셔너리에서 제거
+        }
+
+        // 플레이어 스쿼드에 있는 유닛 중, 사무실에 없는 유닛 소환
+        foreach (var unitData in playerSquadUnitDatas)
+        {
+            if (!dicOfficeUnit.ContainsKey(unitData.unitUniqueID))
+            {
+                var office = OfficeUnitObject.Spawn(unitData);
+                dicOfficeUnit.Add(unitData.unitUniqueID, office); // 새로 소환된 유닛 추가
+            }
+        }
+
+        PanelRenderQueueManager.Instance.CloseAllPanel();
     }
 
     private void OnClick_News() { /* News 버튼 클릭 시 실행할 코드 */ }

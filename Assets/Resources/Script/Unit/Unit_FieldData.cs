@@ -72,7 +72,7 @@ public class Unit_FieldData
             //#특성 인내심: 받은 피해를 {0}% 감소시킵니다.
 
             // 1 보다 작은 피해는 무시한다.
-            if (1 <= convertDamage)
+            if (convertDamage <= 1)
             {
                 convertDamage = 0;
             }

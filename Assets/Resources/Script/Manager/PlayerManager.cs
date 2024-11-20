@@ -397,9 +397,16 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         {
             return false;
         }
+        if (gameSchedule.AddScheduleToday(EScheduleType.Scream, "½ºÅ©¸²") == false)
+        {
+            return false;
+        }
+
+        gameSchedule.AdvanceDay();
         screamTeamInfo = new List<TeamInfo>();
         screamTeamInfo.Add(playerTeamInfo);
         screamTeamInfo.Add(enemyTeamInfo);
+
         return true;
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public enum EScheduleType
@@ -11,13 +12,38 @@ public enum EScheduleType
     InternationalActivity,
 }
 
+public enum EUnitScheduleType
+{
+    Traning_Health,
+    Traning_Damage,
+    Traning_Armor,
+    Traning_Mental,
+    Traning_Trait,
+}
+
+[System.Serializable]
+public class ScheduleDate
+{
+    public int Year;
+    public int Month;
+    public int Day;
+
+    public ScheduleDate(int year, int month, int day)
+    {
+        Year = year;
+        Month = month;
+        Day = day;
+    }
+}
+
+[System.Serializable]
 public class Schedule
 {
-    public int Year { get; private set; }
-    public int Month { get; private set; }
-    public int Day { get; private set; }
-    public EScheduleType Type { get; private set; }
-    public string Description { get; private set; }
+    public int Year;
+    public int Month;
+    public int Day;
+    public EScheduleType Type;
+    public string Description;
 
     public Schedule(int year, int month, int day, EScheduleType type, string description)
     {
@@ -62,14 +88,38 @@ public class GameSchedule
     }
 
     // 특정 날짜에 스케줄을 추가하는 메서드
-    public void AddSchedule(int year, int month, int day, EScheduleType type, string description)
+    public bool AddSchedule(int year, int month, int day, EScheduleType type, string description)
     {
         string dateKey = new DateTime(year, month, day).ToString("yyyy-MM-dd");
 
         if (monthlyCalendar.ContainsKey(dateKey))
         {
             monthlyCalendar[dateKey] = new Schedule(year, month, day, type, description);
+            return true;
         }
+        else
+        {
+            Panel_ToastMessage.OpenToast("이미 일정이 있습니다.", false);
+        }
+
+        return false;
+    }
+
+    public bool AddScheduleToday(EScheduleType type, string description)
+    {
+        string dateKey = new DateTime(CurrentDate.Year, CurrentDate.Month, CurrentDate.Day).ToString("yyyy-MM-dd");
+
+        if (monthlyCalendar.ContainsKey(dateKey))
+        {
+            monthlyCalendar[dateKey] = new Schedule(CurrentDate.Year, CurrentDate.Month, CurrentDate.Day, type, description);
+            return true;
+        }
+        else
+        {
+            Panel_ToastMessage.OpenToast("이미 일정이 있습니다.", false);
+        }
+
+        return false;
     }
 
     public List<Schedule> GetMonthlySchedules(int year, int month)
