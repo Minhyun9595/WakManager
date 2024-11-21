@@ -95,7 +95,8 @@ public enum EPanelPrefabType
     Panel_StoryDialogue,
     Panel_Scream,
     Panel_ToastMessage,
-    Panel_TeamUnitList
+    Panel_TeamUnitList,
+    Panel_TeamUpgrade
 }
 
 public class ConstValue : CustomSingleton<ConstValue>

@@ -166,7 +166,7 @@ public class Panel_Market : PanelAbstract
             return;
         }
 
-        var dt_TeamUpgrade = DT_TeamUpgrade.GetInfoByIndex("¿Œ¿Á πﬂ±º", PlayerManager.Instance.PlayerTeamUpgrade.FindUnitLevel);
+        var dt_TeamUpgrade = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
         var randomWorldCardList = PlayerManager.Instance.GetRandomWorldCard(dt_TeamUpgrade.Value1);
 
         BG.gameObject.SetActive(true);

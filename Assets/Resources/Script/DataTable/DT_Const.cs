@@ -15,6 +15,7 @@ public class DT_Const
 
     public static int GetInfoByIndex(string name)
     {
+        name = name.ToLower();
         if (infoDictionary.TryGetValue(name, out var info))
         {
             return info.Value;
@@ -34,6 +35,7 @@ public partial class DataTable : CustomSingleton<DataTable>
         // Dictionary에 데이터를 저장
         foreach (var info in infoList)
         {
+            info.Name = info.Name.ToLower();
             DT_Const.infoDictionary[info.Name] = info;
             DT_Const.listInfo.Add(info);
         }

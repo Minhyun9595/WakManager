@@ -22,6 +22,7 @@ public class Panel_LobbyMenu : PanelAbstract
     public Button Button_TeamRecord;
     public Button Button_SavePanel;
     public Button Button_InternationalActivity;
+    public Button Button_TeamUpgrade;
 
     private Dictionary<string, OfficeUnitObject> dicOfficeUnit = new Dictionary<string, OfficeUnitObject>();
     void Start()
@@ -37,6 +38,7 @@ public class Panel_LobbyMenu : PanelAbstract
         Button_TeamRecord = InitializeButton("Button_TeamRecord", OnClick_TeamRecord);
         Button_SavePanel = InitializeButton("Button_SavePanel", OnClick_SavePanel);
         Button_InternationalActivity = InitializeButton("Button_InternationalActivity", OnClick_InternationalActivity);
+        Button_TeamUpgrade = InitializeButton("Button_TeamUpgrade", OnClick_TeamUpgrade);
     }
 
     private Button InitializeButton(string buttonName, UnityAction onClickAction)
@@ -116,4 +118,8 @@ public class Panel_LobbyMenu : PanelAbstract
 
     }
 
+    private void OnClick_TeamUpgrade()
+    {
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_TeamUpgrade);
+    }
 }
