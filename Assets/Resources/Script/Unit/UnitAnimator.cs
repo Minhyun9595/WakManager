@@ -34,7 +34,7 @@ public class UnitAnimator : MonoBehaviour
             var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{_animationControllerName}/{_animationControllerName}");
             animator.runtimeAnimatorController = controller;
             animator.Play(EAnimationType.Idle.ToString());
-            animator.speed = ConstValue.timeValueWithoutDeltaTime;
+            animator.speed = CustomTime.timeScale;
             // 애니메이션 클립 저장
             animationClips.Clear();
             foreach (var clip in controller.animationClips)
@@ -66,17 +66,15 @@ public class UnitAnimator : MonoBehaviour
 
         eAnimationType = _eAnimation;
         animator.Play(_eAnimation.ToString());
-        animator.speed = _animationSpeed * ConstValue.timeValueWithoutDeltaTime;
+        animator.speed = _animationSpeed * CustomTime.timeScale;
 
-        if (_eAnimation == EAnimationType.Attack1 || _eAnimation == EAnimationType.Attack2)
+        if (_eAnimation == EAnimationType.Attack1 || _eAnimation == EAnimationType.Attack2 || _eAnimation == EAnimationType.Skill)
         {
-            blackboard.isAnimationPlaying = true;
-
-            if (animationCoroutine != null)
+            if (animationCoroutine == null)
             {
-                StopCoroutine(animationCoroutine);
+                blackboard.isAnimationPlaying = true;
+                animationCoroutine = StartCoroutine(CheckAnimationEnd());
             }
-            animationCoroutine = StartCoroutine(CheckAnimationEnd());
         }
     }
 
@@ -87,6 +85,11 @@ public class UnitAnimator : MonoBehaviour
         animationCoroutine = null;
     }
 
+    public float GetCurrentAnimationTime()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+    }
+    
     public void CancelCurrentAnimation()
     {
         if (animationCoroutine != null)

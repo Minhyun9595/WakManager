@@ -17,6 +17,7 @@ public class DT_UnitInfo_Immutable
     public int RoleIndex;
     public int MaxTraitCount;
     public int FixTraitType;
+    public int IsRangeUnit;
     public string Animator;
     public string AttackType;
     public string AttackPrefabName;
@@ -50,6 +51,11 @@ public class DT_UnitInfo_Immutable
     public static List<int> GetKeys()
     {
         return infoDictionary.Keys.ToList();
+    }
+
+    public bool CheckRangeUnit()
+    {
+        return IsRangeUnit == 1;
     }
 }
 

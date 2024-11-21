@@ -513,8 +513,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamUnitIndices:
-  - unitIndices: 0100000002000000030000000400000005000000060000000700000008000000
-  - unitIndices: 0100000002000000030000000400000005000000060000000700000008000000
+  - TeamIndex: 
+    unitIndices: 01000000
+    unitDatas: []
+  - TeamIndex: 
+    unitIndices: 01000000
+    unitDatas: []
   spawnedUnits: []
   teamPanel_1: {fileID: 8349205954756021586}
   teamPanel_2: {fileID: 1894047663}
@@ -940,11 +944,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 794207233462091788, guid: f23fe848fd2705a4e8f86dab1f56b31f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00007115206
+      value: 0.000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 868922463709831025, guid: f23fe848fd2705a4e8f86dab1f56b31f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00007115206
+      value: 0.000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 1237060181920854825, guid: f23fe848fd2705a4e8f86dab1f56b31f, type: 3}
       propertyPath: m_Name
@@ -1004,6 +1008,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6118392554493012378, guid: f23fe848fd2705a4e8f86dab1f56b31f, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118392554493012378, guid: f23fe848fd2705a4e8f86dab1f56b31f, type: 3}
+      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6132439259710960631, guid: f23fe848fd2705a4e8f86dab1f56b31f, type: 3}

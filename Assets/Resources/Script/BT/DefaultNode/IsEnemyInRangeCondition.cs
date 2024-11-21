@@ -16,70 +16,18 @@ public class IsEnemyInRangeCondition : BehaviorNode
 
     public override NodeStatus Execute()
     {
-        if (blackboard.isAnimationPlaying)
-        {
-            return NodeStatus.Success;
-        }
-        if (0 < blackboard.unitFieldInfo.NormalAction_LeftCoolTime)
+        if (blackboard.targetUnitAI == null || blackboard.targetUnitAI.blackboard.unitFieldInfo.IsDead())
         {
             return NodeStatus.Failure;
         }
-        if (blackboard.targetUnitAI != null && Time.time < nextTargetUpdateTime)
-        {
-            return NodeStatus.Success; // 주기가 지나지 않았으면 이전 타겟을 그대로 유지
-        }
 
-        nextTargetUpdateTime = Time.time + targetUpdateInterval;
+        Debug.Log("IsEnemyInRangeCondition");
 
-        // 기존 타겟이 없거나, 사망했거나, 더 나은 타겟이 있을 경우 새로운 타겟을 찾음
-        if (blackboard.targetUnitAI == null || HasHigherPriorityTarget())
-        {
-            FindNewTarget();
-        }
+        float distance = Vector3.Distance(
+            blackboard.myTransform.position,
+            blackboard.targetUnitAI.transform.position);
 
-        return blackboard.targetUnitAI != null ? NodeStatus.Success : NodeStatus.Failure;
-    }
-
-    private void FindNewTarget()
-    {
-        Unit_AI closestEnemy = null;
-        float closestDistance = float.MaxValue;
-
-        foreach (var enemy in MathUtility.GetAllEnemiesInRange(blackboard.myUnitAI, blackboard.teamIndex, blackboard.myTransform.position, blackboard.realUnitData.GetRange()))
-        {
-            float distance = Vector3.Distance(blackboard.myTransform.position, enemy.transform.position);
-
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestEnemy = enemy;
-            }
-        }
-
-        if (closestEnemy != null)
-        {
-            // 상대의 구독자 목록에 날 추간 (죽었을 때 알림)
-            blackboard.myUnitAI.SetTarget(closestEnemy);
-        }
-    }
-
-    private bool HasHigherPriorityTarget()
-    {
-        var enemyList = MathUtility.GetAllEnemiesInRange(blackboard.myUnitAI, blackboard.teamIndex, blackboard.myTransform.position, blackboard.realUnitData.GetRange());
-        foreach (var enemy in enemyList)
-        {
-            if (IsHigherPriority(enemy, blackboard.targetUnitAI))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private bool IsHigherPriority(Unit_AI newTarget, Unit_AI currentTarget)
-    {
-        // 우선순위 판단 로직: 거리가 더 가깝거나 체력이 낮은 경우
-        return Vector3.Distance(blackboard.myTransform.position, newTarget.transform.position) <
-               Vector3.Distance(blackboard.myTransform.position, currentTarget.transform.position);
+        var isInRange = distance <= blackboard.realUnitData.GetRange();
+        return isInRange ? NodeStatus.Success : NodeStatus.Failure;
     }
 }

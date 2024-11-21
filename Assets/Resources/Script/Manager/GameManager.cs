@@ -13,28 +13,11 @@ public class GameManager : MonoBehaviour
         var panel = PanelRenderQueueManager.Instance;
         var poolManager = PoolManager.Instance;
         var playerManager = PlayerManager.Instance;
+        var customTime = CustomTime.Instance;
     }
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.P))
-        {
-            if (Mathf.Approximately(ConstValue.timeValueWithoutDeltaTime, 1.0f)) // 1배 -> 2배
-            {
-                ConstValue.timeValueWithoutDeltaTime = 2.0f;
-            }
-            else if (Mathf.Approximately(ConstValue.timeValueWithoutDeltaTime, 2.0f)) // 2배 -> 3배
-            {
-                ConstValue.timeValueWithoutDeltaTime = 3.0f;
-            }
-            else if (Mathf.Approximately(ConstValue.timeValueWithoutDeltaTime, 3.0f)) // 3배 -> 1배
-            {
-                ConstValue.timeValueWithoutDeltaTime = 1.0f;
-            }
-
-            Debug.Log(ConstValue.timeValueWithoutDeltaTime);
-        }
-
         //if (Input.GetKeyUp(KeyCode.Alpha1) && SceneManager.GetActiveScene().buildIndex != (int)ESceneType.Menu)
         //{
         //    PlayerManager.Instance.SetSceneChangeType(SceneChangeType.MoveWorld);

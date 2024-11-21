@@ -98,11 +98,8 @@ public enum EPanelPrefabType
     Panel_TeamUnitList
 }
 
-
 public class ConstValue : CustomSingleton<ConstValue>
 {
-    public static float timeValueWithoutDeltaTime = 1.0f;
-    public static float DeltaTimeValue {  get { return timeValueWithoutDeltaTime * Time.deltaTime; } set { timeValueWithoutDeltaTime = value; } }
     public static float speedRatio = 0.5f;
     public static float CriticalDamageCoefficient = 0.0001f;
     public static float RangeCoefficient = 0.015f;

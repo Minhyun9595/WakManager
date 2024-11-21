@@ -35,7 +35,7 @@ public class Projectile_Straight : ProjectileAbstract
         if (StartDelayUpdate() == false)
             return;
 
-        transform.Translate(normalizeDirection * speed * ConstValue.DeltaTimeValue, Space.World);
+        transform.Translate(normalizeDirection * speed * CustomTime.deltaTime, Space.World);
     }
 
     public void SetProjectile(Unit_AI _ownerUnitAI, Vector3 _normalizeDirection, float _speed)

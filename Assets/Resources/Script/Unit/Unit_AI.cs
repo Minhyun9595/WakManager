@@ -24,6 +24,7 @@ public class Blackboard
     public UnitReport unitReport { get; set; }
     public bool isAnimationPlaying { get; set; }
     public Vector3 destination { get; set; }
+    public BehaviorNode rootNode { get; set; }
 
     public Blackboard(int _teamIndex, UnitData _unitData, GameObject _myGameObject) 
     {
@@ -50,10 +51,12 @@ public class Blackboard
 
     public void Update(float deltaTime)
     {
-        if (isAnimationPlaying)
-            return;
+        if (isAnimationPlaying == false)
+        {
+            unitFieldInfo.Update(deltaTime);
+        }
 
-        unitFieldInfo.Update(deltaTime);
+        rootNode.Execute();
     }
 
     public List<DamageInfo> GetDamageList()
@@ -79,13 +82,39 @@ public class Blackboard
             damageList.Add(damageInfo);
         }
 
+        EditDamage_Trait_RangeUnit(ref damageList);
+
         return damageList;
+    }
+
+    public void EditDamage_Trait_RangeUnit(ref List<DamageInfo> damageInfos)
+    {
+        var IsRangeUnit = realUnitData.unitInfo_Immutable.CheckRangeUnit();
+        DT_Trait dT_Trait = null;
+
+        if (IsRangeUnit)
+        {
+            dT_Trait = realUnitData.traitList.FirstOrDefault(x => x.Name == "원거리 딜러");
+        }
+        else
+        {
+            dT_Trait = realUnitData.traitList.FirstOrDefault(x => x.Name == "원거리 딜러");
+        }
+
+        if(dT_Trait != null)
+        {
+            foreach(var damageInfo in damageInfos)
+            {
+                Debug.Log($"Before EditDamage_Trait_RangeUnit: {damageInfo.damage}");
+                damageInfo.damage *= (1.0f + (dT_Trait.Value2 * 0.01f));
+                Debug.Log($"After EditDamage_Trait_RangeUnit: {damageInfo.damage}");
+            }
+        }
     }
 }
 
 public class Unit_AI : MonoBehaviour
 {
-    private BehaviorNode rootNode;
     [SerializeField] public Blackboard blackboard;
 
     public Action<Unit_AI> OnDeath; // 유닛이 죽을 때 호출되는 이벤트
@@ -114,7 +143,7 @@ public class Unit_AI : MonoBehaviour
     public void Initialize(int _teamIndex, UnitData _unitData)
     {
         blackboard = new Blackboard(_teamIndex, _unitData, this.gameObject);
-        rootNode = CreateTankBehaviorTree();
+        blackboard.rootNode = CreateTankBehaviorTree();
     }
 
     /*
@@ -154,39 +183,45 @@ public class Unit_AI : MonoBehaviour
         rootSelectorNode.AddChild(dead_SequenceNode); // Death에서 Succress반환하면 이후 안함
 
         // 스킬 셀렉터: 스킬 쿨타임을 검사하여 스킬을 사용
-        var skill_SelectorNode = new SelectorNode();
-        foreach (var dT_Skill in blackboard.realUnitData.skillList)
-        {
-            var skillSequence = new SequenceNode();
-            var coolDownNode = new CooldownNode(blackboard, dT_Skill); // 쿨타임 설정
-            skillSequence.AddChild(coolDownNode);
-            skillSequence.AddChild(new SkillActionNode(blackboard, dT_Skill));
-
-            //if (dT_Skill.Name == "Sirian_Skill_Node")
-            //{
-            //    var sirianSkillNode = new Sirian_Skill_Node(blackboard);
-            //
-            //    skillSequence.AddChild(sirianSkillNode); // 스킬 실행
-            //}
-        
-            skill_SelectorNode.AddChild(skillSequence);
-        }
-        rootSelectorNode.AddChild(skill_SelectorNode);
+        //var skill_SelectorNode = new SelectorNode();
+        //foreach (var dT_Skill in blackboard.realUnitData.skillList)
+        //{
+        //    var skillSequence = new SequenceNode();
+        //    var coolDownNode = new CooldownNode(blackboard, dT_Skill); // 쿨타임 설정
+        //    skillSequence.AddChild(coolDownNode);
+        //    skillSequence.AddChild(new SkillActionNode(blackboard, dT_Skill));
+        //
+        //    //if (dT_Skill.Name == "Sirian_Skill_Node")
+        //    //{
+        //    //    var sirianSkillNode = new Sirian_Skill_Node(blackboard);
+        //    //
+        //    //    skillSequence.AddChild(sirianSkillNode); // 스킬 실행
+        //    //}
+        //
+        //    skill_SelectorNode.AddChild(skillSequence);
+        //}
+        //rootSelectorNode.AddChild(skill_SelectorNode);
 
         var Default_Sequence = new SequenceNode();
         var Default_Selector = new SelectorNode();
         var AttackEnemyAction_Sequence = new SequenceNode();
-        AttackEnemyAction_Sequence.AddChild(new IsEnemyFoundCondition(blackboard));
+
+        // 1. 타겟 탐색: 0.3초마다 타겟을 갱신
+        AttackEnemyAction_Sequence.AddChild(new FindTargetCondition(blackboard));
+        // 2. 타겟이 범위 내에 있는지 확인
         var AttackAction_Selector = new SelectorNode();
         var Attack_Sequence = new SequenceNode();
         Attack_Sequence.AddChild(new IsEnemyInRangeCondition(blackboard));
+        // 3. 타겟이 범위 내에 있으면 공격, 아니면 이동
         Attack_Sequence.AddChild(new AttackAction(blackboard));
         AttackAction_Selector.AddChild(Attack_Sequence);
         AttackAction_Selector.AddChild(new MoveToTargetAction(blackboard));
         AttackEnemyAction_Sequence.AddChild(AttackAction_Selector);
         Default_Selector.AddChild(AttackEnemyAction_Sequence);
+        // 타겟이 없거나 모든 행동 실패 시 대기
         Default_Selector.AddChild(new IdleAction(blackboard));
         Default_Sequence.AddChild(Default_Selector);
+
         rootSelectorNode.AddChild(Default_Sequence);
 
         return rootSelectorNode;
@@ -196,12 +231,7 @@ public class Unit_AI : MonoBehaviour
     {
         if(blackboard  != null)
         {
-            blackboard.Update(ConstValue.DeltaTimeValue);
-        }
-
-        if(blackboard != null && blackboard.isAnimationPlaying == false && rootNode != null)
-        {
-            rootNode.Execute();
+            blackboard.Update(CustomTime.deltaTime);
         }
     }
 
@@ -343,5 +373,18 @@ public class Unit_AI : MonoBehaviour
 
             }
         }
+    }
+}
+
+public class DamageInfo
+{
+    public float damage { get; set; }
+    public bool isCritical { get; set; }
+
+    public DamageInfo() { }
+    public DamageInfo(float damage, bool isCritical)
+    {
+        this.damage = damage;
+        this.isCritical = isCritical;
     }
 }

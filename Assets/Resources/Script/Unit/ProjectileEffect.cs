@@ -33,7 +33,7 @@ public class ProjectileEffect : MonoBehaviour
     void OnEnable()
     {
         animator.Play("Effect");
-        animator.speed = ConstValue.timeValueWithoutDeltaTime;
+        animator.speed = CustomTime.timeScale;
         waitUntil = new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
         StartCoroutine(CheckAnimationEnd());
     }

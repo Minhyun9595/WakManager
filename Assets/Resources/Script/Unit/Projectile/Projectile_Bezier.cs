@@ -54,7 +54,7 @@ public class Projectile_Bezier : ProjectileAbstract
             endPosition = targetTransform.position;
         }
 
-        time += ConstValue.DeltaTimeValue;
+        time += CustomTime.deltaTime;
 
         if (time > life)
         {

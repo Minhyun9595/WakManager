@@ -60,7 +60,7 @@ public class DamageFont : MonoBehaviour
         animator.enabled = true;
         textMeshPro.enabled = true;
         animator.Play(prefabName);
-        animator.speed = ConstValue.timeValueWithoutDeltaTime;
+        animator.speed = CustomTime.timeScale;
     }
 
     public void AnimationEnd()

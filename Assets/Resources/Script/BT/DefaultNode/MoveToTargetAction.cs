@@ -16,6 +16,7 @@ public class MoveToTargetAction : ActionNode
     {
         if (blackboard.targetUnitAI == null)
         {
+            Debug.Log("Target is null");
             // 타겟이 없으면 반환
             return NodeStatus.Failure;
         }
@@ -62,7 +63,7 @@ public class MoveToTargetAction : ActionNode
         Vector3 direction = (targetPosition - blackboard.myTransform.position).normalized;
 
         // 이동 속도 적용
-        Vector3 movement = new Vector3(blackboard.realUnitData.unitStat.MoveSpeed_X * direction.x, blackboard.realUnitData.unitStat.MoveSpeed_Y * direction.y, 0) * ConstValue.DeltaTimeValue * ConstValue.speedRatio;
+        Vector3 movement = new Vector3(blackboard.realUnitData.unitStat.MoveSpeed_X * direction.x, blackboard.realUnitData.unitStat.MoveSpeed_Y * direction.y, 0) * CustomTime.deltaTime * ConstValue.speedRatio;
 
         // 실제 이동 적용
         blackboard.myTransform.position += movement;

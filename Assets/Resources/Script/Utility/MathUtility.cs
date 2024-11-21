@@ -39,7 +39,7 @@ namespace QUtility
             List<Unit_AI> enemiesInRange = new List<Unit_AI>();
 
             // 탐색 반경 내의 모든 Collider 가져오기
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(_startPosition, 1000);
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(_startPosition, _range);
 
             QUtility.UIUtility.DrawDebugCircle(_startPosition, _range, Color.yellow);
             foreach (Collider2D collider in colliders)
