@@ -16,7 +16,7 @@ public class Sirian_Skill_Node : BehaviorNode
         Debug.Log("스킬 발동");
         var enemySpawnUnit = FieldManager.Instance.GetEnemySpawnedUnit_ByTeamIndex(blackboard.teamIndex);
 
-        var aliveEnemyList = enemySpawnUnit.units.FindAll(x => x.blackboard.unitFieldInfo.IsDead() == false);
+        var aliveEnemyList = enemySpawnUnit.units.FindAll(x => x.blackboard.unitFieldInfo.IsCanNotTarget() == false);
         var aliveEnemyCount = aliveEnemyList.Count;
 
         if (aliveEnemyList.Count == 0)

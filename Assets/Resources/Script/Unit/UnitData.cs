@@ -18,6 +18,7 @@ public class UnitData
     public Unitcondition unitCondition;
     public int AddStatPoint;
     public int PotentialPoints;
+    public int Population;
 
     // 일정
     public ScheduleDate schedule;
@@ -238,6 +239,54 @@ public class UnitData
 
         // 남은 일수가 음수라면 0 반환 (스케줄이 이미 지난 경우)
         return daysLeft < 0 ? 0 : daysLeft;
+    }
+
+    public void SoloStream(TeamInfo teamInfo)
+    {
+        var rand = UnityEngine.Random.Range(0, 100);
+        var addPopulation = 0;
+        var addMoney = Population * 300.0f;
+        var state = "";
+        if(rand <= 10) // 대성공
+        {
+            state = "대성공";
+            addPopulation = 100;
+            addMoney *= 3.0f;
+        }
+        else if (rand <= 20) // 성공
+        {
+            state = "큰 성공";
+            addPopulation = 60;
+            addMoney = 2.0f;
+        }
+        else if (rand <= 40) // 성공
+        {
+            state = "작은 성공";
+            addPopulation = 50;
+            addMoney = 1.5f;
+        }
+        else if (rand <= 70) // 성공
+        {
+            state = "무난한 방송";
+            addPopulation = 40;
+            addMoney = 1.0f;
+        }
+        else if (rand <= 90) // 작은 실패
+        {
+            state = "작은 실패";
+            addPopulation = 20;
+            addMoney = 0.5f;
+        }
+        else // 대실패
+        {
+            state = "대실패";
+            addPopulation = 10;
+            addMoney = 0.2f;
+        }
+
+        NotificationManager.Instance.ShowNotification($"[{state}]{unitInfo_Immutable.Name} 개인 방송으로 {addMoney} 수익과 인기 {addPopulation}를  얻었습니다.");
+        teamInfo.AddMoney(EMoneyType.Activity_SoloStream, (int)addMoney);
+        Population += addPopulation;
     }
 }
 

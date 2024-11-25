@@ -154,6 +154,11 @@ public class GameSchedule
         return (CurrentDate - StartDate).Days;
     }
 
+    public string GetToday()
+    {
+        return CurrentDate.ToString("yyyy-MM-dd");
+    }
+
     // JSON으로 저장하기 위한 메서드
     public string ToJson()
     {

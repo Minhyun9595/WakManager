@@ -38,7 +38,7 @@ public enum EPrefabType
     Projectile_Bezier,
     Projectile_Bezier_Hit,
 
-
+    Effect,
 
     // РЏДж
     Unit,
@@ -96,7 +96,11 @@ public enum EPanelPrefabType
     Panel_Scream,
     Panel_ToastMessage,
     Panel_TeamUnitList,
-    Panel_TeamUpgrade
+    Panel_TeamUpgrade,
+    Panel_InternationalActivity,
+    Panel_Notification,
+    Panel_Record,
+    Panel_FieldBattleEnd
 }
 
 public class ConstValue : CustomSingleton<ConstValue>

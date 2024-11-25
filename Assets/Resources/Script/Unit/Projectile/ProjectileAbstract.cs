@@ -72,7 +72,7 @@ public abstract class ProjectileAbstract : MonoBehaviour, ProjectileInterface
         if (targetUnitAI.blackboard.teamIndex == teamIndex)
             return false;
 
-        if (targetUnitAI.blackboard.unitFieldInfo.IsDead())
+        if (targetUnitAI.blackboard.unitFieldInfo.IsCanNotTarget())
             return false;
 
         targetUnitAI.blackboard.unitFieldInfo.Hit(eDamageType, damageInfoList, targetUnitAI.transform.position);

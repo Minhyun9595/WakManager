@@ -1,6 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.WSA;
+
+public enum EMoneyType
+{
+    Start,
+    Activity_SoloStream,
+    Activity_TeamStream,
+    Activity_SellGoods,
+    Ads,
+    Sponsor,
+}
 
 [System.Serializable]
 public class TeamInfo
@@ -12,11 +23,11 @@ public class TeamInfo
     public int MaintenanceCosts; // 유지비
     public int Reputation; // 평판
     
-
     public List<UnitData> player_Squad_UnitCardDatas = new List<UnitData>();
     public List<UnitData> player_InSquad_UnitCardDatas = new List<UnitData>();
     public List<BattleReport> teamBattleReports = new List<BattleReport>();
 
+    public List<KeyValuePair<EMoneyType, int>> WeekIncomeList = new List<KeyValuePair<EMoneyType, int>>();
     // AI 팀용 데이터
     public EUnitTier teamTier;
 
@@ -110,9 +121,9 @@ public class TeamInfo
         return player_InSquad_UnitCardDatas;
     }
 
-    public void AddMoney(int _money)
+    public void AddMoney(EMoneyType eMoneyType, float _money)
     {
-        Money += _money;
+        Money += (int)_money;
         FrontInfoCanvas.Instance?.SetMoneyText(Money);
     }
 
@@ -132,5 +143,51 @@ public class TeamInfo
         FrontInfoCanvas.Instance?.SetMoneyText(Money);
 
         return true;
+    }
+
+    public void AddPopulation(int _population)
+    {
+        Population += _population;
+        NotificationManager.Instance.ShowNotification($"팀 인기도가 {Population} 증가했습니다.");
+    }
+
+    public void DoActivity_SoloStream()
+    {
+        foreach(var unitData in player_Squad_UnitCardDatas)
+        {
+            unitData.SoloStream(this);
+        }
+        AddPopulation(30);
+    }
+
+    public void DoActivity_TeamStream()
+    {
+        var mulPopulation = 0.0f;
+        var moneyRatio = 1.5f;
+        foreach (var unitData in player_Squad_UnitCardDatas)
+        {
+            mulPopulation += unitData.Population;
+            unitData.Population += 10;
+        }
+
+        mulPopulation *= moneyRatio;
+        AddPopulation(100);
+        AddMoney(EMoneyType.Activity_TeamStream, (int)mulPopulation);
+    }
+    
+    public void DoActivity_SellGoods()
+    {
+        Panel_ToastMessage.OpenToast("개발 중", false);
+        //AddMoney(EMoneyType.Activity_SellGoods, 100000);
+    }
+
+    public void DoActivity_Ads()
+    {
+        Panel_ToastMessage.OpenToast("개발 중", false);
+    }
+
+    public void DoActivity_FindSponsor()
+    {
+        Panel_ToastMessage.OpenToast("개발 중", false);
     }
 }

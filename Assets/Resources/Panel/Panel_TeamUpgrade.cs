@@ -77,7 +77,9 @@ public class Panel_TeamUpgrade : PanelAbstract
         if (result)
         {
             var after = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(type);
-            Panel_ToastMessage.OpenToast($"[{after.Name}] 업그레이드 성공: {string.Format(after.Desc, after.Value1)}", true);
+            var message = $"[{after.Name}] 업그레이드 성공: {string.Format(after.Desc, after.Value1)}";
+            Panel_ToastMessage.OpenToast(message, true);
+            NotificationManager.Instance.ShowNotification(message);
             PanelUpdate();
         }
         else

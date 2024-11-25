@@ -13,7 +13,10 @@ public class IdleAction : ActionNode
 
     public override NodeStatus Execute()
     {
-        blackboard.unitAnimator.SetAnimation(EAnimationType.Idle);
+        if(blackboard.isAnimationPlaying == false)
+        {
+            blackboard.unitAnimator.SetAnimation(EAnimationType.Idle);
+        }
         return NodeStatus.Success;
     }
 }

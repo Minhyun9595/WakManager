@@ -202,10 +202,11 @@ public class Panel_Market : PanelAbstract
 
     void OnClick_Buy(int _index)
     {
-        var result = PlayerManager.Instance.BuyUnit(gridList[_index].unitUniqueID);
-        if(result)
+        var buyUnitData = PlayerManager.Instance.BuyUnit(gridList[_index].unitUniqueID);
+        if(buyUnitData != null)
         {
             gridList[_index].SellBG.gameObject.SetActive(true);
+            NotificationManager.Instance.ShowNotification($"선수 구매 [{buyUnitData.unitInfo_Immutable.Name}]");
         }
     }
 }

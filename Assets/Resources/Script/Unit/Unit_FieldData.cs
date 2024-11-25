@@ -13,6 +13,7 @@ public class Unit_FieldData
     public float NormalAction_LeftCoolTime;
     public bool isDead;
     public Dictionary<int, DT_Trait> traits;
+    public bool isNoneTargeting = false;
 
     private const float AddingFontHeightCoefficient = 0.3f;
     private const float AddingDelayTimeCoefficient = 0.18f;
@@ -41,10 +42,10 @@ public class Unit_FieldData
 
     public bool Hit(EDamageType _damageType, List<DamageInfo> _damageList, Vector3 _position)
     {
-        if (IsDead())
+        if (IsCanNotTarget())
             return false;
 
-        var beforeDeadState = IsDead();
+        var beforeDeadState = IsCanNotTarget();
         var myArmor = unitData.unitStat.Armor;
         var myMagicArmor = unitData.unitStat.MagicArmor;
 
@@ -99,7 +100,7 @@ public class Unit_FieldData
         }
 
         // Á×¾ú´ÂÁö Ã¼Å©
-        if (IsDead())
+        if (IsCanNotTarget())
         {
             Debug.Log($"{unitData.unitStat.Name} »ç¸Á");
         }
@@ -110,6 +111,11 @@ public class Unit_FieldData
         teamPanel.UpdateUnit();
 
         return true;
+    }
+
+    public bool IsCanNotTarget()
+    {
+        return Hp <= 0 || isNoneTargeting;
     }
 
     public bool IsDead()

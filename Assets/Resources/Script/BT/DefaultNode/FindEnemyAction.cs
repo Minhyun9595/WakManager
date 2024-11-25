@@ -51,7 +51,7 @@ public class FindEnemyAction : ActionNode
             }
         }
 
-        if (closestUnitAI != null && closestUnitAI.GetBlackboard().unitFieldInfo.IsDead() == false)
+        if (closestUnitAI != null && closestUnitAI.GetBlackboard().unitFieldInfo.IsCanNotTarget() == false)
         {
             blackboard.targetUnitAI = closestUnitAI;
 

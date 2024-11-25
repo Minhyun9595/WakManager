@@ -16,12 +16,10 @@ public class IsEnemyInRangeCondition : BehaviorNode
 
     public override NodeStatus Execute()
     {
-        if (blackboard.targetUnitAI == null || blackboard.targetUnitAI.blackboard.unitFieldInfo.IsDead())
+        if (blackboard.targetUnitAI == null || blackboard.targetUnitAI.blackboard.unitFieldInfo.IsCanNotTarget())
         {
             return NodeStatus.Failure;
         }
-
-        Debug.Log("IsEnemyInRangeCondition");
 
         float distance = Vector3.Distance(
             blackboard.myTransform.position,

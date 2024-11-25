@@ -19,10 +19,10 @@ public class Panel_LobbyMenu : PanelAbstract
     public Button Button_Schedule;
     public Button Button_Traning;
     public Button Button_TeamInfo;
-    public Button Button_TeamRecord;
     public Button Button_SavePanel;
     public Button Button_InternationalActivity;
     public Button Button_TeamUpgrade;
+    public Button Button_Record;
 
     private Dictionary<string, OfficeUnitObject> dicOfficeUnit = new Dictionary<string, OfficeUnitObject>();
     void Start()
@@ -31,14 +31,13 @@ public class Panel_LobbyMenu : PanelAbstract
         Button_Squad = InitializeButton("Button_Squad", OnClick_Squad);
         Button_News = InitializeButton("Button_News", OnClick_News);
         Button_Market = InitializeButton("Button_Market", OnClick_Market);
-        Button_RandomRecruit = InitializeButton("Button_RandomRecruit", OnClick_RandomRecruit);
         Button_Schedule = InitializeButton("Button_Schedule", OnClick_Schedule);
         Button_Traning = InitializeButton("Button_Traning", OnClick_Traning);
         Button_TeamInfo = InitializeButton("Button_TeamInfo", OnClick_TeamInfo);
-        Button_TeamRecord = InitializeButton("Button_TeamRecord", OnClick_TeamRecord);
         Button_SavePanel = InitializeButton("Button_SavePanel", OnClick_SavePanel);
         Button_InternationalActivity = InitializeButton("Button_InternationalActivity", OnClick_InternationalActivity);
         Button_TeamUpgrade = InitializeButton("Button_TeamUpgrade", OnClick_TeamUpgrade);
+        Button_Record = InitializeButton("Button_Record", OnClick_Record);
     }
 
     private Button InitializeButton(string buttonName, UnityAction onClickAction)
@@ -55,7 +54,6 @@ public class Panel_LobbyMenu : PanelAbstract
 
     private void OnClick_Squad()
     {
-        FrontInfoCanvas.Instance.SetPanelName("사무실");
         var panel_Squad = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Squad);
         panel_Squad.GetComponent<Panel_Squad>().PanelUpdate();
     }
@@ -86,6 +84,7 @@ public class Panel_LobbyMenu : PanelAbstract
         }
 
         PanelRenderQueueManager.Instance.CloseAllPanel();
+        FrontInfoCanvas.Instance.SetPanelName("사무실");
     }
 
     private void OnClick_News() { /* News 버튼 클릭 시 실행할 코드 */ }
@@ -93,8 +92,6 @@ public class Panel_LobbyMenu : PanelAbstract
     {
         PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Market);
     }
-
-    private void OnClick_RandomRecruit() { /* CardGacha 버튼 클릭 시 실행할 코드 */ }
 
     private void OnClick_Schedule() 
     {
@@ -106,7 +103,6 @@ public class Panel_LobbyMenu : PanelAbstract
         PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Traning);
     }
     private void OnClick_TeamInfo() { /* TeamInfo 버튼 클릭 시 실행할 코드 */ }
-    private void OnClick_TeamRecord() { /* TeamRecord 버튼 클릭 시 실행할 코드 */ }
 
     private void OnClick_SavePanel() 
     {
@@ -115,11 +111,16 @@ public class Panel_LobbyMenu : PanelAbstract
 
     private void OnClick_InternationalActivity()
     {
-
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_InternationalActivity);
     }
 
     private void OnClick_TeamUpgrade()
     {
         PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_TeamUpgrade);
+    }
+
+    private void OnClick_Record()
+    {
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Record);
     }
 }

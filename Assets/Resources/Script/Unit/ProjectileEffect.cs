@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -24,6 +25,22 @@ public class ProjectileEffect : MonoBehaviour
         return effectObject;
     }
 
+    public static GameObject SpawnEffect(string effectAnimatorName, Vector3 _startPosition)
+    {
+        var _prefabName = "Effect";
+        GameObject effectObject = PoolManager.Instance.GetFromPool(_prefabName);
+
+        if (effectObject != null)
+        {
+            effectObject.transform.position = _startPosition;
+            var projectileEffect = effectObject.GetComponent<ProjectileEffect>();
+            projectileEffect.prefabName = _prefabName;
+            projectileEffect.SetAnimator(effectAnimatorName);
+        }
+
+        return effectObject;
+    }
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -41,6 +58,15 @@ public class ProjectileEffect : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void SetAnimator(string effectAnimatorName)
+    {
+        AnimatorController controller = Resources.Load<AnimatorController>($"Animation/Effect/{effectAnimatorName}");
+        if(controller != null)
+        {
+            animator.runtimeAnimatorController = controller;
+        }
     }
 
     private IEnumerator CheckAnimationEnd()

@@ -20,6 +20,7 @@ public class SaveData
     public TeamInfo playerTeamInfo = new TeamInfo();
     public TeamUpgrade playerTeamUpgrade = new TeamUpgrade();
     public List<TeamInfo> worldTeamList = new List<TeamInfo>();
+    public List<Notification> notifications = new List<Notification>();
     public string gameScheduleData;
 }
 
@@ -63,6 +64,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     [SerializeField] private TeamUpgrade playerTeamUpgrade = new TeamUpgrade();
     [SerializeField] private List<TeamInfo> worldTeamList = new List<TeamInfo>();
     [SerializeField] public GameSchedule gameSchedule = new GameSchedule(storyStartYear, 1);
+    public List<Notification> notifications = new List<Notification>();
 
 
     // Getter
@@ -102,6 +104,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         saveData.market_UnitCardDatas = market_UnitCardDatas;
         saveData.playerTeamInfo = playerTeamInfo;
         saveData.worldTeamList = worldTeamList;
+        saveData.notifications = notifications;
         saveData.gameScheduleData = gameSchedule.ToJson();
 
         var filePath = Path.Combine(saveFolderPath, $"saveData_{index}.json");
@@ -154,8 +157,6 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         return sceneChangeType;
     }
 
-
-
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log($"OnSceneLoaded {Instance.GetSceneChangeType().ToString()}");
@@ -207,7 +208,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
 #if UNITY_EDITOR
         multiple = 10;
 #endif
-        playerTeamInfo.AddMoney(DT_Const.GetInfoByIndex("START_GOLD") * multiple);
+        playerTeamInfo.AddMoney(EMoneyType.Start, DT_Const.GetInfoByIndex("START_GOLD") * multiple);
 
         playerTeamUpgrade = new TeamUpgrade();
 
@@ -241,9 +242,12 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         // 스케줄 생성
         gameSchedule.GenerateMonthlyCalendar(storyStartYear, 1);
 
-        var dlg = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_StoryDialogue, PanelRenderQueueManager.ECanvasType.FrontCanvas);
-        if(dlg != null)
-            dlg.GetComponent<Panel_StoryDialogue>().PlayDialogue(1);
+        if(SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            var dlg = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_StoryDialogue, PanelRenderQueueManager.ECanvasType.FrontCanvas);
+            if (dlg != null)
+                dlg.GetComponent<Panel_StoryDialogue>().PlayDialogue(1);
+        }
     }
 
     // 로딩한 게임
@@ -258,6 +262,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         playerTeamInfo = loadData.playerTeamInfo;
         playerTeamUpgrade = loadData.playerTeamUpgrade;
         worldTeamList = loadData.worldTeamList;
+        notifications = loadData.notifications;
         gameSchedule.FromJson(loadData.gameScheduleData);
 
         Load_UnitInit(worldUnitCardDatas);
@@ -339,7 +344,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         return cards;
     }
 
-    public bool BuyUnit(string unitUniqueID)
+    public UnitData BuyUnit(string unitUniqueID)
     {
         var buyCard = worldUnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
         if (buyCard != null)
@@ -347,7 +352,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
             var dt_TierInfo = DT_TierInfo.GetInfoByIndex(buyCard.eUnitTier);
             if (playerTeamInfo.ReduceMoney(dt_TierInfo.RecurtCost) == false)
             {
-                return false;
+                return null;
             }
 
             playerTeamInfo.AddSquadUnit(buyCard);
@@ -356,14 +361,14 @@ public class PlayerManager : CustomSingleton<PlayerManager>
 
             gameSchedule.AdvanceDay();
 
-            return true;
+            return buyCard;
         }
         else
         {
             Debug.LogWarning($"Card with ID {unitUniqueID} not found in worldUnitCardDatas.");
         }
 
-        return false;
+        return null;
     }
 
     public List<UnitData> GetMarketDatas()

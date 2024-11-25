@@ -16,6 +16,7 @@ public class Blackboard
     public Unit_AI myUnitAI { get; set; }
     public Transform myTransform { get; set; }
     public Transform myBodyTransform { get; set; }
+    public Renderer myBodyRenderer { get; set; }
     public TextMeshPro myNameText { get; set; }
     public UnitData realUnitData { get; set; }
     public Unit_FieldData unitFieldInfo { get; set; }
@@ -34,6 +35,7 @@ public class Blackboard
         this.myTransform = _myGameObject.transform;
         this.myNameText = myTransform.Find("NameText").GetComponent<TextMeshPro>();
         this.myBodyTransform = myTransform.Find("Body").GetComponent<Transform>();
+        this.myBodyRenderer = myTransform.Find("Body").GetComponent<Renderer>();
         this.myUnitAI = myTransform.GetComponent<Unit_AI>();
         this.unitAnimator = myBodyTransform.GetComponent<UnitAnimator>();
         this.unitReport = new UnitReport();
@@ -111,6 +113,11 @@ public class Blackboard
             }
         }
     }
+
+    public Renderer GetBodyRenderer()
+    {
+        return myBodyRenderer;
+    }
 }
 
 public class Unit_AI : MonoBehaviour
@@ -182,14 +189,22 @@ public class Unit_AI : MonoBehaviour
         dead_SequenceNode.AddChild(deadAction);
         rootSelectorNode.AddChild(dead_SequenceNode); // Death에서 Succress반환하면 이후 안함
 
+        if (blackboard.realUnitData.unitInfo_Immutable.RoleIndex == 3) // 암살자 테스트용 스킬
+        {
+            var skill_SelectorNode = new SelectorNode();
+            var skillSequence = new SequenceNode();
+            skillSequence.AddChild(new SkillCoolTimeNode(blackboard, true, 1000000, 1, ""));
+            skillSequence.AddChild(new Skill_Assassin_Jump(blackboard));
+            skill_SelectorNode.AddChild(skillSequence);
+            rootSelectorNode.AddChild(skill_SelectorNode);
+        }
         // 스킬 셀렉터: 스킬 쿨타임을 검사하여 스킬을 사용
-        //var skill_SelectorNode = new SelectorNode();
         //foreach (var dT_Skill in blackboard.realUnitData.skillList)
         //{
         //    var skillSequence = new SequenceNode();
         //    var coolDownNode = new CooldownNode(blackboard, dT_Skill); // 쿨타임 설정
         //    skillSequence.AddChild(coolDownNode);
-        //    skillSequence.AddChild(new SkillActionNode(blackboard, dT_Skill));
+        //    skillSequence.AddChild(new Skill_Assassin_Jump(blackboard));
         //
         //    //if (dT_Skill.Name == "Sirian_Skill_Node")
         //    //{
@@ -200,7 +215,6 @@ public class Unit_AI : MonoBehaviour
         //
         //    skill_SelectorNode.AddChild(skillSequence);
         //}
-        //rootSelectorNode.AddChild(skill_SelectorNode);
 
         var Default_Sequence = new SequenceNode();
         var Default_Selector = new SelectorNode();

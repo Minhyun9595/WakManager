@@ -17,14 +17,19 @@ public class FindTargetCondition : BehaviorNode
 
     public override NodeStatus Execute()
     {
-        if(blackboard.unitFieldInfo.IsDead())
+        if(blackboard.unitFieldInfo.IsCanNotTarget())
         {
             return NodeStatus.Failure;
         }    
 
+        if(blackboard.isAnimationPlaying)
+        {
+            return NodeStatus.Failure;
+        }
+
         // 이미 타겟이 유효하면 Success
         if (blackboard.targetUnitAI != null &&
-            blackboard.targetUnitAI.blackboard.unitFieldInfo.IsDead() == false)
+            blackboard.targetUnitAI.blackboard.unitFieldInfo.IsCanNotTarget() == false)
         {
             return NodeStatus.Success;
         }

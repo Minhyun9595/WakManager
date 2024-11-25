@@ -94,7 +94,7 @@ public class FindTargetAction : ActionNode
             Unit_AI enemyUnit = collider.GetComponent<Unit_AI>();
             if (enemyUnit != null && 
                 enemyUnit != blackboard.myUnitAI && 
-                enemyUnit.blackboard.unitFieldInfo.IsDead() == false &&
+                enemyUnit.blackboard.unitFieldInfo.IsCanNotTarget() == false &&
                 enemyUnit.GetBlackboard().teamIndex != blackboard.teamIndex) // 자신은 제외 // 같은 팀은 제외 // 죽은 유닛 제외
             {
                 enemiesInRange.Add(enemyUnit);

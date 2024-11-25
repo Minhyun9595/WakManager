@@ -16,13 +16,13 @@ public class AttackAction : ActionNode
 
     public override NodeStatus Execute()
     {
-        if(blackboard.unitFieldInfo.IsDead())
+        if(blackboard.unitFieldInfo.IsCanNotTarget())
         {
             return NodeStatus.Failure;
         }
 
         blackboard.unitAnimator.SetAnimation(EAnimationType.Attack1);
 
-        return NodeStatus.Running;
+        return NodeStatus.Success;
     }
 }

@@ -47,7 +47,7 @@ namespace QUtility
                 Unit_AI enemyUnit = collider.GetComponent<Unit_AI>();
                 if (enemyUnit != null &&
                     enemyUnit != _myUnitAI &&
-                    enemyUnit.blackboard.unitFieldInfo.IsDead() == false &&
+                    enemyUnit.blackboard.unitFieldInfo.IsCanNotTarget() == false &&
                     enemyUnit.GetBlackboard().teamIndex != _myTeamIndex) // 자신은 제외 // 같은 팀은 제외 // 죽은 유닛 제외
                 {
                     enemiesInRange.Add(enemyUnit);

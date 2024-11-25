@@ -34,6 +34,6 @@ public class CooldownNode : BehaviorNode
             return NodeStatus.Success;
         }
 
-        return NodeStatus.Failure;
+        return NodeStatus.Running;
     }
 }

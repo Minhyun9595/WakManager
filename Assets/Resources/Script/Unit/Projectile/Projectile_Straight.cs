@@ -65,7 +65,7 @@ public class Projectile_Straight : ProjectileAbstract
         if (targetUnitAI.blackboard.teamIndex == teamIndex)
             return;
 
-        if (targetUnitAI.blackboard.unitFieldInfo.IsDead())
+        if (targetUnitAI.blackboard.unitFieldInfo.IsCanNotTarget())
             return;
 
         var blackboard = ownerUnitAI.blackboard;
@@ -74,7 +74,8 @@ public class Projectile_Straight : ProjectileAbstract
 
         targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, targetUnitAI.transform.position);
         blackboard.unitFieldInfo.AttackActionResetCoolTime();
-        ProjectileEffect.Spawn(EPrefabType.Projectile_Wizzard_Hit.ToString(), targetUnitAI.transform.position);
+        //ProjectileEffect.Spawn(EPrefabType.Projectile_Wizzard_Hit.ToString(), targetUnitAI.transform.position);
+        ProjectileEffect.SpawnEffect("Hit_05", targetUnitAI.transform.position);
         PoolManager.Instance.ReturnToPool(prefabName, gameObject);
     }
 }

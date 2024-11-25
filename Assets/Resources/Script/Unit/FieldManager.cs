@@ -160,11 +160,11 @@ public class FieldManager : MonoBehaviour
             Vector3 position = Vector3.zero;
             if (_teamIndex % 2 == 0)
             {
-                position = GetRandomRightPosition();
+                position = GetRandomLeftPosition();
             }
             else
             {
-                position = GetRandomLeftPosition();
+                position = GetRandomRightPosition();
             }
 
             var unitObject = Unit_AI.Spawn(position, _teamIndex, unitData);
@@ -240,7 +240,6 @@ public class FieldManager : MonoBehaviour
 
     private void InGameOver()
     {
-        Debug.Log("InGameOver");
         // 팀 1 전투보고서 추가
         var team0Info = PlayerManager.Instance.GetTeamInfo(spawnedUnits[0].TeamIndex);
         BattleReport team0battleReport = new BattleReport(spawnedUnits[0].units, spawnedUnits[1].units);
@@ -251,11 +250,7 @@ public class FieldManager : MonoBehaviour
         BattleReport team1battleReport = new BattleReport(spawnedUnits[1].units, spawnedUnits[0].units);
         team1Info.teamBattleReports.Add(team0battleReport);
 
-        // 연출보고나서 
-
-        // 로비로 이동
-        PlayerManager.Instance.SetSceneChangeType(SceneChangeType.FieldBattle_Scream_End);
-        SceneManager.LoadScene((int)ESceneType.Lobby);
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_FieldBattleEnd, PanelRenderQueueManager.ECanvasType.FrontCanvas);
     }
 
     public GameObject StageBG;
