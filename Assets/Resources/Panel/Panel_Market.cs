@@ -206,7 +206,7 @@ public class Panel_Market : PanelAbstract
         if(buyUnitData != null)
         {
             gridList[_index].SellBG.gameObject.SetActive(true);
-            NotificationManager.Instance.ShowNotification($"선수 구매 [{buyUnitData.unitInfo_Immutable.Name}]");
+            NotificationManager.Instance.ShowNotification($"선수 계약 [{buyUnitData.unitInfo_Immutable.Name}]");
         }
     }
 }

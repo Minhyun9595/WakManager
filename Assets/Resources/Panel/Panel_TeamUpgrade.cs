@@ -71,7 +71,21 @@ public class Panel_TeamUpgrade : PanelAbstract
 
     private void OnClick_Upgrade(TeamUpgrade.UpgradeType type)
     {
+
         var before = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(type);
+        var canUpgrade = PlayerManager.Instance.PlayerTeamUpgrade.CanLevelUp(type);
+        if(canUpgrade == false)
+        {
+            Panel_ToastMessage.OpenToast($"[{before.Name}] 업그레이드 실패: 재화가 부족하거나 최대 레벨입니다.", false);
+            return;
+        }
+
+        var addScheduleResult = PlayerManager.Instance.gameSchedule.AddScheduleToday(EScheduleType.TeamUpgrade, $"{before.Name} 업그레이드");
+        if (addScheduleResult == false)
+        {
+            return;
+        }
+
         var result = PlayerManager.Instance.PlayerTeamUpgrade.TryLevelUp(type);
 
         if (result)
@@ -81,6 +95,7 @@ public class Panel_TeamUpgrade : PanelAbstract
             Panel_ToastMessage.OpenToast(message, true);
             NotificationManager.Instance.ShowNotification(message);
             PanelUpdate();
+            PlayerManager.Instance.gameSchedule.AdvanceDay();
         }
         else
         {

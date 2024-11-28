@@ -33,5 +33,9 @@ public class GameManager : MonoBehaviour
         //    PlayerManager.Instance.SetSceneChangeType(SceneChangeType.MoveWorld);
         //    SceneManager.LoadScene(2);
         //}
+        if (Input.GetKeyUp(KeyCode.Alpha2) && SceneManager.GetActiveScene().buildIndex == (int)ESceneType.Lobby)
+        {
+            PlayerManager.Instance.gameSchedule.AdvanceDay();
+        }
     }
 }

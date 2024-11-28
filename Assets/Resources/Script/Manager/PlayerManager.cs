@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -208,7 +209,9 @@ public class PlayerManager : CustomSingleton<PlayerManager>
 #if UNITY_EDITOR
         multiple = 10;
 #endif
-        playerTeamInfo.AddMoney(EMoneyType.Start, DT_Const.GetInfoByIndex("START_GOLD") * multiple);
+        // 소득에 포함이 되지 않기 위해
+        playerTeamInfo.Money = DT_Const.GetInfoByIndex("START_GOLD") * multiple;
+        FrontInfoCanvas.Instance?.SetMoneyText(playerTeamInfo.Money);
 
         playerTeamUpgrade = new TeamUpgrade();
 
@@ -423,7 +426,13 @@ public class PlayerManager : CustomSingleton<PlayerManager>
 
     public List<TeamInfo> GetTeamInfos(ETeamTier eTeamTier)
     {
-        return worldTeamList.FindAll(x => x.teamTier == eTeamTier);
+        var teamList = worldTeamList.FindAll(x => x.teamTier == eTeamTier);
+        if (playerTeamInfo.teamTier == eTeamTier)
+        {
+            teamList.Add(playerTeamInfo);
+        }
+
+        return teamList;
     }
 
     public bool ScreamDataSet(TeamInfo enemyTeamInfo)

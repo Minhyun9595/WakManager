@@ -14,10 +14,12 @@ public enum EScheduleType
     ContractUnit_Market,
     Activity_SoloStream,
     Activity_TeamStream,
+    TeamUpgrade,
 }
 
 public enum EUnitScheduleType
 {
+    None,
     Traning_Health,
     Traning_Damage,
     Traning_Armor,
@@ -159,6 +161,12 @@ public class GameSchedule
         {
             unit.ScheduleCheck();
         }
+
+        // 1일이라면 지출하기
+        if(CurrentDate.Day == 1)
+        {
+            PayMonth();
+        }
     }
 
     public int GetPlayDay()
@@ -182,6 +190,11 @@ public class GameSchedule
         }
 
         return false;
+    }
+
+    private void PayMonth()
+    {
+        Panel_EventPopup.EventOpen_MonthPay();
     }
 
     // JSON으로 저장하기 위한 메서드

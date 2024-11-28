@@ -17,6 +17,7 @@ public class DT_TeamUpgrade
     public int Value2;
     public int Value3;
     public int Value4;
+    public string StrValue1;
 
     public DT_TeamUpgrade() { }
 

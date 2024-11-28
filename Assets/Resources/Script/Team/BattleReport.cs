@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
 [System.Serializable]
@@ -78,5 +79,18 @@ public class BattleReport
         {
             secondTeamBattleReport.AddUnitReport(unitAI);
         }
+    }
+}
+
+[System.Serializable]
+public class BattleResult
+{
+    public ScheduleDate scheduleDate;
+    public string enemyTeamName;
+
+    public BattleResult(ScheduleDate scheduleDate, string enemyTeamName)
+    {
+        this.scheduleDate = scheduleDate;
+        this.enemyTeamName = enemyTeamName;
     }
 }

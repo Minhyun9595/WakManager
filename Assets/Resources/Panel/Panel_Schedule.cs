@@ -37,24 +37,36 @@ public class GridItem_Day : GridAbstract, GridInterface
         SetColorAlpha(true);
         outline.enabled = false;
         DayText.text = _schedule.Day.ToString();
+        ScheduleText.text = _schedule.Description;
 
         switch (_schedule.Type)
         {
             case EScheduleType.Contest:
                 image.color = Color.red;
-                ScheduleText.text = "대회";
                 break;
             case EScheduleType.Scream:
                 image.color = Color.yellow;
-                ScheduleText.text = "스크림";
                 break;
             case EScheduleType.Training:
                 image.color = Color.cyan;
-                ScheduleText.text = "훈련";
                 break;
             case EScheduleType.InternationalActivity:
                 image.color = Color.magenta;
-                ScheduleText.text = "대외 활동";
+                break;
+            case EScheduleType.Search_Market:
+                image.color = Color.yellow;
+                break;
+            case EScheduleType.ContractUnit_Market:
+                image.color = Color.yellow;
+                break;
+            case EScheduleType.Activity_SoloStream:
+                image.color = Color.gray;
+                break;
+            case EScheduleType.Activity_TeamStream:
+                image.color = Color.gray;
+                break;
+            case EScheduleType.TeamUpgrade:
+                image.color = Color.blue;
                 break;
             default:
                 image.color = UIUtility.HexToColor("00AB40");

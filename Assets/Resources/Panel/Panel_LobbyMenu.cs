@@ -18,7 +18,7 @@ public class Panel_LobbyMenu : PanelAbstract
     public Button Button_RandomRecruit;
     public Button Button_Schedule;
     public Button Button_Traning;
-    public Button Button_TeamInfo;
+    public Button Button_TeamHome;
     public Button Button_SavePanel;
     public Button Button_InternationalActivity;
     public Button Button_TeamUpgrade;
@@ -33,7 +33,7 @@ public class Panel_LobbyMenu : PanelAbstract
         Button_Market = InitializeButton("Button_Market", OnClick_Market);
         Button_Schedule = InitializeButton("Button_Schedule", OnClick_Schedule);
         Button_Traning = InitializeButton("Button_Traning", OnClick_Traning);
-        Button_TeamInfo = InitializeButton("Button_TeamInfo", OnClick_TeamInfo);
+        Button_TeamHome = InitializeButton("Button_TeamHome", OnClick_TeamHome);
         Button_SavePanel = InitializeButton("Button_SavePanel", OnClick_SavePanel);
         Button_InternationalActivity = InitializeButton("Button_InternationalActivity", OnClick_InternationalActivity);
         Button_TeamUpgrade = InitializeButton("Button_TeamUpgrade", OnClick_TeamUpgrade);
@@ -102,7 +102,10 @@ public class Panel_LobbyMenu : PanelAbstract
     { 
         PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Traning);
     }
-    private void OnClick_TeamInfo() { /* TeamInfo 버튼 클릭 시 실행할 코드 */ }
+    private void OnClick_TeamHome()
+    {
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_TeamHome);
+    }
 
     private void OnClick_SavePanel() 
     {

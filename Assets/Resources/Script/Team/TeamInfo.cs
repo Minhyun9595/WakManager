@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.WSA;
+using System.Linq;
 
 public enum EMoneyType
 {
@@ -26,8 +26,10 @@ public class TeamInfo
     public List<UnitData> player_Squad_UnitCardDatas = new List<UnitData>();
     public List<UnitData> player_InSquad_UnitCardDatas = new List<UnitData>();
     public List<BattleReport> teamBattleReports = new List<BattleReport>();
+    public List<BattleResult> winResults = new List<BattleResult>();
+    public List<BattleResult> loseResults = new List<BattleResult>();
 
-    public List<KeyValuePair<EMoneyType, int>> WeekIncomeList = new List<KeyValuePair<EMoneyType, int>>();
+    public List<KeyValuePair<EMoneyType, int>> MonthIncomeList = new List<KeyValuePair<EMoneyType, int>>();
     // AI 팀용 데이터
     public ETeamTier teamTier;
 
@@ -124,14 +126,15 @@ public class TeamInfo
     public void AddMoney(EMoneyType eMoneyType, float _money)
     {
         Money += (int)_money;
+        MonthIncomeList.Add(new KeyValuePair<EMoneyType, int>(eMoneyType, (int)_money));
         FrontInfoCanvas.Instance?.SetMoneyText(Money);
     }
 
-    public bool ReduceMoney(int _money, bool doToast = true)
+    public bool ReduceMoney(int _money, bool doNeedMoneyToast = true)
     {
         if (Money < _money)
         {
-            if(doToast)
+            if(doNeedMoneyToast)
             {
                 Panel_ToastMessage.OpenToast("돈이 부족합니다.", false);
             }
@@ -201,5 +204,32 @@ public class TeamInfo
     public void DoActivity_FindSponsor()
     {
         Panel_ToastMessage.OpenToast("개발 중", false);
+    }
+
+    public void AddBattleResult(bool isWin, TeamInfo opponentTeamInfo)
+    {
+        var currentDate = PlayerManager.Instance.gameSchedule.CurrentDate;
+        var schedule = new ScheduleDate(EUnitScheduleType.None, currentDate.Year, currentDate.Month, currentDate.Day);
+        if (isWin)
+        {
+            winResults.Add(new BattleResult(schedule, opponentTeamInfo.Name));
+        }
+        else
+        {
+            loseResults.Add(new BattleResult(schedule, opponentTeamInfo.Name));
+        }
+    }
+
+    public int GetTax()
+    {
+        var totalIncome = MonthIncomeList.Sum(x => x.Value);
+        var tax = totalIncome * 0.25f;
+
+        return (int)tax;
+    }
+
+    public int GetUnitPay()
+    {
+        return player_Squad_UnitCardDatas.Sum(x => x.Pay);
     }
 }

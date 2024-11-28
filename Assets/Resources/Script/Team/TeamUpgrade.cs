@@ -33,6 +33,23 @@ public class TeamUpgrade
         return DT_TeamUpgrade.GetInfoByIndex(key, level);
     }
 
+    public bool CanLevelUp(UpgradeType type)
+    {
+        int index = (int)type;
+        string key = UpgradeKeys[index];
+        int level = UpgradeLevels[index];
+
+        if (false == DT_TeamUpgrade.HaveNextUpgrade(key, level))
+        {
+            return false;
+        }
+
+        var dt_Current = DT_TeamUpgrade.GetInfoByIndex(key, level);
+        var cost = dt_Current.Cost;
+
+        return cost <= PlayerManager.Instance.PlayerTeamInfo.Money;
+    }
+
     // 업그레이드 시도 함수
     public bool TryLevelUp(UpgradeType type)
     {

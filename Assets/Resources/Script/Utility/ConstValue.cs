@@ -107,7 +107,9 @@ public enum EPanelPrefabType
     Panel_InternationalActivity,
     Panel_Notification,
     Panel_Record,
-    Panel_FieldBattleEnd
+    Panel_FieldBattleEnd,
+    Panel_TeamHome,
+    Panel_EventPopup
 }
 
 public class ConstValue : CustomSingleton<ConstValue>
