@@ -23,9 +23,11 @@ public class DT_UnitInfo_Immutable
     public string AttackPrefabName;
     public string NormalSkills;
     public string SpecialSkills;
+    public string OfficeDialogs;
 
     // Initialize 데이터
     public List<string> SkillNameList;
+    public List<string> OfficeDialogList;
 
     public DT_UnitInfo_Immutable() { }
 
@@ -35,6 +37,10 @@ public class DT_UnitInfo_Immutable
         SkillNameList = new List<string>();
         StringUtility.AddSplitList(ref SkillNameList, NormalSkills, ":");
         StringUtility.AddSplitList(ref SkillNameList, SpecialSkills, ":");
+
+        // 사무실 대사 List
+        OfficeDialogList = new List<string>();
+        StringUtility.AddSplitList(ref OfficeDialogList, OfficeDialogs, ":");
     }
 
     public static DT_UnitInfo_Immutable GetInfoByIndex(int rank)

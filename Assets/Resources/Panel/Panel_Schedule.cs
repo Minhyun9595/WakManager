@@ -41,11 +41,11 @@ public class GridItem_Day : GridAbstract, GridInterface
         switch (_schedule.Type)
         {
             case EScheduleType.Contest:
-                image.color = Color.cyan;
+                image.color = Color.red;
                 ScheduleText.text = "대회";
                 break;
             case EScheduleType.Scream:
-                image.color = Color.cyan;
+                image.color = Color.yellow;
                 ScheduleText.text = "스크림";
                 break;
             case EScheduleType.Training:
@@ -53,11 +53,12 @@ public class GridItem_Day : GridAbstract, GridInterface
                 ScheduleText.text = "훈련";
                 break;
             case EScheduleType.InternationalActivity:
-                image.color = Color.cyan;
+                image.color = Color.magenta;
                 ScheduleText.text = "대외 활동";
                 break;
             default:
                 image.color = UIUtility.HexToColor("00AB40");
+                ScheduleText.text = "";
                 break;
         }
     }

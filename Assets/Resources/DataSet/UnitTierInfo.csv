@@ -1,0 +1,15 @@
+- 선수 티어,선수 능력치,,,,,,,,,
+,우아함,19 - 20,,,,,,,,
+,능숙함,12 - 18,,,,,,,,
+,가능함,6 - 11,,,,,,,,
+,서투름,1 - 5,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+[Field],,,,,,,,,,
+Index,Type,Desc,ConditionStatMin,ConditionStatMax,RecurtCost,MonthCost,AddStatPointMin,AddStatPointMax,PotentialPointMin,PotentialPointMax
+0,Challenger,1부,16,20,4000000,300000,18,20,1,6
+1,Master,2부,12,18,1600000,250000,12,19,1,4
+2,Gold,3부,8,17,750000,200000,7,12,1,9
+3,Silver,4부,5,13,400000,150000,5,10,1,12
+4,Bronze,5부,3,11,200000,100000,3,7,2,9
+5,Iron,6부,1,9,100000,50000,1,5,1,8

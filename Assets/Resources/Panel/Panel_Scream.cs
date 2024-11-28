@@ -32,7 +32,6 @@ public class GridItem_ScreamTeam : GridAbstract, GridInterface
         teamInfo = _teamInfo;
 
         TeamNameText.text = teamInfo.Name;
-        // "이름: teamInfo.player_InSquad_UnitCardDatas[0].unitStat.Name\n"
         SquadInfoText.text = string.Join(" | ", teamInfo.player_InSquad_UnitCardDatas.Select(unitCard => $"{unitCard.unitStat.Name}({unitCard.GetUnitValue()})"));
 
     }
@@ -58,20 +57,48 @@ public class Panel_Scream : PanelAbstract
     public Transform Grid_ScreamTeam;
     public List<GridItem_ScreamTeam> gridItem_ScreamTeams;
 
+    public Button First_TierButton;
+    public Button Second_TierButton;
+    public Button Third_TierButton;
+
     private void Awake()
     {
         Grid_ScreamTeam = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Grid_ScreamTeam");
+        First_TierButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "First_TierButton");
+        Second_TierButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "Second_TierButton");
+        Third_TierButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "Third_TierButton");
 
-        Init_ScreamTeam();
+        First_TierButton.onClick.AddListener(() => OnClick_FindScreamTeam(ETeamTier.First));
+        Second_TierButton.onClick.AddListener(() => OnClick_FindScreamTeam(ETeamTier.Second));
+        Third_TierButton.onClick.AddListener(() => OnClick_FindScreamTeam(ETeamTier.Third));
+
+        Init_ScreamTeam(ETeamTier.Third);
     }
 
-    private void Init_ScreamTeam()
+    public override void Open()
     {
-        var teamInfos = PlayerManager.Instance.GetTeamInfos(EUnitTier.SurplustoRequirements);
+        base.Open();
+        FrontInfoCanvas.Instance.SetPanelName("스크림");
+
+        var findUnitUpgrade = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
+        First_TierButton.gameObject.SetActive(4 <= findUnitUpgrade.Level);
+        Second_TierButton.gameObject.SetActive(2 <= findUnitUpgrade.Level);
+    }
+
+
+    private void Init_ScreamTeam(ETeamTier eTeamTier)
+    {
+        var teamInfos = PlayerManager.Instance.GetTeamInfos(eTeamTier);
         gridItem_ScreamTeams = new List<GridItem_ScreamTeam>();
         for (int i = 0; i < teamInfos.Count; i++)
         {
             var childItem = UIUtility.GetChildAutoCraete(Grid_ScreamTeam, i);
+            childItem.SetActive(false);
+        }
+
+        for (int i = 0; i < teamInfos.Count; i++)
+        {
+            var childItem = Grid_ScreamTeam.GetChild(i).gameObject;
             childItem.SetActive(true);
             var gridItem_SquadCard = new GridItem_ScreamTeam();
             gridItem_SquadCard.Init(childItem);
@@ -79,5 +106,11 @@ public class Panel_Scream : PanelAbstract
 
             gridItem_ScreamTeams.Add(gridItem_SquadCard);
         }
+
+    }
+
+    public void OnClick_FindScreamTeam(ETeamTier eTeamTier)
+    {
+        Init_ScreamTeam(eTeamTier);
     }
 }

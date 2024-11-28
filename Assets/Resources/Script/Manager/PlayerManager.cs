@@ -202,7 +202,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         worldUnitCardDatas = CreateWorldCard(5);
         market_UnitCardDatas.Clear();
         playerTeamInfo.Clear();
-        playerTeamInfo.Initialize(EUnitTier.SurplustoRequirements, "우왁굳");
+        playerTeamInfo.Initialize(ETeamTier.Third, "우왁굳");
 
         int multiple = 1;
 #if UNITY_EDITOR
@@ -212,32 +212,58 @@ public class PlayerManager : CustomSingleton<PlayerManager>
 
         playerTeamUpgrade = new TeamUpgrade();
 
-        // 팀 32개 만들기
+        // 팀티어별로 팀 16개씩 만들기
         TeamNameGenerator teamNameGenerator = new TeamNameGenerator();
         worldTeamList.Clear();
 
-        foreach(var unitTierType in Enum.GetValues(typeof(EUnitTier)))
+        // 챌린저부터 Iron까지의 EUnitTier 배열
+        EUnitTier[] unitTiers = Enum.GetValues(typeof(EUnitTier)) as EUnitTier[];
+
+
+        foreach (var teamTier in Enum.GetValues(typeof(ETeamTier)))
         {
             List<TeamInfo> newTeamInfos = new List<TeamInfo>();
-            for (int i = 0; i < 32; i++)
+
+            for (int i = 0; i < 16; i++)
             {
                 var team = new TeamInfo();
-                team.Initialize((EUnitTier)unitTierType, teamNameGenerator.GetRandomName());
+                team.Initialize((ETeamTier)teamTier, teamNameGenerator.GetRandomName());
                 newTeamInfos.Add(team);
             }
 
+            // AI팀 팀원 티어 정하기
             foreach (var team in newTeamInfos)
             {
-                var teamCardList = CreateWorldTeamCard((EUnitTier)unitTierType, 5);
-                foreach (var unit in teamCardList)
+                int unitCount = 0;
+
+                // 챌린저부터 Iron 순서로 유닛 채우기
+                foreach (var unitTier in unitTiers)
                 {
-                    team.AddInSquadUnit(unit);
+                    var teamTierInfo = DT_TeamTierInfo.GetInfoByIndex((ETeamTier)team.teamTier);
+                    if (teamTierInfo == null || !teamTierInfo.keyValuePairs.ContainsKey(unitTier))
+                    {
+                        continue;
+                    }
+
+                    var minMax = teamTierInfo.keyValuePairs[unitTier];
+                    int tierUnitCount = UnityEngine.Random.Range(minMax.Key, minMax.Value + 1);
+
+                    // 필요한 만큼 유닛 생성
+                    for (int j = 0; j < tierUnitCount; j++)
+                    {
+                        if (unitCount >= 10) break; // 한 팀에 10명의 유닛이 채워지면 중단
+
+                        var unit = CreateWorldTeamCard(unitTier, 1)[0]; // 1개의 유닛 생성
+                        team.AddSquadUnit(unit);
+                        unitCount++;
+                    }
+
+                    if (unitCount >= 10) break; // 한 팀에 10명의 유닛이 채워지면 중단
                 }
             }
 
             worldTeamList.AddRange(newTeamInfos);
         }
-
 
         // 스케줄 생성
         gameSchedule.GenerateMonthlyCalendar(storyStartYear, 1);
@@ -349,7 +375,12 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         var buyCard = worldUnitCardDatas.Find(x => x.unitUniqueID == unitUniqueID);
         if (buyCard != null)
         {
-            var dt_TierInfo = DT_TierInfo.GetInfoByIndex(buyCard.eUnitTier);
+            if (gameSchedule.AddScheduleToday(EScheduleType.ContractUnit_Market, "선수 계약") == false)
+            {
+                return null;
+            }
+
+            var dt_TierInfo = DT_UnitTierInfo.GetInfoByIndex(buyCard.eUnitTier);
             if (playerTeamInfo.ReduceMoney(dt_TierInfo.RecurtCost) == false)
             {
                 return null;
@@ -360,7 +391,6 @@ public class PlayerManager : CustomSingleton<PlayerManager>
             worldUnitCardDatas.RemoveAll(x => x.unitUniqueID == unitUniqueID); // ID와 일치하는 모든 항목 제거
 
             gameSchedule.AdvanceDay();
-
             return buyCard;
         }
         else
@@ -391,9 +421,9 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         return playerTeamInfo.GetPlayer_InSquadUnitDatas();
     }
 
-    public List<TeamInfo> GetTeamInfos(EUnitTier eUnitTier)
+    public List<TeamInfo> GetTeamInfos(ETeamTier eTeamTier)
     {
-        return worldTeamList;
+        return worldTeamList.FindAll(x => x.teamTier == eTeamTier);
     }
 
     public bool ScreamDataSet(TeamInfo enemyTeamInfo)

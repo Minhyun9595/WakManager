@@ -23,7 +23,7 @@ public class DamageFont : MonoBehaviour
         GameObject damageFont = PoolManager.Instance.GetFromPool(prefabName);
         damageFont.transform.position = position;
         var textMeshPro = damageFont.GetComponent<TextMeshPro>();
-        textMeshPro.text =((int)damage).ToString();
+        textMeshPro.text = string.Format("{0:0.00}", damage);
         textMeshPro.color = color;
         damageFont.GetComponent<DamageFont>().Invoke_PlayDamageFont(_delayTime);
 

@@ -12,9 +12,9 @@ public class TeamNameGenerator
 
     public List<string> nameTemplate = new List<string>
     {
-        "다이노스", "일레븐", "바로셀로나", "스타즈", "빨간양념 다이노스",
-        "아토믹핑크", "까만양념 드래곤즈", "반반숯불치킨 일레븐",
-        "빨간양념 와이번스", "우동사리", "까만양념 블랙맘바", "일레븐 솔트"
+        "다이노스", "일레븐", "바로셀로나", "스타즈", "다이노스",
+        "아토믹핑크", "드래곤즈", "호드",
+        "와이번스", "블랙맘바", "얼라이언스"
     };
 
     public TeamNameGenerator()

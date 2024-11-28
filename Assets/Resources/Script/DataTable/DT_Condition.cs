@@ -14,10 +14,12 @@ public class DT_Condition
     public string Type;
     public string Range;
     public string Desc;
+    public int Value1;
+    public int Value2;
 
     public EUnitConditionType eUnitConditionType;
-    public int Min;
-    public int Max;
+    public int RangeMin;
+    public int RangeMax;
 
     public DT_Condition() { }
 
@@ -25,8 +27,8 @@ public class DT_Condition
     {
         eUnitConditionType = (EUnitConditionType)Enum.Parse(typeof(EUnitConditionType), Type);
         var rangeSplit = Range.Split("~");
-        Min = int.Parse(rangeSplit[0]);
-        Max = int.Parse(rangeSplit[1]);
+        RangeMin = int.Parse(rangeSplit[0]);
+        RangeMax = int.Parse(rangeSplit[1]);
     }
 
     public static DT_Condition GetInfoByIndex(EUnitConditionType eUnitConditionType)
@@ -44,7 +46,7 @@ public class DT_Condition
     {
         foreach(var condition in listInfo)
         {
-            if (condition.Min <= _conditionPoint && _conditionPoint <= condition.Max)
+            if (condition.RangeMin <= _conditionPoint && _conditionPoint <= condition.RangeMax)
                 return condition;
         }
 

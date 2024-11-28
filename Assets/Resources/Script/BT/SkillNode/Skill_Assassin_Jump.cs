@@ -67,6 +67,7 @@ public class Skill_Assassin_Jump : BehaviorNode
         // 목표 위치 계산
         Vector3 startPosition = blackboard.myUnitAI.transform.position;
         Vector3 targetPosition = farthestEnemy.transform.position + new Vector3(1.0f * (blackboard.teamIndex % 2 == 0 ? -1 : 1), 0, 0); // 적 뒤쪽
+        targetPosition.y = startPosition.y;
 
         // 마테리얼 변경
         Renderer renderer = blackboard.GetBodyRenderer();

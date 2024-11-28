@@ -65,13 +65,41 @@ public class FieldManager : MonoBehaviour
         spawnedUnits.Clear();
         teamUnitIndices.Clear();
 
+        var needMaxCount = 5;
         foreach (var teamInfo in _teamInfoList)
         {
             var teamUnitData = new TeamUnitData();
             teamUnitData.TeamIndex = teamInfo.TeamIndex;
+
+            // 스쿼드에 있는 유닛 추가
             foreach (var unit in teamInfo.player_InSquad_UnitCardDatas)
             {
                 teamUnitData.unitDatas.Add(unit);
+
+                if (needMaxCount <= teamUnitData.unitDatas.Count)
+                    break;
+            }
+
+            // AI의 경우 스쿼드에 없음. teamInfo.player_Squad_UnitCardDatas 에 있는 유닛중 부족한 수 만큼 랜덤으로 뽑아서 추가
+            if (PlayerManager.Instance.PlayerTeamInfo != teamInfo)
+            {
+                var needCount = needMaxCount - teamUnitData.unitDatas.Count;
+                if (needCount > 0)
+                {
+                    var randomUnitIndices = new List<int>();
+                    for (int unit = 0; unit < teamInfo.player_Squad_UnitCardDatas.Count; unit++)
+                    {
+                        randomUnitIndices.Add(unit);
+                    }
+
+                    for (int i = 0; i < needCount && randomUnitIndices.Count != 0; i++)
+                    {
+                        var randomIndex = Random.Range(0, randomUnitIndices.Count);
+                        var randomUnit = randomUnitIndices[randomIndex];
+                        teamUnitData.unitIndices.Add(randomUnit);
+                        randomUnitIndices.RemoveAt(randomIndex);
+                    }
+                }
             }
 
             teamUnitIndices.Add(teamUnitData);

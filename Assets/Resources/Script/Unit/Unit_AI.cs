@@ -130,7 +130,7 @@ public class Unit_AI : MonoBehaviour
 
     public static GameObject TestSpawn(Vector3 _position, int _teamIndex, int _unitIndex)
     {
-        UnitData testUnitData = UnitData.CreateNewUnit(EUnitTier.Rotation, _unitIndex);
+        UnitData testUnitData = UnitData.CreateNewUnit(EUnitTier.Silver, _unitIndex);
         GameObject unit = PoolManager.Instance.GetFromPool(EPrefabType.Unit.ToString());
         unit.transform.position = _position;
         unit.GetComponent<Unit_AI>().Initialize(_teamIndex, testUnitData);

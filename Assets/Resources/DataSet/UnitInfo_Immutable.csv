@@ -1,9 +1,13 @@
-Index,Name,IsDeveloped,RoleIndex,RoleName,Animator,IsRangeUnit,AttackType,AttackPrefabName,NormalSkills,SpecialSkills,MaxTraitCount,FixTraitType
-1,단답벌레,1,3,암살자,단답벌레,0,Melee,,,,3,0
-2,풍신,1,2,마법사,풍신,1,Projectile,Projectile_Wizzard,추적 ,추적2,3,0
-3,진희,1,0,탱커,진희,0,Melee,,,,3,0
-4,비즈니스킴,1,3,암살자,비즈니스킴,0,Melee,,,,3,0
-5,빅토리,1,5,서포터,빅토리,1,Projectile,Projectile_Wizzard,,,3,0
-6,샬롯,1,1,전사,샬롯,0,Melee,,,,3,0
-7,크리즈,1,0,탱커,크리즈,0,Melee,,,,3,0
-8,히키킹,1,1,전사,히키킹,0,Melee,,,,3,0
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+[Field],,,,,,,,,,,,,,
+Index,Name,IsDeveloped,RoleIndex,RoleName,Animator,IsRangeUnit,AttackType,AttackPrefabName,HittEffect,NormalSkills,SpecialSkills,MaxTraitCount,FixTraitType,OfficeDialogs
+1,단답벌레,1,3,암살자,단답벌레,0,Melee,,,,,3,0,안녕하세요 고정멤버 단답벌레입니다.
+2,풍신,1,2,마법사,풍신,1,Projectile,Projectile_Wizzard,Projectile_Wizzard_Hit,추적 ,추적2,3,0,안녕하세요 고정멤버 풍신입니다.
+3,진희,1,0,탱커,진희,0,Melee,,,,,3,0,안녕하세요 고정멤버 진희입니다.
+4,비즈니스킴,1,3,암살자,비즈니스킴,0,Melee,,,,,3,0,안녕하세요 고정멤버 비즈니스킴입니다.
+5,빅토리,1,5,서포터,빅토리,1,Projectile,Projectile_Wizzard,Projectile_Wizzard_Hit,,,3,0,안녕하세요 고정멤버 빅토리입니다.
+6,샬롯,1,1,전사,샬롯,0,Melee,,,,,3,0,안녕하세요 고정멤버 샬롯입니다.
+7,크리즈,1,0,탱커,크리즈,0,Melee,,,,,3,0,안녕하세요 고정멤버 크리즈입니다.
+8,히키킹,1,1,전사,히키킹,0,Melee,,,,,3,0,안녕하세요 고정멤버 히키킹입니다.

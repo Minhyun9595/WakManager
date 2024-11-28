@@ -28,11 +28,11 @@ public class FindTargetCondition : BehaviorNode
         }
 
         // 이미 타겟이 유효하면 Success
-        if (blackboard.targetUnitAI != null &&
-            blackboard.targetUnitAI.blackboard.unitFieldInfo.IsCanNotTarget() == false)
-        {
-            return NodeStatus.Success;
-        }
+        //if (blackboard.targetUnitAI != null &&
+        //    blackboard.targetUnitAI.blackboard.unitFieldInfo.IsCanNotTarget() == false)
+        //{
+        //    return NodeStatus.Success;
+        //}
 
         // 0.3초가 지나지 않았다면 이전 타겟 유지
         if (CustomTime.time < nextTargetUpdateTime)

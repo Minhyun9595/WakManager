@@ -57,7 +57,6 @@ public class Panel_InternationalActivity : PanelAbstract
         }
 
         PlayerManager.Instance.PlayerTeamInfo.DoActivity_SoloStream();
-        PlayerManager.Instance.gameSchedule.AdvanceDay();
     }
 
     void OnClick_TeamStream()
@@ -69,7 +68,6 @@ public class Panel_InternationalActivity : PanelAbstract
         }
 
         PlayerManager.Instance.PlayerTeamInfo.DoActivity_TeamStream();
-        PlayerManager.Instance.gameSchedule.AdvanceDay();
     }
 
     void OnClick_Goods()

@@ -5,10 +5,10 @@ using System.IO;
 using UnityEngine;
 
 [System.Serializable]
-public class DT_TierInfo
+public class DT_UnitTierInfo
 {
-    public static Dictionary<EUnitTier, DT_TierInfo> infoDictionary = new Dictionary<EUnitTier, DT_TierInfo>();
-    public static List<DT_TierInfo> listInfo = new List<DT_TierInfo>();
+    public static Dictionary<EUnitTier, DT_UnitTierInfo> infoDictionary = new Dictionary<EUnitTier, DT_UnitTierInfo>();
+    public static List<DT_UnitTierInfo> listInfo = new List<DT_UnitTierInfo>();
 
     public int Index;
     public string Type;
@@ -16,13 +16,15 @@ public class DT_TierInfo
     public int ConditionStatMin;
     public int ConditionStatMax;
     public int RecurtCost;
-    public int AddStatPoint;
+    public int MonthCost;
+    public int AddStatPointMin;
+    public int AddStatPointMax;
     public int PotentialPointMin;
     public int PotentialPointMax;
 
     public EUnitTier eUnitTier;
 
-    public DT_TierInfo() { }
+    public DT_UnitTierInfo() { }
 
     public void Set()
     {
@@ -30,7 +32,7 @@ public class DT_TierInfo
     }
 
 
-    public static DT_TierInfo GetInfoByIndex(EUnitTier eUnitTier)
+    public static DT_UnitTierInfo GetInfoByIndex(EUnitTier eUnitTier)
     {
         if (infoDictionary.TryGetValue(eUnitTier, out var info))
         {
@@ -46,14 +48,14 @@ public partial class DataTable : CustomSingleton<DataTable>
 {
     public void Inltialize_DT_TierInfo()
     {
-        List<DT_TierInfo> infoList = DataLoader.Instance.LoadCSV<DT_TierInfo>(Path.Combine(Application.dataPath, "Resources/DataSet/TierInfo.csv"));
+        List<DT_UnitTierInfo> infoList = DataLoader.Instance.LoadCSV<DT_UnitTierInfo>(Path.Combine(Application.dataPath, "Resources/DataSet/UnitTierInfo.csv"));
 
         // Dictionary에 데이터를 저장
         foreach (var info in infoList)
         {
             info.Set();
-            DT_TierInfo.infoDictionary[info.eUnitTier] = info;
-            DT_TierInfo.listInfo.Add(info);
+            DT_UnitTierInfo.infoDictionary[info.eUnitTier] = info;
+            DT_UnitTierInfo.listInfo.Add(info);
         }
     }
 }

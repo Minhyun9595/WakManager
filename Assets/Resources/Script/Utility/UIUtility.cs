@@ -139,13 +139,13 @@ namespace QUtility
         {
             string formattedMoney;
 
-            if (unit >= 1_000_000) // 100만 이상이면 M 단위
+            if (unit >= 10_000_000) // 1000만 이상이면 M 단위
             {
-                formattedMoney = $"{unit / 1_000_000f:0.##}M";
+                formattedMoney = $"{unit / 10_000_000f:0.##}M";
             }
-            else if (unit >= 1_000) // 1000 이상이면 K 단위
+            else if (unit >= 10_000) // 10000 이상이면 K 단위
             {
-                formattedMoney = $"{unit / 1_000f:0.##}K";
+                formattedMoney = $"{unit / 10_000f:0.##}K";
             }
             else // 1000 미만이면 그냥 숫자 표시
             {

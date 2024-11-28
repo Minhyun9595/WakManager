@@ -14,16 +14,18 @@ public class DataLoader : CustomSingleton<DataLoader>
         List<T> dataList = new List<T>();
         string[] lines = File.ReadAllLines(filePath);
 
-        if (lines.Length <= 1)
+        // [Field] 키워드가 포함된 줄 찾기
+        int startIndex = Array.FindIndex(lines, line => line.Contains("[Field]"));
+        if (startIndex == -1 || startIndex + 1 >= lines.Length)
         {
-            Debug.LogWarning("CSV 파일에 데이터가 없습니다.");
+            Debug.LogWarning("[Field]를 찾을 수 없거나 데이터가 없습니다.");
             return dataList;
         }
 
-        // 첫 번째 줄에서 컬럼 이름을 읽습니다.
-        string[] headers = lines[0].Split(',');
+        // [Field] 줄 이후부터 데이터 처리 시작
+        string[] headers = lines[startIndex + 1].Split(',');
 
-        for (int i = 1; i < lines.Length; i++)
+        for (int i = startIndex + 2; i < lines.Length; i++)
         {
             string[] values = lines[i].Split(',');
             T dataItem = new T();
@@ -33,7 +35,7 @@ public class DataLoader : CustomSingleton<DataLoader>
             {
                 for (int j = 0; j < headers.Length; j++)
                 {
-                    if (field.Name.Equals(headers[j], StringComparison.OrdinalIgnoreCase))
+                    if (field.Name.Equals(headers[j].Trim(), StringComparison.OrdinalIgnoreCase))
                     {
                         object convertedValue = ConvertValue(values[j], field.FieldType);
                         field.SetValue(dataItem, convertedValue);

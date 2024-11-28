@@ -28,6 +28,7 @@ public class OfficeUnitObject : MonoBehaviour
     private Animator animator;
     private SpriteRenderer sprite;
     public string unitUniqueID;
+    private UnitData unitData;
 
     public Transform MessageBox;
     public SpriteRenderer MessageBox_SpriteRenderer;
@@ -49,12 +50,13 @@ public class OfficeUnitObject : MonoBehaviour
         MessageText.gameObject.SetActive(false);
 
         unitUniqueID = unitData.unitUniqueID;
+        this.unitData = unitData;
 
         var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{unitData.unitInfo_Immutable.Animator}/{unitData.unitInfo_Immutable.Animator}");
         animator.runtimeAnimatorController = controller;
         animator.Play("Move");
 
-        ShowMessage($"안녕하세요 고정멤버 {unitData.unitInfo_Immutable.Name}입니다.");
+        ShowMessage();
     }
 
     void Start()
@@ -148,13 +150,25 @@ public class OfficeUnitObject : MonoBehaviour
         PoolManager.Instance.ReturnToPool(prefabType.ToString(), gameObject);
     }
 
-    public void ShowMessage(string message)
+    public void ShowMessage()
     {
-        StartCoroutine(DisplayMessageCoroutine(message));
+        StartCoroutine(DisplayMessageCoroutine());
     }
 
-    private IEnumerator DisplayMessageCoroutine(string message)
+    private IEnumerator DisplayMessageCoroutine()
     {
+        var message = "";
+        if(unitData.unitInfo_Immutable.OfficeDialogList.Count == 0)
+        {
+            message = $"{unitData.unitInfo_Immutable.Name} 데이터테이블이 비었습니다.";
+        }
+        else
+        {
+            var rand = Random.Range(0, unitData.unitInfo_Immutable.OfficeDialogList.Count);
+            message = unitData.unitInfo_Immutable.OfficeDialogList[rand];
+        }
+        
+
         // 메시지 출력 시작
         MessageBox.gameObject.SetActive(true);
         MessageText.gameObject.SetActive(true);
@@ -179,7 +193,7 @@ public class OfficeUnitObject : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
 
         // 다시 메시지 출력 (임의의 메시지를 사용하거나 매개변수를 반복적으로 사용)
-        ShowMessage(message);
+        ShowMessage();
     }
 
     private Vector2 padding = new Vector2(0.2f, 0.1f); // 텍스트 외부의 여백 (x: 좌우, y: 위아래)

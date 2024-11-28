@@ -29,9 +29,9 @@ public class TeamInfo
 
     public List<KeyValuePair<EMoneyType, int>> WeekIncomeList = new List<KeyValuePair<EMoneyType, int>>();
     // AI 팀용 데이터
-    public EUnitTier teamTier;
+    public ETeamTier teamTier;
 
-    public void Initialize(EUnitTier _teamTier, string teamName)
+    public void Initialize(ETeamTier _teamTier, string teamName)
     {
         TeamIndex = System.Guid.NewGuid().ToString();
         teamTier = _teamTier;
@@ -153,26 +153,38 @@ public class TeamInfo
 
     public void DoActivity_SoloStream()
     {
-        foreach(var unitData in player_Squad_UnitCardDatas)
+        if (false == PlayerManager.Instance.gameSchedule.AddScheduleToday(EScheduleType.Activity_SoloStream, "솔로 스트리밍"))
+        {
+            return;
+        }
+
+        foreach (var unitData in player_Squad_UnitCardDatas)
         {
             unitData.SoloStream(this);
         }
         AddPopulation(30);
+        PlayerManager.Instance.gameSchedule.AdvanceDay();
     }
 
     public void DoActivity_TeamStream()
     {
+        if (false == PlayerManager.Instance.gameSchedule.AddScheduleToday(EScheduleType.Activity_TeamStream, "팀 스트리밍"))
+        {
+            return;
+        }
+
         var mulPopulation = 0.0f;
         var moneyRatio = 1.5f;
         foreach (var unitData in player_Squad_UnitCardDatas)
         {
             mulPopulation += unitData.Population;
-            unitData.Population += 10;
+            unitData.AddPopulation(10);
         }
 
         mulPopulation *= moneyRatio;
         AddPopulation(100);
         AddMoney(EMoneyType.Activity_TeamStream, (int)mulPopulation);
+        PlayerManager.Instance.gameSchedule.AdvanceDay();
     }
     
     public void DoActivity_SellGoods()

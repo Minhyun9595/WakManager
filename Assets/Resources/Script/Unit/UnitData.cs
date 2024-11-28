@@ -19,6 +19,7 @@ public class UnitData
     public int AddStatPoint;
     public int PotentialPoints;
     public int Population;
+    public int Pay;
 
     // 일정
     public ScheduleDate schedule;
@@ -61,9 +62,15 @@ public class UnitData
         unitStat = DT_UnitStat.GetInfoByIndex(unitIndex);
         unitInfo_Immutable = DT_UnitInfo_Immutable.GetInfoByIndex(unitIndex);
 
-        var tierInfo = DT_TierInfo.GetInfoByIndex(eUnitTier);
-        AddStatPoint = tierInfo.AddStatPoint;
-        PotentialPoints = UnityEngine.Random.Range(tierInfo.PotentialPointMin, tierInfo.PotentialPointMax); 
+        var tierInfo = DT_UnitTierInfo.GetInfoByIndex(eUnitTier);
+
+        var addStatRand = UnityEngine.Random.Range(tierInfo.AddStatPointMin, tierInfo.AddStatPointMax + 1);
+        var potentialStatRand = UnityEngine.Random.Range(tierInfo.PotentialPointMin, tierInfo.PotentialPointMax + 1);
+
+        AddStatPoint = DT_Potential.GetRandomPotentialValue(addStatRand);
+        PotentialPoints = DT_Potential.GetRandomPotentialValue(potentialStatRand);
+        Pay = (int)UnityEngine.Random.Range(tierInfo.MonthCost * 0.9f, tierInfo.MonthCost * 1.1f);
+        Pay = (Pay / 100) * 100; // 100 단위 버리기
 
         unitCondition = new Unitcondition(_eUnitTier);
         skillList = new List<DT_Skill>();
@@ -78,8 +85,7 @@ public class UnitData
         var Types = DT_Trait.GetTypes();
 
         // 특성 생성
-        var randomTraitCount = 0;
-        randomTraitCount = UnityEngine.Random.Range(0, unitInfo_Immutable.MaxTraitCount + 1);
+        var randomTraitCount = UnityEngine.Random.Range(0, unitInfo_Immutable.MaxTraitCount + 1);
         for (int i = 0; i < randomTraitCount; i++)
         {
             CreateTrait(ref Types);
@@ -217,7 +223,7 @@ public class UnitData
         }
 
         // 스케줄이 null이거나 오늘이라면 새 스케줄을 생성
-        schedule = new ScheduleDate(targetDate.Year, targetDate.Month, targetDate.Day);
+        schedule = new ScheduleDate(eUnitScheduleType, targetDate.Year, targetDate.Month, targetDate.Day);
 
         return true;
     }
@@ -286,6 +292,45 @@ public class UnitData
 
         NotificationManager.Instance.ShowNotification($"[{state}]{unitInfo_Immutable.Name} 개인 방송으로 {addMoney} 수익과 인기 {addPopulation}를  얻었습니다.");
         teamInfo.AddMoney(EMoneyType.Activity_SoloStream, (int)addMoney);
+        AddPopulation(addPopulation);
+    }
+
+    public void ScheduleCheck()
+    {
+        // 오늘 스케줄이 끝났을 때 효과 발동
+        if(PlayerManager.Instance.gameSchedule.IsToday(schedule))
+        {
+            // 훈련 성공 여부 체크
+            var resultRand = UnityEngine.Random.Range(0, 100);
+
+            switch (schedule.EUnitScheduleType)
+            {
+                case EUnitScheduleType.Traning_Health:
+                    Debug.Log("훈련 성공 Traning_Health");
+                    NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 체력 훈련이 성공적으로 끝났습니다.");
+                    break;
+                case EUnitScheduleType.Traning_Damage:
+                    Debug.Log("훈련 성공 Traning_Damage");
+                    NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 공격력 훈련이 성공적으로 끝났습니다.");
+                    break;
+                case EUnitScheduleType.Traning_Armor:
+                    Debug.Log("훈련 성공 Traning_Armor");
+                    NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 방어력 훈련이 성공적으로 끝났습니다.");
+                    break;
+                case EUnitScheduleType.Traning_Mental:
+                    Debug.Log("훈련 성공 Traning_Mental");
+                    NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 정신력 훈련이 성공적으로 끝났습니다.");
+                    break;
+                case EUnitScheduleType.Traning_Trait:
+                    Debug.Log("훈련 성공 Traning_Trait");
+                    NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 특성 훈련이 성공적으로 끝났습니다.");
+                    break;
+            }
+        }
+    }
+
+    public void AddPopulation(int addPopulation)
+    {
         Population += addPopulation;
     }
 }
@@ -311,9 +356,9 @@ public class Unitcondition
     {
         eUnitTier = _eUnitTier;
 
-        var tierInfo = DT_TierInfo.GetInfoByIndex(eUnitTier);
+        var tierInfo = DT_UnitTierInfo.GetInfoByIndex(eUnitTier);
         int min = tierInfo.ConditionStatMin;
-        int max = tierInfo.ConditionStatMax;
+        int max = tierInfo.ConditionStatMax + 1;
 
         Professionalism = UnityEngine.Random.Range(min, max);
         Ambition = UnityEngine.Random.Range(min, max);
@@ -345,22 +390,22 @@ public class Unitcondition
         var addPoint = 0;
         switch (eUnitTier)
         {
-            case EUnitTier.WorldClass:
+            case EUnitTier.Challenger:
                 addPoint += 50;
                 break;
-            case EUnitTier.LeagueStar:
+            case EUnitTier.Master:
                 addPoint += 30;
                 break;
-            case EUnitTier.FirstTeam:
+            case EUnitTier.Gold:
                 addPoint += 25;
                 break;
-            case EUnitTier.Rotation:
+            case EUnitTier.Silver:
                 addPoint += 20;
                 break;
-            case EUnitTier.Prospect:
+            case EUnitTier.Bronze:
                 addPoint += 10;
                 break;
-            case EUnitTier.SurplustoRequirements:
+            case EUnitTier.Iron:
                 addPoint += 0;
                 break;
         }
@@ -407,6 +452,7 @@ public enum EAddStatType
     CriticalChance,
     CriticalDamage,
 }
+
 public class AddStat
 {
     public int Health;

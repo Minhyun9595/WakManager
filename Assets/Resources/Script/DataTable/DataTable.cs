@@ -33,6 +33,8 @@ public partial class DataTable : CustomSingleton<DataTable>
         Inltialize_DT_Const();
         Inltialize_DT_TierInfo();
         Inltialize_DT_TeamUpgrade();
+        Inltialize_DT_TeamTierInfo();
+        Initialize_DT_Potential();
 
         Inltialize_DT_UnitInfo_Immutable();
         Inltialize_DT_UnitStat();

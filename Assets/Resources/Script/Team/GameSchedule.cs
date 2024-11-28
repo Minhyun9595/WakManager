@@ -10,6 +10,10 @@ public enum EScheduleType
     Scream,
     Training,
     InternationalActivity,
+    Search_Market,
+    ContractUnit_Market,
+    Activity_SoloStream,
+    Activity_TeamStream,
 }
 
 public enum EUnitScheduleType
@@ -24,12 +28,14 @@ public enum EUnitScheduleType
 [System.Serializable]
 public class ScheduleDate
 {
+    public EUnitScheduleType EUnitScheduleType;
     public int Year;
     public int Month;
     public int Day;
 
-    public ScheduleDate(int year, int month, int day)
+    public ScheduleDate(EUnitScheduleType eUnitScheduleType,  int year, int month, int day)
     {
+        EUnitScheduleType = eUnitScheduleType;
         Year = year;
         Month = month;
         Day = day;
@@ -116,9 +122,8 @@ public class GameSchedule
         }
         else
         {
-            Panel_ToastMessage.OpenToast("이미 일정이 있습니다.", false);
+            Panel_ToastMessage.OpenToast("오늘은 일정을 소화했습니다.", false);
         }
-
         return false;
     }
 
@@ -147,6 +152,13 @@ public class GameSchedule
     {
         CurrentDate = CurrentDate.AddDays(1); // 다음날로 이동
         FrontInfoCanvas.Instance.SetDateText(CurrentDate);
+
+        // 유닛 스케줄 체크
+        var playerUnits = PlayerManager.Instance.PlayerTeamInfo.GetPlayer_SquadUnitDatas();
+        foreach(var unit in playerUnits)
+        {
+            unit.ScheduleCheck();
+        }
     }
 
     public int GetPlayDay()
@@ -157,6 +169,19 @@ public class GameSchedule
     public string GetToday()
     {
         return CurrentDate.ToString("yyyy-MM-dd");
+    }
+
+    public bool IsToday(ScheduleDate scheduleDate)
+    {
+        if (scheduleDate == null)
+            return false;
+
+        if(scheduleDate.Year == CurrentDate.Year && scheduleDate.Month == CurrentDate.Month && scheduleDate.Day == CurrentDate.Day)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     // JSON으로 저장하기 위한 메서드

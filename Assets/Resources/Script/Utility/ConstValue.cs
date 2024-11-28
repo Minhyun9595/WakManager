@@ -3,18 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum EUnitTier
-{ 
-    WorldClass, // 월드 클래스
-    LeagueStar, // 리그 최상급
-    FirstTeam, // 주전급
-    Rotation, // 로테이션
-    Prospect, // 유망주
-    SurplustoRequirements // 팀 수준 미달
+{
+    Challenger,
+    Master,
+    Gold,
+    Silver,
+    Bronze,
+    Iron
+}
+
+public enum ETeamTier
+{
+    First,
+    Second,
+    Third,
 }
 
 public enum EUnitConditionType
 {
-    Superb, // 90 ~ 100
+    VeryGood, // 90 ~ 100
     Good, // 80 ~ 89
     Okay, // 65 ~ 79
     Poor, // 40 ~ 64
