@@ -109,7 +109,7 @@ public class Panel_LobbyMenu : PanelAbstract
 
     private void OnClick_SavePanel() 
     {
-        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_SaveData);
+        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_SaveData, PanelRenderQueueManager.ECanvasType.FrontCanvas);
     }
 
     private void OnClick_InternationalActivity()

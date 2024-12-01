@@ -273,9 +273,11 @@ public class PlayerManager : CustomSingleton<PlayerManager>
 
         if(SceneManager.GetActiveScene().buildIndex == 1)
         {
-            var dlg = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_StoryDialogue, PanelRenderQueueManager.ECanvasType.FrontCanvas);
-            if (dlg != null)
-                dlg.GetComponent<Panel_StoryDialogue>().PlayDialogue(1);
+            //var dlg = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_StoryDialogue, PanelRenderQueueManager.ECanvasType.FrontCanvas);
+            //if (dlg != null)
+            //{
+            //    dlg.GetComponent<Panel_StoryDialogue>().PlayDialogue(1);
+            //}
         }
     }
 

@@ -48,8 +48,11 @@ public class FieldManager : MonoBehaviour
     [SerializeField] private TeamPanel teamPanel_1;
     [SerializeField] private TeamPanel teamPanel_2;
 
+    private string winTeamIndex = "";
+
     private void Update()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.T))
         {
             StartGame();
@@ -58,6 +61,7 @@ public class FieldManager : MonoBehaviour
         {
             ResetGame();
         }
+#endif
     }
 
     public void SetInGame(List<TeamInfo> _teamInfoList)
@@ -86,17 +90,17 @@ public class FieldManager : MonoBehaviour
                 var needCount = needMaxCount - teamUnitData.unitDatas.Count;
                 if (needCount > 0)
                 {
-                    var randomUnitIndices = new List<int>();
-                    for (int unit = 0; unit < teamInfo.player_Squad_UnitCardDatas.Count; unit++)
+                    var randomUnitIndices = new List<UnitData>();
+                    for (int i = 0; i < teamInfo.player_Squad_UnitCardDatas.Count; i++)
                     {
-                        randomUnitIndices.Add(unit);
+                        randomUnitIndices.Add(teamInfo.player_Squad_UnitCardDatas[i]);
                     }
 
                     for (int i = 0; i < needCount && randomUnitIndices.Count != 0; i++)
                     {
                         var randomIndex = Random.Range(0, randomUnitIndices.Count);
                         var randomUnit = randomUnitIndices[randomIndex];
-                        teamUnitData.unitIndices.Add(randomUnit);
+                        teamUnitData.unitDatas.Add(randomUnit);
                         randomUnitIndices.RemoveAt(randomIndex);
                     }
                 }
@@ -247,6 +251,7 @@ public class FieldManager : MonoBehaviour
     {
         foreach(var teamSpawnedUnit in spawnedUnits)
         {
+            var teamIndex = teamSpawnedUnit.TeamIndex;
             bool allUnitDead = true;
             foreach(var unit in teamSpawnedUnit.units)
             {
@@ -259,6 +264,7 @@ public class FieldManager : MonoBehaviour
 
             if(allUnitDead)
             {
+                winTeamIndex = teamSpawnedUnit.TeamIndex;
                 Debug.Log("전투 종료");
                 CancelInvoke("InvokeCheckGameOver");
                 Invoke("InGameOver", 1.0f);
@@ -278,7 +284,8 @@ public class FieldManager : MonoBehaviour
         BattleReport team1battleReport = new BattleReport(spawnedUnits[1].units, spawnedUnits[0].units);
         team1Info.teamBattleReports.Add(team0battleReport);
 
-        PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_FieldBattleEnd, PanelRenderQueueManager.ECanvasType.FrontCanvas);
+        var firstPlayerWin = winTeamIndex == spawnedUnits[0].TeamIndex;
+        Panel_FieldBattleEnd.Open(firstPlayerWin);
     }
 
     public GameObject StageBG;

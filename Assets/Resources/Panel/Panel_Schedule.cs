@@ -45,7 +45,7 @@ public class GridItem_Day : GridAbstract, GridInterface
                 image.color = Color.red;
                 break;
             case EScheduleType.Scream:
-                image.color = Color.yellow;
+                image.color = UIUtility.HexToColor(Colors.갈색);
                 break;
             case EScheduleType.Training:
                 image.color = Color.cyan;
@@ -54,10 +54,10 @@ public class GridItem_Day : GridAbstract, GridInterface
                 image.color = Color.magenta;
                 break;
             case EScheduleType.Search_Market:
-                image.color = Color.yellow;
+                image.color = UIUtility.HexToColor(Colors.선명한주황);
                 break;
             case EScheduleType.ContractUnit_Market:
-                image.color = Color.yellow;
+                image.color = UIUtility.HexToColor(Colors.선명한주황);
                 break;
             case EScheduleType.Activity_SoloStream:
                 image.color = Color.gray;

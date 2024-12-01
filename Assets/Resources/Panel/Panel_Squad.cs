@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class GridItem_InSquadCard : GridAbstract, GridInterface
 {
     private string unitUniqueID;
-    public Image UnitImage;
+    public Animator UnitImage_Animator;
     public TextMeshProUGUI PointText;
     public TextMeshProUGUI NameText;
 
@@ -21,7 +21,7 @@ public class GridItem_InSquadCard : GridAbstract, GridInterface
     {
         base.Init(_gameObject);
 
-        UnitImage = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "UnitImage");
+        UnitImage_Animator = UIUtility.FindComponentInChildrenByName<Animator>(gameObject, "UnitImage");
         PointText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "PointText");
         NameText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "NameText");
         Content_GridTrait = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Content_GridTrait");
@@ -37,9 +37,10 @@ public class GridItem_InSquadCard : GridAbstract, GridInterface
         unitUniqueID = _unitData.unitUniqueID;
         NameText.text = _unitData.unitInfo_Immutable.Name;
         PointText.text = _unitData.GetUnitValue().ToString();
+        UnitImage_Animator.runtimeAnimatorController = _unitData.unitInfo_Immutable.GetRuntimeAnimatorController();
+        UnitImage_Animator.Play("Idle_Image");
         UpdateMarket(_unitData);
     }
-
 
     private void UpdateMarket(UnitData _unitData)
     {
@@ -78,6 +79,7 @@ public class GridItem_InSquadCard : GridAbstract, GridInterface
 public class GridItem_SquadCard : GridAbstract, GridInterface
 {
     private string unitUniqueID;
+    private UnitData unitData;
     public TextMeshProUGUI JobText;
     public TextMeshProUGUI NameText;
     public TextMeshProUGUI TraitText;
@@ -113,6 +115,7 @@ public class GridItem_SquadCard : GridAbstract, GridInterface
 
     public void Set(UnitData _unitData)
     {
+        unitData = _unitData;
         unitUniqueID = _unitData.unitUniqueID;
         DT_Role dT_Role = DT_Role.GetInfoByIndex(_unitData.unitInfo_Immutable.RoleIndex);
         JobText.text = dT_Role.Name;
@@ -129,7 +132,9 @@ public class GridItem_SquadCard : GridAbstract, GridInterface
 
     public void OnClick_InfoButton()
     {
-
+        Debug.Log("OnClick_InfoButton");
+        var panel_UnitInfo = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_UnitInfo);
+        panel_UnitInfo.GetComponent<Panel_UnitInfo>().SetUnit(unitData);
     }
 
     public void OnClick_SquadCard()

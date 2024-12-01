@@ -29,7 +29,7 @@ public class GridItem_Trait : GridAbstract, GridInterface
     {
         traitIndex = dT_Trait.TraitIndex;
         TraitImage.sprite = UIUtility.GetSprite(dT_Trait.IconSprite);
-        RankText.text = dT_Trait.Rank.ToString();
+        RankText.text = dT_Trait.GetRankString();
     }
 
     private void OnClick_Trait()
@@ -70,7 +70,7 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
         unitUniqueID = _unitData.unitUniqueID;
         //_unitData.unitInfo_Immutable.Animation
 
-        var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{_unitData.unitInfo_Immutable.Animator}/{_unitData.unitInfo_Immutable.Animator}");
+        var controller = _unitData.unitInfo_Immutable.GetRuntimeAnimatorController();
         UnitImage_Animator.runtimeAnimatorController = controller;
         UnitImage_Animator.keepAnimatorStateOnDisable = true;
         UnitImage_Animator.Play("Idle_Image");
@@ -113,7 +113,7 @@ public class Panel_Market : PanelAbstract
     public Transform Grid_MarketCard;
     public List<GridItem_MarketCard> gridList;
 
-    void Start()
+    void Awake()
     {
         MakeButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "MakeButton");
         BG = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "BG");

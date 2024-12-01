@@ -52,7 +52,7 @@ public class OfficeUnitObject : MonoBehaviour
         unitUniqueID = unitData.unitUniqueID;
         this.unitData = unitData;
 
-        var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{unitData.unitInfo_Immutable.Animator}/{unitData.unitInfo_Immutable.Animator}");
+        var controller = unitData.unitInfo_Immutable.GetRuntimeAnimatorController();
         animator.runtimeAnimatorController = controller;
         animator.Play("Move");
 

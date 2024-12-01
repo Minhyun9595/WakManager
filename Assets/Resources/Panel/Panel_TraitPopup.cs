@@ -38,7 +38,7 @@ public class Panel_TraitPopup : PanelAbstract
         Init();
 
         var dt_Trait = DT_Trait.GetInfoByIndex(_index);
-        TraitPopupRankText.text = dt_Trait.Rank.ToString();
+        TraitPopupRankText.text = dt_Trait.GetRankString();
         TraitPopupImage.sprite = UIUtility.GetSprite(dt_Trait.IconSprite);
         TraitPopupNameText.text = dt_Trait.Name;
 

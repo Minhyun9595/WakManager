@@ -23,7 +23,20 @@ public class DamageFont : MonoBehaviour
         GameObject damageFont = PoolManager.Instance.GetFromPool(prefabName);
         damageFont.transform.position = position;
         var textMeshPro = damageFont.GetComponent<TextMeshPro>();
-        textMeshPro.text = string.Format("{0:0.00}", damage);
+
+        // 정수인지 여부를 확인하고 포맷 설정
+        if (damage % 1 == 0)
+        {
+            // 정수일 경우 소수점 없이 출력
+            textMeshPro.text = string.Format("{0:0}", damage);
+        }
+        else
+        {
+            // 소수일 경우 소수점 두 자리까지 출력
+            //textMeshPro.text = string.Format("{0:0.00}", damage);
+            textMeshPro.text = string.Format("{0:0}", damage);
+        }
+
         textMeshPro.color = color;
         damageFont.GetComponent<DamageFont>().Invoke_PlayDamageFont(_delayTime);
 

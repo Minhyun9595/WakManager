@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [System.Serializable]
@@ -33,6 +34,56 @@ public class UnitReport
         unitIndex = unit_AI.blackboard.realUnitData.unitIndex;
         unitUniqueID = unit_AI.blackboard.realUnitData.unitUniqueID;
 
+        Damage_Total = unit_AI.blackboard.unitReport.Damage_Total;
+        Damage_Physical = unit_AI.blackboard.unitReport.Damage_Physical;
+        Damage_Magical = unit_AI.blackboard.unitReport.Damage_Magical;
+        Damage_True = unit_AI.blackboard.unitReport.Damage_True;
+
+        DamageReceive_Total = unit_AI.blackboard.unitReport.DamageReceive_Total;
+        DamageReceive_Physical = unit_AI.blackboard.unitReport.DamageReceive_Physical;
+        DamageReceive_Magical = unit_AI.blackboard.unitReport.DamageReceive_Magical;
+        DamageReceive_True = unit_AI.blackboard.unitReport.DamageReceive_True;
+
+        Heal_Amount = unit_AI.blackboard.unitReport.Heal_Amount;
+        Heal_Receive = unit_AI.blackboard.unitReport.Heal_Receive;
+        MoveDistance = unit_AI.blackboard.unitReport.MoveDistance;
+        KillCount = unit_AI.blackboard.unitReport.KillCount;
+        DeathCount = unit_AI.blackboard.unitReport.DeathCount;
+        AssistCount = unit_AI.blackboard.unitReport.AssistCount;
+    }
+
+    public void AddDamage(EDamageType eDamageType, float damage)
+    {
+        switch (eDamageType)
+        {
+            case EDamageType.Physical:
+                Damage_Physical += damage;
+                break;
+            case EDamageType.Magical:
+                Damage_Magical += damage;
+                break;
+            case EDamageType.True:
+                Damage_True += damage;
+                break;
+        }
+        Damage_Total += damage;
+    }
+
+    public void AddReceiveDamage(EDamageType eDamageType, float damage)
+    {
+        switch (eDamageType)
+        {
+            case EDamageType.Physical:
+                DamageReceive_Physical += damage;
+                break;
+            case EDamageType.Magical:
+                DamageReceive_Magical += damage;
+                break;
+            case EDamageType.True:
+                DamageReceive_True += damage;
+                break;
+        }
+        DamageReceive_Total += damage;
     }
 }
 

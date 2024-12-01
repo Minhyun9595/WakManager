@@ -96,20 +96,18 @@ public class Blackboard
 
         if (IsRangeUnit)
         {
-            dT_Trait = realUnitData.traitList.FirstOrDefault(x => x.Name == "원거리 딜러");
+            dT_Trait = realUnitData.GetTrait(TraitType.원거리_딜러);
         }
         else
         {
-            dT_Trait = realUnitData.traitList.FirstOrDefault(x => x.Name == "원거리 딜러");
+            dT_Trait = realUnitData.GetTrait(TraitType.근거리_딜러);
         }
 
         if(dT_Trait != null)
         {
             foreach(var damageInfo in damageInfos)
             {
-                Debug.Log($"Before EditDamage_Trait_RangeUnit: {damageInfo.damage}");
                 damageInfo.damage *= (1.0f + (dT_Trait.Value2 * 0.01f));
-                Debug.Log($"After EditDamage_Trait_RangeUnit: {damageInfo.damage}");
             }
         }
     }
@@ -316,7 +314,12 @@ public class Unit_AI : MonoBehaviour
 
             if (blackboard.targetUnitAI != null)
             {
-                blackboard.targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, blackboard.targetUnitAI.transform.position);
+                var hitDamageList = blackboard.targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, blackboard.targetUnitAI.transform.position);
+                foreach (var hitDamage in hitDamageList)
+                {
+                    blackboard.unitReport.AddDamage(myDamageType, hitDamage);
+                }
+
                 blackboard.unitFieldInfo.AttackActionResetCoolTime();
             }
         }

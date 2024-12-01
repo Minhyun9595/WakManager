@@ -20,8 +20,19 @@ public class AttackAction : ActionNode
         {
             return NodeStatus.Failure;
         }
+        if(0 < blackboard.unitFieldInfo.NormalAction_LeftCoolTime)
+        {
+            return NodeStatus.Failure;
+        }
 
-        blackboard.unitAnimator.SetAnimation(EAnimationType.Attack1);
+        var attackSpeed = 1.0f;
+        var trait = blackboard.realUnitData.GetTrait(TraitType.³¯·ÆÇÔ);
+        if (trait != null)
+        {
+            attackSpeed = 1 + (trait.Value1 * 0.01f);
+        }
+
+        blackboard.unitAnimator.SetAnimation(EAnimationType.Attack1, attackSpeed);
 
         return NodeStatus.Success;
     }

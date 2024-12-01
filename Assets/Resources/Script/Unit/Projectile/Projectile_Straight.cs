@@ -72,7 +72,13 @@ public class Projectile_Straight : ProjectileAbstract
         var damageList = ownerUnitAI.GetDamageList();
         var myDamageType = blackboard.realUnitData.GetDamageType();
 
-        targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, targetUnitAI.transform.position);
+        var hitDamageList = targetUnitAI.blackboard.unitFieldInfo.Hit(myDamageType, damageList, targetUnitAI.transform.position);
+        foreach(var hitDamage in hitDamageList)
+        {
+            blackboard.unitReport.AddDamage(myDamageType, hitDamage);
+        }
+
+
         blackboard.unitFieldInfo.AttackActionResetCoolTime();
         //ProjectileEffect.Spawn(EPrefabType.Projectile_Wizzard_Hit.ToString(), targetUnitAI.transform.position);
         ProjectileEffect.SpawnEffect("Hit_05", targetUnitAI.transform.position);

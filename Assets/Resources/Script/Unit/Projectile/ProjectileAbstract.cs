@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public interface ProjectileInterface
@@ -75,7 +76,12 @@ public abstract class ProjectileAbstract : MonoBehaviour, ProjectileInterface
         if (targetUnitAI.blackboard.unitFieldInfo.IsCanNotTarget())
             return false;
 
-        targetUnitAI.blackboard.unitFieldInfo.Hit(eDamageType, damageInfoList, targetUnitAI.transform.position);
+        var hitDamageList = targetUnitAI.blackboard.unitFieldInfo.Hit(eDamageType, damageInfoList, targetUnitAI.transform.position);
+        foreach (var hitDamage in hitDamageList)
+        {
+            ownerUnitAI.blackboard.unitReport.AddDamage(eDamageType, hitDamage);
+        }
+
         ProjectileEffect.Spawn(ePrefabType.ToString(), targetUnitAI.transform.position);
 
         return true;

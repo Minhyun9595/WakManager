@@ -32,7 +32,7 @@ public class GridItem_ScreamTeam : GridAbstract, GridInterface
         teamInfo = _teamInfo;
 
         TeamNameText.text = teamInfo.Name;
-        SquadInfoText.text = string.Join(" | ", teamInfo.player_InSquad_UnitCardDatas.Select(unitCard => $"{unitCard.unitStat.Name}({unitCard.GetUnitValue()})"));
+        SquadInfoText.text = string.Join(" | ", teamInfo.player_Squad_UnitCardDatas.Select(unitCard => $"{unitCard.unitStat.Name}({unitCard.GetUnitValue()})"));
 
     }
 

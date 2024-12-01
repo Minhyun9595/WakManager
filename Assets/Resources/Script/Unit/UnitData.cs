@@ -194,9 +194,23 @@ public class UnitData
         return 0;
     }
 
+    private DT_Trait eagleEyeTrait;
     public float GetRange()
     {
-        return unitStat.Range * ConstValue.RangeCoefficient;
+        var range = unitStat.Range * ConstValue.RangeCoefficient;
+
+        var IsRangeUnit = unitInfo_Immutable.CheckRangeUnit();
+        if (IsRangeUnit)
+        {
+            var trait = GetTrait(TraitType.매의_눈);
+
+            if (trait != null)
+            {
+                range += trait.Value1;
+            }
+        }
+
+        return range;
     }
 
     public string GetRoleName()
@@ -331,7 +345,19 @@ public class UnitData
 
     public void AddPopulation(int addPopulation)
     {
+        var trait = GetTrait(TraitType.쇼메이커);
+
+        if(trait != null)
+        {
+            addPopulation = (int)(addPopulation * (trait.Value1 * 0.01f));
+        }
+
         Population += addPopulation;
+    }
+
+    public DT_Trait GetTrait(string traitType)
+    {
+        return traitList.Find(x => x.Type == traitType);
     }
 }
 
@@ -342,11 +368,10 @@ public class Unitcondition
     public DT_Condition dt_Condition;
     public EUnitTier eUnitTier;
 
-    public int Professionalism; // 프로페셔널리즘
+    public int Professionalism; // 전문성
     public int Ambition; // 야망
     public int Injury_Proneness; // 부상 성향
     public int Consistency; // 일관성
-    public int Pressure_Handling; // 압박 처리 능력
     public int Teamwork; // 팀워크
     public int Preparation; // 준비성
     public int Diligence; // 근면성
@@ -364,7 +389,6 @@ public class Unitcondition
         Ambition = UnityEngine.Random.Range(min, max);
         Injury_Proneness = UnityEngine.Random.Range(min, max);
         Consistency = UnityEngine.Random.Range(min, max);
-        Pressure_Handling = UnityEngine.Random.Range(min, max);
         Teamwork = UnityEngine.Random.Range(min, max);
         Preparation = UnityEngine.Random.Range(min, max);
         Diligence = UnityEngine.Random.Range(min, max);
@@ -413,7 +437,7 @@ public class Unitcondition
 
     public int GetConditionValue()
     {
-        var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Pressure_Handling + Teamwork + Preparation + Diligence + Royalty);
+        var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Teamwork + Preparation + Diligence + Royalty);
         totalValue /= 5;
         return totalValue;
     }

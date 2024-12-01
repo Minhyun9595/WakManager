@@ -37,7 +37,6 @@ public class SkillCoolTimeNode : BehaviorNode
     {
         if (CanExecute())
         {
-            Debug.Log("Execute");
             lastExecutionTime = CustomTime.time;
             blackboard.unitAnimator.SetAnimation(EAnimationType.Skill);
 

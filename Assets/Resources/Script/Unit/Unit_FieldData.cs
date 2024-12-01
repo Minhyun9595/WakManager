@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-
+using UnityEngine.UIElements;
 
 public class Unit_FieldData
 {
@@ -25,14 +25,17 @@ public class Unit_FieldData
 
         FullHp = unitData.unitStat.Health;
         Hp = FullHp;
-        AttackActionResetCoolTime();
+        NormalAction_LeftCoolTime = 0.0f;
 
         isDead = false;
     }
 
     public void Update(float _deltaTime)
     {
-        NormalAction_LeftCoolTime -= _deltaTime;
+        if (blackboard.isAnimationPlaying == false)
+        {
+            NormalAction_LeftCoolTime -= _deltaTime;
+        }
     }
 
     public void AttackActionResetCoolTime()
@@ -40,10 +43,12 @@ public class Unit_FieldData
         NormalAction_LeftCoolTime = 1 / unitData.unitStat.AttackSpeed;
     }
 
-    public bool Hit(EDamageType _damageType, List<DamageInfo> _damageList, Vector3 _position)
+    public List<float> Hit(EDamageType _damageType, List<DamageInfo> _damageList, Vector3 _position)
     {
+        List<float> convertDamageInfoList = new List<float>();
+
         if (IsCanNotTarget())
-            return false;
+            return convertDamageInfoList;
 
         var beforeDeadState = IsCanNotTarget();
         var myArmor = unitData.unitStat.Armor;
@@ -55,6 +60,8 @@ public class Unit_FieldData
             var convertDamage = damageInfo.damage;
 
             //#특성 질긴가죽: 받은 피해의 {0}이 감소된 피해를 입습니다. (도트 당 적용)
+            convertDamage = Convert_Leather(convertDamage);
+
             if (_damageType == EDamageType.Magical)
             {
                 // 마법 공격 효과
@@ -71,6 +78,7 @@ public class Unit_FieldData
             }
 
             //#특성 인내심: 받은 피해를 {0}% 감소시킵니다.
+            convertDamage = Convert_Patience(convertDamage);
 
             // 1 보다 작은 피해는 무시한다.
             if (convertDamage <= 1)
@@ -79,20 +87,9 @@ public class Unit_FieldData
             }
 
             Hp -= convertDamage;
+            convertDamageInfoList.Add(convertDamage);
 
-            switch(_damageType)
-            {
-                case EDamageType.Physical:
-                    blackboard.unitReport.DamageReceive_Physical += convertDamage;
-                    break;
-                case EDamageType.Magical:
-                    blackboard.unitReport.DamageReceive_Magical += convertDamage;
-                    break;
-                case EDamageType.True:
-                    blackboard.unitReport.DamageReceive_True += convertDamage;
-                    break;
-            }
-            blackboard.unitReport.DamageReceive_Total += convertDamage;
+            blackboard.unitReport.AddReceiveDamage(_damageType, convertDamage);
 
             var addingFontHeight = i * AddingFontHeightCoefficient;
             var addingDelayTime = i * AddingDelayTimeCoefficient;
@@ -110,7 +107,7 @@ public class Unit_FieldData
         var teamPanel = FieldManager.Instance.GetTeamPanel(blackboard.teamIndex);
         teamPanel.UpdateUnit();
 
-        return true;
+        return convertDamageInfoList;
     }
 
     public bool IsCanNotTarget()
@@ -121,5 +118,33 @@ public class Unit_FieldData
     public bool IsDead()
     {
         return Hp <= 0;
+    }
+
+    public float Convert_Leather(float originalDamage)
+    {
+        float convertDamage = originalDamage;
+        var trait = blackboard.realUnitData.GetTrait(TraitType.질긴_가죽);
+
+        if(trait != null)
+        {
+            convertDamage -= trait.Value1;
+            convertDamage = Mathf.Max(0, convertDamage);
+        }
+
+        return convertDamage; 
+    }
+
+    public float Convert_Patience(float originalDamage)
+    {
+        float convertDamage = originalDamage;
+        var trait = blackboard.realUnitData.GetTrait(TraitType.인내심);
+
+        if (trait != null)
+        {
+            convertDamage *= (1.0f - trait.Value1 * 0.01f);
+            convertDamage = Mathf.Max(0, convertDamage);
+        }
+
+        return convertDamage;
     }
 }

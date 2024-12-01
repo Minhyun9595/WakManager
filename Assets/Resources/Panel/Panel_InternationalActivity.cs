@@ -73,18 +73,15 @@ public class Panel_InternationalActivity : PanelAbstract
     void OnClick_Goods()
     {
         PlayerManager.Instance.PlayerTeamInfo.DoActivity_SellGoods();
-        PlayerManager.Instance.gameSchedule.AdvanceDay();
     }
 
     void OnClick_FindAds()
     {
         PlayerManager.Instance.PlayerTeamInfo.DoActivity_Ads();
-        PlayerManager.Instance.gameSchedule.AdvanceDay();
     }
 
     void OnClick_FindSponsor()
     {
         PlayerManager.Instance.PlayerTeamInfo.DoActivity_FindSponsor();
-        PlayerManager.Instance.gameSchedule.AdvanceDay();
     }
 }

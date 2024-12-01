@@ -6,10 +6,12 @@ using UnityEngine;
 public class MoveToTargetAction : ActionNode
 {
     private Blackboard blackboard;
+    DT_Trait speedTrait;
 
     public MoveToTargetAction(Blackboard bb)
     {
         blackboard = bb;
+        speedTrait = blackboard.realUnitData.GetTrait(TraitType.날렵함);
     }
 
     public override NodeStatus Execute()
@@ -57,17 +59,34 @@ public class MoveToTargetAction : ActionNode
         }
     }
 
+
     private Vector3 MoveTowards(Vector3 targetPosition)
     {
         // 이동 방향 계산
-        Vector3 direction = (targetPosition - blackboard.myTransform.position).normalized;
+        Vector3 delta = targetPosition - blackboard.myTransform.position;
+        var moveSpeed_X = blackboard.realUnitData.unitStat.MoveSpeed_X;
+        var moveSpeed_Y = blackboard.realUnitData.unitStat.MoveSpeed_Y;
 
-        // 이동 속도 적용
-        Vector3 movement = new Vector3(blackboard.realUnitData.unitStat.MoveSpeed_X * direction.x, blackboard.realUnitData.unitStat.MoveSpeed_Y * direction.y, 0) * CustomTime.deltaTime * ConstValue.speedRatio;
+        if (speedTrait != null)
+        {
+            moveSpeed_X *= speedTrait.Value1;
+            moveSpeed_Y *= speedTrait.Value1;
+        }
+
+        // X와 Y 각각의 방향에 따라 속도 계산
+        float movementX = Mathf.Sign(delta.x) * moveSpeed_X * CustomTime.deltaTime * ConstValue.speedRatio;
+        float movementY = Mathf.Sign(delta.y) * moveSpeed_Y * CustomTime.deltaTime * ConstValue.speedRatio;
+
+        // 이동 거리 제한: 목표 지점을 초과하지 않도록 보정
+        if (Mathf.Abs(movementX) > Mathf.Abs(delta.x)) movementX = delta.x;
+        if (Mathf.Abs(movementY) > Mathf.Abs(delta.y)) movementY = delta.y;
+
+        // 이동 벡터 계산
+        Vector3 movement = new Vector3(movementX, movementY, 0);
 
         // 실제 이동 적용
         blackboard.myTransform.position += movement;
-        
+
         return movement;
     }
 

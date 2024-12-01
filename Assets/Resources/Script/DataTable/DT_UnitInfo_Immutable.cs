@@ -24,6 +24,7 @@ public class DT_UnitInfo_Immutable
     public string NormalSkills;
     public string SpecialSkills;
     public string OfficeDialogs;
+    public string Affiliation;
 
     // Initialize 데이터
     public List<string> SkillNameList;
@@ -62,6 +63,27 @@ public class DT_UnitInfo_Immutable
     public bool CheckRangeUnit()
     {
         return IsRangeUnit == 1;
+    }
+
+    public RuntimeAnimatorController GetRuntimeAnimatorController()
+    {
+        var controller = Resources.Load<RuntimeAnimatorController>($"Animation/UnitAnimation/{Animator}/{Animator}");
+     
+        return controller;
+    }
+
+    public string GetAttackTypeText()
+    {
+        if(AttackType == "Melee")
+        {
+            return "근거리";
+        }
+        else if(AttackType == "Projectile")
+        {
+            return "원거리";
+        }
+
+        return "원거리";
     }
 }
 

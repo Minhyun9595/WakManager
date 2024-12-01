@@ -30,7 +30,6 @@ public class GridItem_LeagueTeamInfo : GridAbstract, GridInterface
 
 public class Panel_TeamHome : PanelAbstract
 {
-
     // 팀 정보
     public TextMeshProUGUI TeamNameText;
     public TextMeshProUGUI PopulationText;
@@ -90,7 +89,7 @@ public class Panel_TeamHome : PanelAbstract
         FrontInfoCanvas.Instance.SetPanelName("홈");
         Update_LeagueTeamInfo();
         Update_Income();
-
+        Update_ScreamInfo();
     }
 
     public override void Close()
@@ -151,5 +150,17 @@ public class Panel_TeamHome : PanelAbstract
         stringBuilder.AppendLine($"급료: {UIUtility.GetUnitizeText(totalPay)}$");
         stringBuilder.AppendLine($"사무실 {officeName}: {UIUtility.GetUnitizeText(officePay)}$");
         IncomeText.text = stringBuilder.ToString();
+    }
+
+    private void Update_ScreamInfo()
+    {
+        var playerTeamInfo = PlayerManager.Instance.PlayerTeamInfo;
+        RecentScreamInfoText.text = $"스크림 전적: {playerTeamInfo.winResults.Count}승/{playerTeamInfo.loseResults.Count}패";
+
+        foreach(var battleReport in playerTeamInfo.teamBattleReports)
+        {
+            //battleReport.firstTeamBattleReport.unitReports
+        }
+
     }
 }

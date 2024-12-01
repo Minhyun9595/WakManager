@@ -20,9 +20,12 @@ public class FindTargetCondition : BehaviorNode
         if(blackboard.unitFieldInfo.IsCanNotTarget())
         {
             return NodeStatus.Failure;
-        }    
-
-        if(blackboard.isAnimationPlaying)
+        }
+        if (0 < blackboard.unitFieldInfo.NormalAction_LeftCoolTime)
+        {
+            return NodeStatus.Failure;
+        }
+        if (blackboard.isAnimationPlaying)
         {
             return NodeStatus.Failure;
         }

@@ -356,6 +356,7 @@ GameObject:
   - component: {fileID: 7204362185021836101}
   - component: {fileID: 4485795091212870256}
   - component: {fileID: 6477994824728226914}
+  - component: {fileID: 6234026448754495182}
   m_Layer: 5
   m_Name: Panel_FieldBattleEnd
   m_TagString: Untagged
@@ -443,6 +444,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6234026448754495182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555341232819464844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec70ea73bedd314a80e2f186df7561b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCanClose: 1
+  fieldBattleEndAnimator: {fileID: 0}
+  ExitButton: {fileID: 0}
+  FieldBattleEndText: {fileID: 0}
+  ExitText: {fileID: 0}
 --- !u!1 &7975330139325777019
 GameObject:
   m_ObjectHideFlags: 0

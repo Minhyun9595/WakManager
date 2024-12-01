@@ -52,6 +52,47 @@ public class DT_UnitStat
         }
     }
 
+    public string GetDamageTypeText()
+    {
+        switch (DamageType)
+        {
+            case "Physical":
+                return "물리";
+            case "Magic":
+                return "마법";
+            case "True":
+                return "고정";
+            default:
+                return "물리";
+        }
+    }
+    
+    public string GetSpeedText()
+    {
+        var result = "";
+        if(MoveSpeed_X <= 2.0f)
+        {
+            result = "느림";
+        }
+        else if (MoveSpeed_X <= 2.5f)
+        {
+            result = "보통";
+        }
+        else if (MoveSpeed_X <= 3.0f)
+        {
+            result = "빠름";
+        }
+        else if (MoveSpeed_X <= 3.5f)
+        {
+            result = "매우 빠름";
+        }
+        else
+        {
+            result = "매우 빠름";
+        }
+
+        return result;
+    }
 }
 
 public partial class DataTable : CustomSingleton<DataTable>

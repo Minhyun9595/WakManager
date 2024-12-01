@@ -72,6 +72,21 @@ public class DT_Trait
 
         return result;
     }
+
+    public string GetDesc()
+    {
+        List<string> strings = new List<string>();
+        if(Desc1 != null)
+        {
+            strings.Add(string.Format(Desc1, Value1));
+        }
+        if (Desc2 != null)
+        {
+            strings.Add(string.Format(Desc2, Value2));
+        }
+
+        return string.Join("\n", strings);
+    }
 }
 
 public partial class DataTable : CustomSingleton<DataTable>
