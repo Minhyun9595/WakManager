@@ -181,7 +181,6 @@ public class TeamInfo
         foreach (var unitData in player_Squad_UnitCardDatas)
         {
             mulPopulation += unitData.Population;
-            unitData.AddPopulation(10);
         }
 
         mulPopulation *= moneyRatio;

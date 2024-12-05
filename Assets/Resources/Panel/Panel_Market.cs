@@ -108,18 +108,46 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
 
 public class Panel_Market : PanelAbstract
 {
-    public Button MakeButton;
+    public Button Market_Button_0;
+    public TextMeshProUGUI Market_Text_0;
+    public Transform Market_Button_FG_0;
+    public Button Market_Button_1;
+    public TextMeshProUGUI Market_Text_1;
+    public Transform Market_Button_FG_1;
+    public Button Market_Button_2;
+    public TextMeshProUGUI Market_Text_2;
+    public Transform Market_Button_FG_2;
+
     public Transform BG;
     public Transform Grid_MarketCard;
     public List<GridItem_MarketCard> gridList;
 
     void Awake()
     {
-        MakeButton = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "MakeButton");
+        Market_Button_0 = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "Market_Button_0");
+        Market_Text_0 = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "Market_Text_0");
+        Market_Button_FG_0 = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Market_Button_FG_0");
+        Market_Button_1 = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "Market_Button_1");
+        Market_Text_1 = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "Market_Text_1");
+        Market_Button_FG_1 = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Market_Button_FG_1");
+        Market_Button_2 = UIUtility.FindComponentInChildrenByName<Button>(gameObject, "Market_Button_2");
+        Market_Text_2 = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "Market_Text_2");
+        Market_Button_FG_2 = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Market_Button_FG_2");
+
         BG = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "BG");
         Grid_MarketCard = UIUtility.FindComponentInChildrenByName<Transform>(gameObject, "Grid_MarketCard");
 
-        MakeButton.onClick.AddListener(OnClick_Make);
+        var market_0 = DT_Market.GetInfoByIndex(0);
+        var market_1 = DT_Market.GetInfoByIndex(1);
+        var market_2 = DT_Market.GetInfoByIndex(2);
+
+        Market_Text_0.text = $"{market_0.Name}\n{UIUtility.GetUnitizeText(market_0.SearchPrice)}$";
+        Market_Text_1.text = $"{market_1.Name}\n{UIUtility.GetUnitizeText(market_1.SearchPrice)}$";
+        Market_Text_2.text = $"{market_2.Name}\n{UIUtility.GetUnitizeText(market_2.SearchPrice)}$";
+
+        Market_Button_0.onClick.AddListener(() => OnClick_Make(0));
+        Market_Button_1.onClick.AddListener(() => OnClick_Make(1));
+        Market_Button_2.onClick.AddListener(() => OnClick_Make(2));
 
         gridList = new List<GridItem_MarketCard>();
         var childItem = UIUtility.GetChildAutoCraete(Grid_MarketCard, 0);
@@ -150,32 +178,59 @@ public class Panel_Market : PanelAbstract
     {
         base.Open();
         FrontInfoCanvas.Instance.SetPanelName("이적시장");
+
+        var upgradeInfo = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
+        Market_Button_FG_1.gameObject.SetActive(upgradeInfo.Level < 2);
+        Market_Button_FG_2.gameObject.SetActive(upgradeInfo.Level < 4);
     }
 
-    void OnClick_Make()
+    void OnClick_Make(int marketIndex)
     {
-        FindNewCard();
+        // marketIndex가 1인 경우 레벨2가 넘어야하고 2인 경우 레벨 4가 넘어야함.
+        //var upgradeInfo = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
+        //if (marketIndex == 1 && upgradeInfo.Level < 2)
+        //{
+        //    return;
+        //}
+        //else if (marketIndex == 2 && upgradeInfo.Level < 4)
+        //{
+        //    return;
+        //}
+
+        FindNewCard(marketIndex);
     }
 
-    void FindNewCard()
+    void FindNewCard(int marketIndex)
     {
-        var result = PlayerManager.Instance.PlayerTeamInfo.ReduceMoney(DT_Const.GetInfoByIndex("TRANSFER_MARKET_SEARCH_COST"));
+        var dt_Market = DT_Market.GetInfoByIndex(marketIndex);
+        var searchPrice = dt_Market.SearchPrice;
+
+        var result = PlayerManager.Instance.PlayerTeamInfo.ReduceMoney(searchPrice);
 
         if (result == false)
         {
             return;
         }
 
-        var dt_TeamUpgrade = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
-        var randomWorldCardList = PlayerManager.Instance.GetRandomWorldCard(dt_TeamUpgrade.Value1);
-
-        BG.gameObject.SetActive(true);
-        for (int i = 0; i < randomWorldCardList.Count; i++)
+        var upgradeInfo = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
+        var findCount = upgradeInfo.Value1;
+        //var randomWorldCardList = PlayerManager.Instance.GetRandomWorldCard(upgradeInfo.Value1);
+        List<UnitData> unitDatas = new List<UnitData>();
+        for (int i = 0; i < findCount; i++)
         {
-            SetCard(i, randomWorldCardList[i]);
+            // dt_Market에 따라서 랜덤한 티어로
+            var randomTier = dt_Market.GetRandomCardTier();
+            var randomUnitData = PlayerManager.Instance.GetWorldCard_ByTier(randomTier);
+            unitDatas.Add(randomUnitData);
         }
 
-        for (int i = randomWorldCardList.Count; i < Grid_MarketCard.childCount; i++)
+        BG.gameObject.SetActive(true);
+        for (int i = 0; i < unitDatas.Count; i++)
+        {
+            SetCard(i, unitDatas[i]);
+        }
+
+        for (int i = unitDatas.Count; i < Grid_MarketCard.childCount; i++)
         {
             gridList[i].gameObject.SetActive(false);
         }

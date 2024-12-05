@@ -21,14 +21,19 @@ public class DT_UnitTierInfo
     public int AddStatPointMax;
     public int PotentialPointMin;
     public int PotentialPointMax;
+    public string TraitCountRatio;
+    public int Value;
 
     public EUnitTier eUnitTier;
+    private List<KeyValuePair<int, int>> traitCountProbability = new List<KeyValuePair<int, int>>();
+
 
     public DT_UnitTierInfo() { }
 
     public void Set()
     {
         eUnitTier = (EUnitTier)Enum.Parse(typeof(EUnitTier), Type);
+        InitializeTraitCountProbability();
     }
 
 
@@ -41,6 +46,53 @@ public class DT_UnitTierInfo
 
         Debug.LogWarning($"Index {eUnitTier.ToString()} not found in InfoManager.");
         return null;
+    }
+
+    private void InitializeTraitCountProbability()
+    {
+        if (string.IsNullOrWhiteSpace(TraitCountRatio))
+        {
+            Debug.LogWarning("TraitCountRatio is empty or null.");
+            return;
+        }
+
+        string[] parts = TraitCountRatio.Split(';');
+        int cumulativeProbability = 0;
+
+        foreach (var part in parts)
+        {
+            string[] keyValue = part.Split(':');
+            if (keyValue.Length == 2 && int.TryParse(keyValue[0], out int value) && int.TryParse(keyValue[1], out int probability))
+            {
+                cumulativeProbability += probability;
+                traitCountProbability.Add(new KeyValuePair<int, int>(value, cumulativeProbability));
+            }
+            else
+            {
+                Debug.LogWarning($"Invalid TraitCountRatio format: {part}");
+            }
+        }
+    }
+
+    public int GetRandomTraitCount()
+    {
+        if (traitCountProbability.Count == 0)
+        {
+            Debug.LogError("TraitCountProbability is not initialized.");
+            return -1;
+        }
+
+        int randomValue = UnityEngine.Random.Range(1, traitCountProbability[^1].Value + 1); // 1ºÎÅÍ ÃÑ È®·ü±îÁöÀÇ °ª
+        foreach (var pair in traitCountProbability)
+        {
+            if (randomValue <= pair.Value)
+            {
+                return pair.Key;
+            }
+        }
+
+        Debug.LogError("Random value did not match any trait count.");
+        return -1;
     }
 }
 

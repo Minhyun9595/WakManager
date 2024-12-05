@@ -1,8 +1,13 @@
-- 상수 시트,
-,
-,
-[Field],
-Name,Value
-CONDITION_START,80
-START_GOLD,5000000
-TRANSFER_MARKET_SEARCH_COST,150000
+- 상수 시트,,
+,,
+,,
+[Field],,
+Name,Value,설명
+CONDITION_START,80,선수의 시작 컨디션
+CONDITION_START_MIN,50,선수의 시작 컨디션 MIN
+CONDITION_START_MAX,90,선수의 시작 컨디션 MAX
+RECOVER_CONDITION,2,아무것도 안할 시 회복하는 컨디션
+START_GOLD,5000000,시작 돈
+TRANSFER_MARKET_SEARCH_COST,150000,삭제예정
+LEAGUE_MATACH_COOLTIME,14,리그 경기 쿨타임
+LEAGUE_PERIOD,3,리그 총 몇개월 (리그 당 6경기)

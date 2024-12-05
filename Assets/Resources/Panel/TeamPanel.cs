@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using System;
-using UnityEditor.Experimental.GraphView;
 using System.Globalization;
 
 public class GridItem_Unit : GridAbstract, GridInterface

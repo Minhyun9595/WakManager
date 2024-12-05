@@ -334,6 +334,18 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         return list;
     }
 
+    public UnitData GetWorldCard_ByTier(EUnitTier eUnitTier)
+    {
+        var list = worldUnitCardDatas.FindAll(x => x.eUnitTier == eUnitTier);
+        if (list.Count > 0)
+        {
+            var randIndex = UnityEngine.Random.Range(0, list.Count);
+            return list[randIndex];
+        }
+
+        return null;
+    }
+
     private List<UnitData> CreateWorldTeamCard(EUnitTier _tier, int _createCount)
     {
         List<UnitData> cards = new List<UnitData>();

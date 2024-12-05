@@ -168,7 +168,21 @@ public class GameSchedule
             PayMonth();
         }
     }
+    public bool HaveSchedule(ScheduleDate scheduleDate)
+    {
+        if (scheduleDate == null)
+            return false;
 
+        if (scheduleDate.Year > CurrentDate.Year ||
+            (scheduleDate.Year == CurrentDate.Year && scheduleDate.Month > CurrentDate.Month) ||
+            (scheduleDate.Year == CurrentDate.Year && scheduleDate.Month == CurrentDate.Month && scheduleDate.Day >= CurrentDate.Day))
+        {
+            return true;
+        }
+
+        return false;
+    }
+    
     public int GetPlayDay()
     {
         return (CurrentDate - StartDate).Days;

@@ -85,12 +85,12 @@ public class UnitData
         var Types = DT_Trait.GetTypes();
 
         // 특성 생성
-        var randomTraitCount = UnityEngine.Random.Range(0, unitInfo_Immutable.MaxTraitCount + 1);
+        var dt_unitTier = DT_UnitTierInfo.GetInfoByIndex(eUnitTier);
+        var randomTraitCount = dt_unitTier.GetRandomTraitCount();
         for (int i = 0; i < randomTraitCount; i++)
         {
             CreateTrait(ref Types);
         }
-
     }
 
     public void LoadUnit()
@@ -134,9 +134,12 @@ public class UnitData
             point += DT_TraitValue.GetInfoByIndex(trait.Rank).Value;
         }
         
-        // 컨디션 점수
+        // 컨디션 점수 (8)
+        point += unitCondition.GetConditionValue();
         
         // 티어 점수
+        var dt_unitTier = DT_UnitTierInfo.GetInfoByIndex(eUnitTier);
+        point += dt_unitTier.Value;
 
         return point;
     }
@@ -320,27 +323,27 @@ public class UnitData
             switch (schedule.EUnitScheduleType)
             {
                 case EUnitScheduleType.Traning_Health:
-                    Debug.Log("훈련 성공 Traning_Health");
                     NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 체력 훈련이 성공적으로 끝났습니다.");
                     break;
                 case EUnitScheduleType.Traning_Damage:
-                    Debug.Log("훈련 성공 Traning_Damage");
                     NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 공격력 훈련이 성공적으로 끝났습니다.");
                     break;
                 case EUnitScheduleType.Traning_Armor:
-                    Debug.Log("훈련 성공 Traning_Armor");
                     NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 방어력 훈련이 성공적으로 끝났습니다.");
                     break;
                 case EUnitScheduleType.Traning_Mental:
-                    Debug.Log("훈련 성공 Traning_Mental");
                     NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 정신력 훈련이 성공적으로 끝났습니다.");
                     break;
                 case EUnitScheduleType.Traning_Trait:
-                    Debug.Log("훈련 성공 Traning_Trait");
                     NotificationManager.Instance.ShowNotification($"{unitInfo_Immutable.Name}의 특성 훈련이 성공적으로 끝났습니다.");
                     break;
             }
         }
+
+        if(PlayerManager.Instance.gameSchedule.HaveSchedule(schedule) == false)
+        {
+            unitCondition.RecoverCondition();
+        }   
     }
 
     public void AddPopulation(int addPopulation)
@@ -394,7 +397,7 @@ public class Unitcondition
         Diligence = UnityEngine.Random.Range(min, max);
         Royalty = UnityEngine.Random.Range(min, max);
 
-        CurrentContdition = DT_Const.GetInfoByIndex("CONDITION_START");
+        CurrentContdition = UnityEngine.Random.Range(DT_Const.GetInfoByIndex("CONDITION_START_MIN"), DT_Const.GetInfoByIndex("CONDITION_START_MAX") + 1);
         UpdateCondition();
     }
 
@@ -438,7 +441,7 @@ public class Unitcondition
     public int GetConditionValue()
     {
         var totalValue = (Professionalism + Ambition + Injury_Proneness + Consistency + Teamwork + Preparation + Diligence + Royalty);
-        totalValue /= 5;
+        totalValue /= 3;
         return totalValue;
     }
 
@@ -464,6 +467,11 @@ public class Unitcondition
     public void SetSchedule(int day)
     {
 
+    }
+
+    public void RecoverCondition()
+    {
+        CurrentContdition += DT_Const.GetInfoByIndex("RECOVER_CONDITION");
     }
 }
 

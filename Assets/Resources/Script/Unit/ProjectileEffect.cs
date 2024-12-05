@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class ProjectileEffect : MonoBehaviour
@@ -62,7 +60,7 @@ public class ProjectileEffect : MonoBehaviour
 
     public void SetAnimator(string effectAnimatorName)
     {
-        AnimatorController controller = Resources.Load<AnimatorController>($"Animation/Effect/{effectAnimatorName}");
+        RuntimeAnimatorController controller = Resources.Load<RuntimeAnimatorController>($"Animation/Effect/{effectAnimatorName}");
         if(controller != null)
         {
             animator.runtimeAnimatorController = controller;

@@ -80,9 +80,9 @@ public class Panel_Scream : PanelAbstract
         base.Open();
         FrontInfoCanvas.Instance.SetPanelName("½ºÅ©¸²");
 
-        var findUnitUpgrade = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
-        First_TierButton.gameObject.SetActive(4 <= findUnitUpgrade.Level);
-        Second_TierButton.gameObject.SetActive(2 <= findUnitUpgrade.Level);
+        var upgradeInfo = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
+        First_TierButton.gameObject.SetActive(4 <= upgradeInfo.Level);
+        Second_TierButton.gameObject.SetActive(2 <= upgradeInfo.Level);
     }
 
 
@@ -106,7 +106,6 @@ public class Panel_Scream : PanelAbstract
 
             gridItem_ScreamTeams.Add(gridItem_SquadCard);
         }
-
     }
 
     public void OnClick_FindScreamTeam(ETeamTier eTeamTier)
