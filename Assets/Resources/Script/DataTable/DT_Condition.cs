@@ -38,7 +38,7 @@ public class DT_Condition
             return info;
         }
 
-        Debug.LogWarning($"Index {eUnitConditionType.ToString()} not found in InfoManager.");
+        Debug.LogWarning($"DT_Condition Index {eUnitConditionType.ToString()} not found");
         return null;
     }
 

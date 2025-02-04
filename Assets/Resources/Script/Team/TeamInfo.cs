@@ -231,4 +231,15 @@ public class TeamInfo
     {
         return player_Squad_UnitCardDatas.Sum(x => x.Pay);
     }
+
+    public int GetTeamValue()
+    {
+        var value = 0;
+        foreach(var unitData in player_Squad_UnitCardDatas)
+        {
+            value += unitData.GetUnitValue();
+        }
+
+        return value;
+    }
 }

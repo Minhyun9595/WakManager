@@ -121,7 +121,7 @@ public class Unit_FieldData
     public float Convert_Leather(float originalDamage)
     {
         float convertDamage = originalDamage;
-        var trait = blackboard.realUnitData.GetTrait(TraitType.질긴_가죽);
+        var trait = blackboard.realUnitData.GetTrait(TraitType.ToughHide);
 
         if(trait != null)
         {
@@ -135,7 +135,7 @@ public class Unit_FieldData
     public float Convert_Patience(float originalDamage)
     {
         float convertDamage = originalDamage;
-        var trait = blackboard.realUnitData.GetTrait(TraitType.인내심);
+        var trait = blackboard.realUnitData.GetTrait(TraitType.Endurance);
 
         if (trait != null)
         {

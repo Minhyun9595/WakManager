@@ -205,7 +205,7 @@ public class UnitData
         var IsRangeUnit = unitInfo_Immutable.CheckRangeUnit();
         if (IsRangeUnit)
         {
-            var trait = GetTrait(TraitType.¸ÅÀÇ_´«);
+            var trait = GetTrait(TraitType.EagleEye);
 
             if (trait != null)
             {
@@ -348,7 +348,7 @@ public class UnitData
 
     public void AddPopulation(int addPopulation)
     {
-        var trait = GetTrait(TraitType.¼î¸ÞÀÌÄ¿);
+        var trait = GetTrait(TraitType.Showmaker);
 
         if(trait != null)
         {

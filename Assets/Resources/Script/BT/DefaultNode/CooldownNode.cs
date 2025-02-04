@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class CooldownNode : BehaviorNode
+public class CooldownNode : ActionNode
 {
     private float cooldownTime;
     private float lastExecutionTime;

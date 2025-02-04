@@ -9,7 +9,7 @@ using System.Linq;
 using System;
 using System.Globalization;
 
-public class GridItem_Unit : GridAbstract, GridInterface
+public class GridItem_Unit : GridAbstract
 {
     public TextMeshProUGUI NameText;
     public TextMeshProUGUI InfoText;
@@ -24,7 +24,7 @@ public class GridItem_Unit : GridAbstract, GridInterface
     private int currentFrame = 0;
     private float timer;
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         NameText = UIUtility.FindComponentInChildrenByName<TextMeshProUGUI>(gameObject, "NameText");

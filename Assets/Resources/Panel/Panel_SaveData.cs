@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GridItem_SaveData : GridAbstract, GridInterface
+public class GridItem_SaveData : GridAbstract
 {
     private int index = -1;
     public Button FocusButton;

@@ -7,12 +7,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridItem_LeagueTeamInfo : GridAbstract, GridInterface
+public class GridItem_LeagueTeamInfo : GridAbstract
 {
     public TextMeshProUGUI LeftText;
     public TextMeshProUGUI RightText;
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
 
@@ -87,6 +87,7 @@ public class Panel_TeamHome : PanelAbstract
     {
         base.Open();
         FrontInfoCanvas.Instance.SetPanelName("홈");
+        Update_TeamInfo();
         Update_LeagueTeamInfo();
         Update_Income();
         Update_ScreamInfo();
@@ -95,6 +96,13 @@ public class Panel_TeamHome : PanelAbstract
     public override void Close()
     {
         base.Close();
+    }
+
+    private void Update_TeamInfo()
+    {
+        TeamNameText.text = PlayerManager.Instance.PlayerTeamInfo.Name;
+        PopulationText.text = $"인기: {PlayerManager.Instance.PlayerTeamInfo.Population}";
+        TeamValueText.text = $"팀 가치: {PlayerManager.Instance.PlayerTeamInfo.GetTeamValue()}$";
     }
 
     private void Update_LeagueTeamInfo()

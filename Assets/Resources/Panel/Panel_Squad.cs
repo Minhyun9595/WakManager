@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridItem_InSquadCard : GridAbstract, GridInterface
+public class GridItem_InSquadCard : GridAbstract
 {
     private string unitUniqueID;
     public Animator UnitImage_Animator;
@@ -17,7 +17,7 @@ public class GridItem_InSquadCard : GridAbstract, GridInterface
     public Transform Content_GridTrait;
     public List<GridItem_Trait> gridItem_Traits = new List<GridItem_Trait>();
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
 
@@ -76,7 +76,7 @@ public class GridItem_InSquadCard : GridAbstract, GridInterface
 }
 
 
-public class GridItem_SquadCard : GridAbstract, GridInterface
+public class GridItem_SquadCard : GridAbstract
 {
     private string unitUniqueID;
     private UnitData unitData;
@@ -90,7 +90,7 @@ public class GridItem_SquadCard : GridAbstract, GridInterface
     public Button SellButton;
     public Button InfoButton;
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
 

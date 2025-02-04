@@ -7,14 +7,14 @@ using QUtility;
 using System;
 using System.Reflection;
 
-public class GridItem_Day : GridAbstract, GridInterface
+public class GridItem_Day : GridAbstract
 {
     public Outline outline;
     public Image image;
     public TextMeshProUGUI DayText;
     public TextMeshProUGUI ScheduleText;
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         image = gameObject.GetComponent<Image>();
@@ -45,7 +45,7 @@ public class GridItem_Day : GridAbstract, GridInterface
                 image.color = Color.red;
                 break;
             case EScheduleType.Scream:
-                image.color = UIUtility.HexToColor(Colors.갈색);
+                image.color = UIUtility.HexToColor(Colors.Brown);
                 break;
             case EScheduleType.Training:
                 image.color = Color.cyan;
@@ -54,10 +54,10 @@ public class GridItem_Day : GridAbstract, GridInterface
                 image.color = Color.magenta;
                 break;
             case EScheduleType.Search_Market:
-                image.color = UIUtility.HexToColor(Colors.선명한주황);
+                image.color = UIUtility.HexToColor(Colors.DeepOrange);
                 break;
             case EScheduleType.ContractUnit_Market:
-                image.color = UIUtility.HexToColor(Colors.선명한주황);
+                image.color = UIUtility.HexToColor(Colors.DeepOrange);
                 break;
             case EScheduleType.Activity_SoloStream:
                 image.color = Color.gray;

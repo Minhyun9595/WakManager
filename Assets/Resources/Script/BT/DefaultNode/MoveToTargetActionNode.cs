@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveToTargetAction : ActionNode
+public class MoveToTargetActionNode : ActionNode
 {
     private Blackboard blackboard;
     DT_Trait speedTrait;
 
-    public MoveToTargetAction(Blackboard bb)
+    public MoveToTargetActionNode(Blackboard bb)
     {
         blackboard = bb;
-        speedTrait = blackboard.realUnitData.GetTrait(TraitType.³¯·ÆÇÔ);
+        speedTrait = blackboard.realUnitData.GetTrait(TraitType.Agile);
     }
 
     public override NodeStatus Execute()

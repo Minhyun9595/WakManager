@@ -2486,7 +2486,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isCanClose: 1
-  MakeButton: {fileID: 0}
+  Market_Button_0: {fileID: 0}
+  Market_Text_0: {fileID: 0}
+  Market_Button_FG_0: {fileID: 0}
+  Market_Button_1: {fileID: 0}
+  Market_Text_1: {fileID: 0}
+  Market_Button_FG_1: {fileID: 0}
+  Market_Button_2: {fileID: 0}
+  Market_Text_2: {fileID: 0}
+  Market_Button_FG_2: {fileID: 0}
   BG: {fileID: 0}
   Grid_MarketCard: {fileID: 0}
 --- !u!1 &7710880667781597966

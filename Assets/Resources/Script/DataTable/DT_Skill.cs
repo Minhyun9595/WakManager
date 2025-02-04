@@ -9,9 +9,6 @@ public class DT_Skill
     public static Dictionary<string, DT_Skill> infoDictionary = new Dictionary<string, DT_Skill>();
     public static List<DT_Skill> listInfo = new List<DT_Skill>();
 
-    // Name	Description	IconName	SkillType	PrefabName	CastingTime	CastingAnimation	CoolTime	Damage	
-    // Value1	Value2	Value3	Value4	Value5	Value6	Value7
-
     public string Name;
     public string Description;
     public string IconName;
@@ -38,7 +35,7 @@ public class DT_Skill
             return info;
         }
 
-        Debug.LogWarning($"Index {name} not found in InfoManager.");
+        Debug.LogWarning($"DT_Skill Index {name} not found");
         return null;
     }
 }

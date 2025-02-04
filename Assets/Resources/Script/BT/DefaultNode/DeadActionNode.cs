@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeadAction : ActionNode
+public class DeadActionNode: ActionNode
 {
     private Blackboard blackboard;
 
-    public DeadAction(Blackboard bb)
+    public DeadActionNode(Blackboard bb)
     {
         blackboard = bb;
     }

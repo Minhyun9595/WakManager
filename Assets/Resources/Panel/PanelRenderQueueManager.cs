@@ -4,22 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public interface GridInterface
-{
-    public abstract void Init(GameObject _gameObject);
-}
-
-public abstract class GridAbstract
-{
-    public GameObject gameObject;
-
-    public virtual void Init(GameObject _gameObject)
-    {
-        gameObject = _gameObject;
-    }
-}
-
-
 public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 {
     public enum ECanvasType
@@ -32,7 +16,7 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
     public static List<GameObject> PanelPrefabs = new List<GameObject>();
     public static Dictionary<string, GameObject> SpawnedPanels = new Dictionary<string, GameObject>();
     public static List<PanelAbstract> OpenPanelList = new List<PanelAbstract>();
-
+    public GameObject DisablePanelParent = null;
     new void Awake()
     {
         SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -47,6 +31,7 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 
     void Start()
     {
+        DisablePanelParent = GameObject.FindWithTag("DisablePanelParent");
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Panel/Prefabs");
         PanelPrefabs.AddRange(prefabs);
     }
@@ -148,6 +133,7 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
     {
         if (OpenPanelList.Count == 0)
             return null;
+
         var last = OpenPanelList.Last(x => x.isCanClose == true);
         OpenPanelList.RemoveAt(OpenPanelList.Count - 1);
 
@@ -156,14 +142,16 @@ public class PanelRenderQueueManager : CustomSingleton<PanelRenderQueueManager>
 
     public void ClosePanel(PanelAbstract panelAbstract)
     {
-        Transform DisablePanelParent = GameObject.FindWithTag("DisablePanelParent").transform;
+        if (DisablePanelParent == null)
+            DisablePanelParent = GameObject.FindWithTag("DisablePanelParent");
+
         var index = OpenPanelList.FindIndex(x => x.name == panelAbstract.name);
         if (0 <= index)
         {
             OpenPanelList.RemoveAt(index);
         }
 
-        panelAbstract.gameObject.transform.SetParent(DisablePanelParent);
+        panelAbstract.gameObject.transform.SetParent(DisablePanelParent.transform);
         panelAbstract.gameObject.SetActive(false);
     }
 

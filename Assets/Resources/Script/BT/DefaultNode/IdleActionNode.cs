@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IdleAction : ActionNode
+public class IdleActionNode : ActionNode
 {
     private Blackboard blackboard;
 
-    public IdleAction(Blackboard bb)
+    public IdleActionNode(Blackboard bb)
     {
         blackboard = bb;
     }

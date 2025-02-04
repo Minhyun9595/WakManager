@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
+// 테스트용
 public class LineManager : MonoBehaviour
 {
     public static LineManager _lineManager;

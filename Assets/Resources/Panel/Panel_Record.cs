@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class GridItem_Record : GridAbstract, GridInterface
+public class GridItem_Record : GridAbstract
 {
     public TextMeshProUGUI DateText;
     public TextMeshProUGUI Text;

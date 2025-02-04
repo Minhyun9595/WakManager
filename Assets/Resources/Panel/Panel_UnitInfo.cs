@@ -258,7 +258,7 @@ public class Panel_UnitInfo : PanelAbstract
     }
 }
 
-public class GridItem_UnitInfoTrait : GridAbstract, GridInterface
+public class GridItem_UnitInfoTrait : GridAbstract
 {
     public int traitIndex = -1;
     public Image TraitImage;
@@ -266,7 +266,7 @@ public class GridItem_UnitInfoTrait : GridAbstract, GridInterface
     public TextMeshProUGUI TraitName;
     public TextMeshProUGUI TraitDesc;
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         TraitImage = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "TraitImage");

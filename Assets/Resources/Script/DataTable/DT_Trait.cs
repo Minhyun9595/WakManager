@@ -30,7 +30,7 @@ public class DT_Trait
         {
             return info;
         }
-        Debug.LogWarning($"Index {index} not found in InfoManager.");
+        Debug.LogWarning($"DT_Trait Index {index} not found");
         return null;
     }
 
@@ -57,17 +57,17 @@ public class DT_Trait
                 return trait;
             }
         }
-        Debug.LogWarning($"Trait with Type {type} and Rank {rank} not found in InfoManager.");
+        Debug.LogWarning($"Trait with Type {type} and Rank {rank} not found");
         return null;
     }
 
     public string GetRankString()
     {
         var result = "F";
-        if(Rank == 5)       { result = "D"; }
-        else if(Rank == 4) { result = "C";  }
-        else if(Rank == 3) { result = "B";  }
-        else if(Rank == 2) { result = "A";  }
+        if(Rank == 5) { result = "D"; }
+        else if(Rank == 4) { result = "C"; }
+        else if(Rank == 3) { result = "B"; }
+        else if(Rank == 2) { result = "A"; }
         else if(Rank == 1) { result = "S"; }
 
         return result;

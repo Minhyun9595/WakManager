@@ -7,7 +7,7 @@ using TMPro;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-public class GridItem_ScreamTeam : GridAbstract, GridInterface
+public class GridItem_ScreamTeam : GridAbstract
 {
     private TeamInfo teamInfo;
     public TextMeshProUGUI TeamNameText;

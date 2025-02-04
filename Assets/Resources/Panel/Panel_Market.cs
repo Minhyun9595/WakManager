@@ -7,14 +7,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridItem_Trait : GridAbstract, GridInterface
+public class GridItem_Trait : GridAbstract
 {
     public int traitIndex = -1;
     public Image TraitImage;
     public TextMeshProUGUI RankText;
 
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         TraitImage = UIUtility.FindComponentInChildrenByName<Image>(gameObject, "TraitImage");
@@ -39,7 +39,7 @@ public class GridItem_Trait : GridAbstract, GridInterface
     }
 }
 
-public class GridItem_MarketCard : GridAbstract, GridInterface
+public class GridItem_MarketCard : GridAbstract
 {
     public Panel_Market panel_Market;
     public string unitUniqueID;
@@ -52,7 +52,7 @@ public class GridItem_MarketCard : GridAbstract, GridInterface
 
     public List<GridItem_Trait> gridItem_Traits = new List<GridItem_Trait>();
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
         UnitImage_Animator = UIUtility.FindComponentInChildrenByName<Animator>(gameObject, "UnitImage");
@@ -180,6 +180,7 @@ public class Panel_Market : PanelAbstract
         FrontInfoCanvas.Instance.SetPanelName("이적시장");
 
         var upgradeInfo = PlayerManager.Instance.PlayerTeamUpgrade.GetCurrentUpgrade(TeamUpgrade.UpgradeType.FindUnit);
+        Market_Button_FG_0.gameObject.SetActive(false);
         Market_Button_FG_1.gameObject.SetActive(upgradeInfo.Level < 2);
         Market_Button_FG_2.gameObject.SetActive(upgradeInfo.Level < 4);
     }

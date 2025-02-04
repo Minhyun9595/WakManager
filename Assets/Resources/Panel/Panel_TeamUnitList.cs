@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridItem_SelectTeamUnit : GridAbstract, GridInterface
+public class GridItem_SelectTeamUnit : GridAbstract
 {
     private string unitUniqueID;
     public TextMeshProUGUI JobText;
@@ -19,7 +19,7 @@ public class GridItem_SelectTeamUnit : GridAbstract, GridInterface
     public Transform BlockImage;
     public TextMeshProUGUI BlockText;
 
-    public new void Init(GameObject _gameObject)
+    public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
 

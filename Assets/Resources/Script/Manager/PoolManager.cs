@@ -14,13 +14,11 @@ public class PoolManager : CustomSingleton<PoolManager>
     // 프리팹 이름 리스트
     private List<string> prefabNames;
 
-    private bool isLoaded = false;
     new void Awake()
     {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
         prefabDictionary = new Dictionary<string, GameObject>();
         prefabNames = new List<string>();
-        isLoaded = false;
 
         SceneManager.sceneUnloaded += OnSceneUnloaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -36,10 +34,6 @@ public class PoolManager : CustomSingleton<PoolManager>
 
     void LoadPrefabs()
     {
-        //if (isLoaded)
-        //    return;
-        //
-        //isLoaded = true;
 
         // Resources 폴더에서 프리팹 로드
         GameObject[] prefabs = Resources.LoadAll<GameObject>("InGame/Prefab/PoolObject");
@@ -50,10 +44,9 @@ public class PoolManager : CustomSingleton<PoolManager>
             prefabDictionary.Add(prefab.name, prefab);
             prefabNames.Add(prefab.name);
 
-            // 해당 프리팹의 오브젝트 풀 생성
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
-            // 초기 풀 크기 설정 (필요에 따라 조절)
+            // 초기 풀 크기 설정 (추후 필요에 따라 조절)
             int initialPoolSize = 1;
 
             for (int i = 0; i < initialPoolSize; i++)
@@ -122,7 +115,7 @@ public class PoolManager : CustomSingleton<PoolManager>
             }
         }
 
-        // 딕셔너리 정리
+        // 퓰 정리
         poolDictionary.Clear();
         prefabDictionary.Clear();
         prefabNames.Clear();

@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsEnemyInRangeCondition : BehaviorNode
+public class IsEnemyInRangeConditionNode : ActionNode
 {
     private Blackboard blackboard;
     private float nextTargetUpdateTime;
     private const float targetUpdateInterval = 0.3f; // 타겟 갱신 주기
 
-    public IsEnemyInRangeCondition(Blackboard bb)
+    public IsEnemyInRangeConditionNode(Blackboard bb)
     {
         blackboard = bb;
     }

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public class Skill_Assassin_Jump : BehaviorNode
+public class Skill_Assassin_Jump_Node : BehaviorNode
 {
     private Blackboard blackboard;
     private float jumpDuration = 1.0f; // 점프 지속 시간 (초)
@@ -13,7 +13,7 @@ public class Skill_Assassin_Jump : BehaviorNode
     private NodeStatus currentStatus = NodeStatus.Failure; // 기본 상태를 Failure로 초기화
     private Material originalMaterial; // 원래 마테리얼 저장
     private Material jumpMaterial; // 점프용 마테리얼
-    public Skill_Assassin_Jump(Blackboard bb)
+    public Skill_Assassin_Jump_Node(Blackboard bb)
     {
         blackboard = bb;
 

@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FindTargetCondition : BehaviorNode
+public class FindTargetConditionNode : ActionNode
 {
     private Blackboard blackboard;
     private float nextTargetUpdateTime;
     private const float targetUpdateInterval = 0.3f; // 타겟 갱신 주기
 
 
-    public FindTargetCondition(Blackboard bb)
+    public FindTargetConditionNode(Blackboard bb)
     {
         blackboard = bb;
     }

@@ -16,14 +16,17 @@ public class Blackboard
     public Transform myBodyTransform { get; set; }
     public Renderer myBodyRenderer { get; set; }
     public TextMeshPro myNameText { get; set; }
+
     public UnitData realUnitData { get; set; }
     public Unit_FieldData unitFieldInfo { get; set; }
     public UnitAnimator unitAnimator { get; set; }
-    public Unit_AI targetUnitAI { get; set; } // 현재 타겟을 저장하는 속성
     public UnitReport unitReport { get; set; }
+    public BehaviorNode rootNode { get; set; }
+
+
+    public Unit_AI targetUnitAI { get; set; } // 현재 타겟
     public bool isAnimationPlaying { get; set; }
     public Vector3 destination { get; set; }
-    public BehaviorNode rootNode { get; set; }
 
     public Blackboard(int _teamIndex, UnitData _unitData, GameObject _myGameObject) 
     {
@@ -51,11 +54,7 @@ public class Blackboard
 
     public void Update(float deltaTime)
     {
-        if (isAnimationPlaying == false)
-        {
-            unitFieldInfo.Update(deltaTime);
-        }
-
+        unitFieldInfo.Update(deltaTime);
         rootNode.Execute();
     }
 
@@ -94,11 +93,11 @@ public class Blackboard
 
         if (IsRangeUnit)
         {
-            dT_Trait = realUnitData.GetTrait(TraitType.원거리_딜러);
+            dT_Trait = realUnitData.GetTrait(TraitType.RangedDealer);
         }
         else
         {
-            dT_Trait = realUnitData.GetTrait(TraitType.근거리_딜러);
+            dT_Trait = realUnitData.GetTrait(TraitType.MeleeDealer);
         }
 
         if(dT_Trait != null)
@@ -149,87 +148,34 @@ public class Unit_AI : MonoBehaviour
         blackboard.rootNode = CreateTankBehaviorTree();
     }
 
-    /*
-     Root
-├── Selector
-    ├── Death Sequence (Check IsDead)
-    │   └── Condition: IsDead?
-    │       ├── True: Action: DoNothing
-    │       └── False: Proceed to next node
-    ├── Skill Selector (Skill Usage)
-    │   ├── Sequence (Skill 1)
-    │   │   ├── Condition: IsSkillReady(Skill1)
-    │   │   └── Action: CastSkill(Skill1)
-    │   ├── Sequence (Skill 2)
-    │   │   ├── Condition: IsSkillReady(Skill2)
-    │   │   └── Action: CastSkill(Skill2)
-    │   └── ... (추가 스킬)
-    └── Default_Sequence (Default Behavior)
-        ├── Default_Selector
-        │   ├── AttackEnemyAction_Sequence
-        │   │   ├── Condition: IsEnemyFound()
-        │   │   └── AttackAction_Selector
-        │   │       ├── Attack_Sequence
-        │   │       │   ├── Condition: IsEnemyInRange()
-        │   │       │   └── Action: Attack()
-        │   │       └── Action: MoveToEnemy()
-        │   └── Action: Idle()
-     */
-
     BehaviorNode CreateTankBehaviorTree()
     {
         var rootSelectorNode = new SelectorNode();
-        // 사망 시퀀스
+        // 사망 시퀀스 (최우선)
         var dead_SequenceNode = new SequenceNode();
-        var deadAction = new DeadAction(blackboard);
+        var deadAction = new DeadActionNode(blackboard);
         dead_SequenceNode.AddChild(deadAction);
-        rootSelectorNode.AddChild(dead_SequenceNode); // Death에서 Succress반환하면 이후 안함
+        rootSelectorNode.AddChild(dead_SequenceNode);
 
-        if (blackboard.realUnitData.unitInfo_Immutable.RoleIndex == 3) // 암살자 테스트용 스킬
-        {
-            var skill_SelectorNode = new SelectorNode();
-            var skillSequence = new SequenceNode();
-            skillSequence.AddChild(new SkillCoolTimeNode(blackboard, true, 1000000, 1, ""));
-            skillSequence.AddChild(new Skill_Assassin_Jump(blackboard));
-            skill_SelectorNode.AddChild(skillSequence);
-            rootSelectorNode.AddChild(skill_SelectorNode);
-        }
-        // 스킬 셀렉터: 스킬 쿨타임을 검사하여 스킬을 사용
-        //foreach (var dT_Skill in blackboard.realUnitData.skillList)
-        //{
-        //    var skillSequence = new SequenceNode();
-        //    var coolDownNode = new CooldownNode(blackboard, dT_Skill); // 쿨타임 설정
-        //    skillSequence.AddChild(coolDownNode);
-        //    skillSequence.AddChild(new Skill_Assassin_Jump(blackboard));
-        //
-        //    //if (dT_Skill.Name == "Sirian_Skill_Node")
-        //    //{
-        //    //    var sirianSkillNode = new Sirian_Skill_Node(blackboard);
-        //    //
-        //    //    skillSequence.AddChild(sirianSkillNode); // 스킬 실행
-        //    //}
-        //
-        //    skill_SelectorNode.AddChild(skillSequence);
-        //}
-
+        // 행동 시퀀스
         var Default_Sequence = new SequenceNode();
         var Default_Selector = new SelectorNode();
         var AttackEnemyAction_Sequence = new SequenceNode();
 
         // 1. 타겟 탐색: 0.3초마다 타겟을 갱신
-        AttackEnemyAction_Sequence.AddChild(new FindTargetCondition(blackboard));
+        AttackEnemyAction_Sequence.AddChild(new FindTargetConditionNode(blackboard));
         // 2. 타겟이 범위 내에 있는지 확인
         var AttackAction_Selector = new SelectorNode();
         var Attack_Sequence = new SequenceNode();
-        Attack_Sequence.AddChild(new IsEnemyInRangeCondition(blackboard));
+        Attack_Sequence.AddChild(new IsEnemyInRangeConditionNode(blackboard));
         // 3. 타겟이 범위 내에 있으면 공격, 아니면 이동
-        Attack_Sequence.AddChild(new AttackAction(blackboard));
+        Attack_Sequence.AddChild(new AttackActionNode(blackboard));
         AttackAction_Selector.AddChild(Attack_Sequence);
-        AttackAction_Selector.AddChild(new MoveToTargetAction(blackboard));
+        AttackAction_Selector.AddChild(new MoveToTargetActionNode(blackboard));
         AttackEnemyAction_Sequence.AddChild(AttackAction_Selector);
         Default_Selector.AddChild(AttackEnemyAction_Sequence);
         // 타겟이 없거나 모든 행동 실패 시 대기
-        Default_Selector.AddChild(new IdleAction(blackboard));
+        Default_Selector.AddChild(new IdleActionNode(blackboard));
         Default_Sequence.AddChild(Default_Selector);
 
         rootSelectorNode.AddChild(Default_Sequence);

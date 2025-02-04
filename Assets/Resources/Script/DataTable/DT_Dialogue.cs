@@ -10,7 +10,6 @@ public class DT_Dialogue
 {
     public static Dictionary<int, DT_Dialogue> infoDictionary = new Dictionary<int, DT_Dialogue>();
     public static List<DT_Dialogue> listInfo = new List<DT_Dialogue>();
-
     public static Dictionary<int, List<DT_Dialogue>> groupedDialogueDictionary = new Dictionary<int, List<DT_Dialogue>>();
 
 

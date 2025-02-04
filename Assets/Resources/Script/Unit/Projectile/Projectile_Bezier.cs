@@ -11,8 +11,8 @@ public class Projectile_Bezier : ProjectileAbstract
         float control1Range, float control2Range, float _life, float _startDelayTime)
     {
         var projectileName = prefabName;
-        var control1 = MathUtility.GetRandomVector3(-control1Range, control1Range, -control1Range, control1Range);
-        var control2 = MathUtility.GetRandomVector3(-control2Range, control2Range, -control2Range, control2Range);
+        var control1 = MathUtility.GetRandomVector3_XY(-control1Range, control1Range, -control1Range, control1Range);
+        var control2 = MathUtility.GetRandomVector3_XY(-control2Range, control2Range, -control2Range, control2Range);
 
         GameObject projectileObject = PoolManager.Instance.GetFromPool(projectileName);
         Projectile_Bezier projectile = projectileObject.GetComponent<Projectile_Bezier>();

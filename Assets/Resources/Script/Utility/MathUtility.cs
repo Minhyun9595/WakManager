@@ -7,7 +7,7 @@ namespace QUtility
 {
     public static class MathUtility
     {
-        public static Vector3 GetRandomVector3(float minX, float maxX, float minY, float maxY)
+        public static Vector3 GetRandomVector3_XY(float minX, float maxX, float minY, float maxY)
         {
             return new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0);
         }
@@ -41,7 +41,7 @@ namespace QUtility
             // 탐색 반경 내의 모든 Collider 가져오기
             Collider2D[] colliders = Physics2D.OverlapCircleAll(_startPosition, _range);
 
-            QUtility.UIUtility.DrawDebugCircle(_startPosition, _range, Color.yellow);
+            UIUtility.DrawDebugCircle(_startPosition, _range, Color.yellow);
             foreach (Collider2D collider in colliders)
             {
                 Unit_AI enemyUnit = collider.GetComponent<Unit_AI>();

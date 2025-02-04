@@ -35,8 +35,9 @@ public class NotificationManager : MonoBehaviour
     public float displayTime = 3f;       // 알림이 유지되는 시간
     public float fadeDuration = 2f;      // 알림이 서서히 사라지는 시간
 
-    private Queue<GameObject> notifications = new Queue<GameObject>();
-    private List<string> messages = new List<string>();
+    private Queue<string> notificationQueue = new Queue<string>();
+    private bool isShowingNotification = false;
+
 
     private void Awake()
     {
@@ -46,39 +47,56 @@ public class NotificationManager : MonoBehaviour
 
     public void ShowNotification(string message)
     {
-        // Prefab 인스턴스 생성
-        var panel_Notification = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Notification, PanelRenderQueueManager.ECanvasType.FrontCanvas).GetComponent<Panel_Notification>();
-        GameObject notificationTextBG = Instantiate(notificationPrefab, panel_Notification.LeftBottom);
-        TMP_Text textComponent = notificationTextBG.GetComponentInChildren<TMP_Text>();
-        textComponent.text = message;
+        notificationQueue.Enqueue(message);
 
-        notifications.Enqueue(notificationTextBG);
-        messages.Add(message);
-
+        // PlayerManager의 알림 기록에도 추가 (날짜 정보 추가)
         var today = PlayerManager.Instance.gameSchedule.GetToday();
         PlayerManager.Instance.notifications.Add(new Notification(today, message));
 
-        // 기존 메시지 정렬
-        StartCoroutine(HandleNotification(notificationTextBG));
+        // 현재 알림이 표시 중이지 않다면, 큐 처리를 시작
+        if (!isShowingNotification)
+        {
+            StartCoroutine(ProcessQueue());
+        }
     }
 
-    private IEnumerator HandleNotification(GameObject notificationTextBG)
+    private IEnumerator ProcessQueue()
     {
-        // 일정 시간 대기
-        yield return new WaitForSeconds(displayTime);
+        isShowingNotification = true;
 
-        // Fade Out 처리
-        CanvasGroup canvasGroup = notificationTextBG.GetComponent<CanvasGroup>();
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
+        // 큐에 메시지가 있는 동안 반복
+        while (notificationQueue.Count > 0)
         {
-            elapsed += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
-            yield return null;
+            string message = notificationQueue.Dequeue();
+
+            var panel_Notification = PanelRenderQueueManager.OpenPanel(EPanelPrefabType.Panel_Notification, PanelRenderQueueManager.ECanvasType.FrontCanvas)
+                .GetComponent<Panel_Notification>();
+
+            GameObject notificationObj = Instantiate(notificationPrefab, panel_Notification.LeftBottom);
+            TMP_Text textComponent = notificationObj.GetComponentInChildren<TMP_Text>();
+            textComponent.text = message;
+
+            yield return new WaitForSeconds(displayTime);
+
+            CanvasGroup canvasGroup = notificationObj.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = notificationObj.AddComponent<CanvasGroup>();
+            }
+
+            // 알림 fade-out 처리
+            float elapsed = 0f;
+            while (elapsed < fadeDuration)
+            {
+                elapsed += Time.deltaTime;
+                canvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
+                yield return null;
+            }
+
+            // 알림 객체 파괴
+            Destroy(notificationObj);
         }
 
-        // 알림 삭제
-        notifications.Dequeue();
-        Destroy(notificationTextBG);
+        isShowingNotification = false;
     }
 }

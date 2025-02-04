@@ -23,6 +23,7 @@ public class DT_Market
     public int SearchPrice;
 
     public Dictionary<EUnitTier, int> unitCounts = new Dictionary<EUnitTier, int>();
+    private int totalProbability;
 
     public DT_Market() { }
 
@@ -34,21 +35,19 @@ public class DT_Market
         unitCounts[EUnitTier.Silver] = Silver;
         unitCounts[EUnitTier.Bronze] = Bronze;
         unitCounts[EUnitTier.Iron] = Iron;
+
+        foreach(var pair in unitCounts)
+        {
+            totalProbability += pair.Value;
+        }
     }
 
     public EUnitTier GetRandomCardTier()
     {
-        // 확률의 총합 계산
-        int totalProbability = 0;
-        foreach (var pair in unitCounts)
-        {
-            totalProbability += pair.Value;
-        }
-
         if (totalProbability == 0)
         {
             Debug.LogError("Total probability is 0. No cards can be selected.");
-            return EUnitTier.Iron; // None은 기본값으로 사용됩니다. 필요시 정의해야 합니다.
+            return EUnitTier.Iron;
         }
 
         // 랜덤 값 생성

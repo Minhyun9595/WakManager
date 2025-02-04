@@ -57,7 +57,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
     private string saveFolderPath;
     private SaveData loadData = null;
     private float playTime;
-    private string inputTeamName = string.Empty;
+    private string inputTeamName = "ÆÀ¿ÎÅ¸¹ö½º";
     private const int storyStartYear = 250;
     [SerializeField] private List<UnitData> worldUnitCardDatas = new List<UnitData>();
     [SerializeField] private List<UnitData> market_UnitCardDatas = new List<UnitData>();
@@ -203,7 +203,7 @@ public class PlayerManager : CustomSingleton<PlayerManager>
         worldUnitCardDatas = CreateWorldCard(5);
         market_UnitCardDatas.Clear();
         playerTeamInfo.Clear();
-        playerTeamInfo.Initialize(ETeamTier.Third, "¿ì¿Î±»");
+        playerTeamInfo.Initialize(ETeamTier.Third, inputTeamName);
 
         int multiple = 1;
 #if UNITY_EDITOR
